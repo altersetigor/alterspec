@@ -1,0 +1,594 @@
+{
+  "scope": {
+    "id": "CAP-PRC-001",
+    "kind": "capability",
+    "title": "Propose sales price"
+  },
+  "application": {
+    "title": "Product Catalog"
+  },
+  "module": {
+    "id": "MOD-PRC",
+    "title": "Pricing",
+    "description": "Sales prices of articles: proposing them, approving them and expiring them. It makes sure a sales price is never below the purchase price. Discounts per customer are out of scope (see DEC-001)."
+  },
+  "capabilities": [
+    {
+      "id": "CAP-PRC-001",
+      "title": "Propose sales price",
+      "status": "ready",
+      "version": 1,
+      "module": "MOD-PRC",
+      "roles": [
+        {
+          "role": "ROLE-PRICING-MANAGER",
+          "title": "Pricing manager",
+          "scope": "org"
+        }
+      ],
+      "screens": [
+        "SCR-PRC-01"
+      ],
+      "entities": [
+        {
+          "entity": "ENT-SALES-PRICE",
+          "ops": [
+            "C",
+            "R",
+            "U"
+          ],
+          "transitions": []
+        },
+        {
+          "entity": "ENT-ARTICLE",
+          "ops": [
+            "R"
+          ],
+          "transitions": []
+        },
+        {
+          "entity": "ENT-PURCHASE-PRICE",
+          "ops": [
+            "R"
+          ],
+          "transitions": []
+        }
+      ],
+      "rules": [
+        "RULE-001",
+        "RULE-PRC-001"
+      ],
+      "events": {
+        "emits": [],
+        "consumes": [
+          "EVT-ARTICLE-ACTIVATED",
+          "EVT-PURCHASE-PRICE-CHANGED"
+        ]
+      },
+      "dependsOn": [],
+      "flows": [
+        "FLOW-001",
+        "FLOW-002"
+      ],
+      "text": {
+        "userStory": {
+          "raw": "As a pricing analyst (PER-PRICING-ANALYST), I want to propose a sales price for an article, so that it can be sold at a price that covers what we pay.",
+          "persona": "pricing analyst (PER-PRICING-ANALYST)",
+          "goal": "propose a sales price for an article",
+          "benefit": "it can be sold at a price that covers what we pay"
+        },
+        "sections": {
+          "Summary and user story": "As a pricing analyst (PER-PRICING-ANALYST), I want to propose a sales price for an article, so that it can be sold at a price that covers what we pay.",
+          "Business value / problem": "New articles and changed purchase prices get a sales price quickly, and never one below the purchase price.",
+          "Preconditions and triggers": "An article was activated (EVT-ARTICLE-ACTIVATED) or one of its purchase prices changed (EVT-PURCHASE-PRICE-CHANGED). The article appears on SCR-PRC-01 as waiting for a sales price.",
+          "Main flow": "1. On SCR-PRC-01, the pricing manager opens an article waiting for a sales price.\n2. They see its valid purchase prices and its current sales price, if any.\n3. They use action A01 Propose and enter the amount and the valid-from date.\n4. The amount is checked against the highest valid purchase price (RULE-PRC-001).\n5. The sales price is saved as proposed and waits for approval.",
+          "Alternative and exception flows": "- The amount is not higher than the highest valid purchase price: nothing is saved and the pricing manager sees the purchase price (RULE-PRC-001).\n- The article is no longer active: nothing is saved (RULE-001).\n- A proposed sales price already exists for the article: it is replaced by the new proposal.",
+          "Data in / data out": "In: article, amount, valid-from date. Shown: valid purchase prices, current sales price. Out: a proposed sales price.",
+          "Business rules applied": "- RULE-001 — only active articles get a sales price.\n- RULE-PRC-001 — the amount must be higher than the highest valid purchase price.",
+          "State transitions caused": "None. A new sales price starts as proposed.",
+          "Notifications": "None. The proposal appears on SCR-PRC-01 for approval.",
+          "Permissions and data visibility": "Pricing managers propose sales prices for all articles. Sales staff never see proposed prices.",
+          "Acceptance criteria": "### CAP-PRC-001-AC-01\n\n- **Given** an active article whose highest valid purchase price is 8.00\n- **When** the pricing manager proposes a sales price of 10.00\n- **Then** the sales price is saved as proposed\n- **Covers:** main flow step 5\n\n### CAP-PRC-001-AC-02\n\n- **Given** an active article whose highest valid purchase price is 8.00\n- **When** the pricing manager proposes a sales price of 7.50\n- **Then** nothing is saved and the pricing manager sees the purchase price of 8.00\n- **Covers:** RULE-PRC-001\n\n### CAP-PRC-001-AC-03\n\n- **Given** a discontinued article\n- **When** the pricing manager proposes a sales price\n- **Then** nothing is saved\n- **Covers:** RULE-001",
+          "Out of scope": "- Prices per customer group (DEC-001).\n- Promotions and temporary discounts.",
+          "Open questions": ""
+        },
+        "mainFlow": [
+          "On SCR-PRC-01, the pricing manager opens an article waiting for a sales price.",
+          "They see its valid purchase prices and its current sales price, if any.",
+          "They use action A01 Propose and enter the amount and the valid-from date.",
+          "The amount is checked against the highest valid purchase price (RULE-PRC-001).",
+          "The sales price is saved as proposed and waits for approval."
+        ],
+        "exceptions": [
+          "The amount is not higher than the highest valid purchase price: nothing is saved and the pricing manager sees the purchase price (RULE-PRC-001).",
+          "The article is no longer active: nothing is saved (RULE-001).",
+          "A proposed sales price already exists for the article: it is replaced by the new proposal."
+        ],
+        "outOfScope": [
+          "Prices per customer group (DEC-001).",
+          "Promotions and temporary discounts."
+        ],
+        "openQuestions": [],
+        "acceptance": [
+          {
+            "id": "CAP-PRC-001-AC-01",
+            "given": [
+              "an active article whose highest valid purchase price is 8.00"
+            ],
+            "when": [
+              "the pricing manager proposes a sales price of 10.00"
+            ],
+            "then": [
+              "the sales price is saved as proposed"
+            ],
+            "and": [],
+            "covers": "main flow step 5"
+          },
+          {
+            "id": "CAP-PRC-001-AC-02",
+            "given": [
+              "an active article whose highest valid purchase price is 8.00"
+            ],
+            "when": [
+              "the pricing manager proposes a sales price of 7.50"
+            ],
+            "then": [
+              "nothing is saved and the pricing manager sees the purchase price of 8.00"
+            ],
+            "and": [],
+            "covers": "RULE-PRC-001"
+          },
+          {
+            "id": "CAP-PRC-001-AC-03",
+            "given": [
+              "a discontinued article"
+            ],
+            "when": [
+              "the pricing manager proposes a sales price"
+            ],
+            "then": [
+              "nothing is saved"
+            ],
+            "and": [],
+            "covers": "RULE-001"
+          }
+        ]
+      }
+    }
+  ],
+  "roles": [
+    {
+      "id": "ROLE-PRICING-MANAGER",
+      "title": "Pricing manager",
+      "description": "Proposes and approves sales prices.",
+      "personas": [
+        "PER-PRICING-ANALYST"
+      ]
+    }
+  ],
+  "personas": [
+    {
+      "id": "PER-PRICING-ANALYST",
+      "title": "Pricing analyst",
+      "description": "**Goals:** sales prices that cover the purchase price and are approved before anyone uses them.\n\n**Pain points:** learns about purchase price increases weeks later.",
+      "roles": [
+        "ROLE-PRICING-MANAGER"
+      ]
+    }
+  ],
+  "entities": [
+    {
+      "id": "ENT-ARTICLE",
+      "title": "Article",
+      "description": "Something the company sells. Sales staff only ever see active articles.",
+      "attributes": [
+        {
+          "name": "Article number",
+          "kind": "text",
+          "required": true,
+          "description": "Unique, never reused"
+        },
+        {
+          "name": "Name",
+          "kind": "text",
+          "required": true
+        },
+        {
+          "name": "Brand",
+          "kind": "reference",
+          "required": false
+        },
+        {
+          "name": "Category",
+          "kind": "reference",
+          "required": true
+        },
+        {
+          "name": "Unit of measure",
+          "kind": "reference",
+          "required": true,
+          "description": "The unit it is sold in"
+        },
+        {
+          "name": "Description",
+          "kind": "text",
+          "required": false
+        }
+      ],
+      "states": [
+        "draft",
+        "active",
+        "discontinued"
+      ],
+      "initialState": "draft",
+      "transitions": [
+        {
+          "from": "draft",
+          "to": "active"
+        },
+        {
+          "from": "active",
+          "to": "discontinued"
+        }
+      ],
+      "relationships": [
+        {
+          "entity": "ENT-BRAND",
+          "cardinality": "one"
+        },
+        {
+          "entity": "ENT-CATEGORY",
+          "cardinality": "one"
+        },
+        {
+          "entity": "ENT-UNIT-OF-MEASURE",
+          "cardinality": "one"
+        }
+      ]
+    },
+    {
+      "id": "ENT-PURCHASE-PRICE",
+      "title": "Purchase price",
+      "description": "What a supplier charges for one unit of measure of an article, from a given date.",
+      "attributes": [
+        {
+          "name": "Article",
+          "kind": "reference",
+          "required": true
+        },
+        {
+          "name": "Supplier",
+          "kind": "reference",
+          "required": true
+        },
+        {
+          "name": "Amount",
+          "kind": "amount",
+          "required": true
+        },
+        {
+          "name": "Valid from",
+          "kind": "date",
+          "required": true
+        }
+      ],
+      "states": [
+        "proposed",
+        "valid",
+        "expired"
+      ],
+      "initialState": "proposed",
+      "transitions": [
+        {
+          "from": "proposed",
+          "to": "valid"
+        },
+        {
+          "from": "valid",
+          "to": "expired"
+        }
+      ],
+      "relationships": [
+        {
+          "entity": "ENT-ARTICLE",
+          "cardinality": "one"
+        },
+        {
+          "entity": "ENT-SUPPLIER",
+          "cardinality": "one"
+        }
+      ]
+    },
+    {
+      "id": "ENT-SALES-PRICE",
+      "title": "Sales price",
+      "description": "What the company charges for one unit of measure of an article, from a given date.",
+      "attributes": [
+        {
+          "name": "Article",
+          "kind": "reference",
+          "required": true
+        },
+        {
+          "name": "Amount",
+          "kind": "amount",
+          "required": true
+        },
+        {
+          "name": "Valid from",
+          "kind": "date",
+          "required": true
+        }
+      ],
+      "states": [
+        "proposed",
+        "valid",
+        "expired"
+      ],
+      "initialState": "proposed",
+      "transitions": [
+        {
+          "from": "proposed",
+          "to": "valid"
+        },
+        {
+          "from": "valid",
+          "to": "expired"
+        }
+      ],
+      "relationships": [
+        {
+          "entity": "ENT-ARTICLE",
+          "cardinality": "one"
+        }
+      ]
+    }
+  ],
+  "rules": [
+    {
+      "id": "RULE-001",
+      "title": "Only active articles are sold",
+      "statement": "An article can have a valid sales price, and be shown to sales staff, only while it is active."
+    },
+    {
+      "id": "RULE-PRC-001",
+      "title": "Sales price covers the purchase price",
+      "statement": "A sales price must be higher than the highest valid purchase price of the same article."
+    }
+  ],
+  "events": [
+    {
+      "id": "EVT-ARTICLE-ACTIVATED",
+      "title": "Article activated",
+      "external": false,
+      "description": "An article became active. Pricing is told so a sales price can be proposed."
+    },
+    {
+      "id": "EVT-PURCHASE-PRICE-CHANGED",
+      "title": "Purchase price changed",
+      "external": false,
+      "description": "A new purchase price became valid. Pricing checks whether the sales price still covers it."
+    }
+  ],
+  "screens": [
+    {
+      "id": "SCR-PRC-01",
+      "title": "Sales price review",
+      "purpose": "Work through articles that need a sales price, proposals that need approval, and discontinued articles whose prices must expire.",
+      "actions": [
+        {
+          "id": "A01",
+          "label": "Propose",
+          "capability": "CAP-PRC-001"
+        },
+        {
+          "id": "A02",
+          "label": "Approve",
+          "capability": "CAP-PRC-002"
+        },
+        {
+          "id": "A03",
+          "label": "Expire",
+          "capability": "CAP-PRC-003"
+        }
+      ]
+    }
+  ],
+  "flows": [
+    {
+      "id": "FLOW-001",
+      "title": "New article to sellable",
+      "steps": [
+        {
+          "step": 1,
+          "capability": "CAP-CAT-004",
+          "title": "Create article",
+          "role": "ROLE-CATALOG-MANAGER",
+          "inScope": false
+        },
+        {
+          "step": 2,
+          "capability": "CAP-CAT-005",
+          "title": "Activate article",
+          "role": "ROLE-CATALOG-MANAGER",
+          "inScope": false
+        },
+        {
+          "step": 3,
+          "capability": "CAP-SUP-004",
+          "title": "Record purchase price",
+          "role": "ROLE-PURCHASER",
+          "inScope": false
+        },
+        {
+          "step": 4,
+          "capability": "CAP-PRC-001",
+          "title": "Propose sales price",
+          "role": "ROLE-PRICING-MANAGER",
+          "inScope": true
+        },
+        {
+          "step": 5,
+          "capability": "CAP-PRC-002",
+          "title": "Approve sales price",
+          "role": "ROLE-PRICING-MANAGER",
+          "inScope": false
+        },
+        {
+          "step": 6,
+          "capability": "CAP-GLB-001",
+          "title": "Look up article prices",
+          "role": "ROLE-SALES-STAFF",
+          "inScope": false
+        }
+      ]
+    },
+    {
+      "id": "FLOW-002",
+      "title": "Supplier price update",
+      "steps": [
+        {
+          "step": 1,
+          "capability": "CAP-SUP-005",
+          "title": "Import supplier price list",
+          "role": "ROLE-PURCHASER",
+          "inScope": false
+        },
+        {
+          "step": 2,
+          "capability": "CAP-SUP-006",
+          "title": "Approve purchase price",
+          "role": "ROLE-PURCHASER",
+          "inScope": false
+        },
+        {
+          "step": 3,
+          "capability": "CAP-PRC-001",
+          "title": "Propose sales price",
+          "role": "ROLE-PRICING-MANAGER",
+          "inScope": true
+        },
+        {
+          "step": 4,
+          "capability": "CAP-PRC-002",
+          "title": "Approve sales price",
+          "role": "ROLE-PRICING-MANAGER",
+          "inScope": false
+        }
+      ]
+    }
+  ],
+  "glossary": [
+    {
+      "term": "Article",
+      "definition": "Something the company sells, identified by its article number.",
+      "forbidden": [
+        "item"
+      ]
+    },
+    {
+      "term": "Purchase price",
+      "definition": "What a supplier charges for one unit of measure of an article, from a given date.",
+      "forbidden": [
+        "cost price"
+      ]
+    },
+    {
+      "term": "Sales price",
+      "definition": "What the company charges for one unit of measure of an article, from a given date, once approved.",
+      "forbidden": [
+        "selling price"
+      ]
+    }
+  ],
+  "openQuestions": [
+    {
+      "id": "DEC-001",
+      "title": "Do sales prices differ per customer group?",
+      "context": "**Context:** Some customers get better prices today, agreed outside any system. Until this is decided, an article\nhas one valid sales price at a time."
+    }
+  ],
+  "sources": [
+    {
+      "id": "CAP-PRC-001",
+      "status": "ready",
+      "version": 1,
+      "fingerprint": "dc3ea39de94e625e"
+    },
+    {
+      "id": "DEC-001",
+      "fingerprint": "cf4e6facca30c430"
+    },
+    {
+      "id": "ENT-ARTICLE",
+      "status": "refined",
+      "fingerprint": "54c3745940d09110"
+    },
+    {
+      "id": "ENT-PURCHASE-PRICE",
+      "status": "refined",
+      "fingerprint": "9a18a6388757f94f"
+    },
+    {
+      "id": "ENT-SALES-PRICE",
+      "status": "refined",
+      "fingerprint": "a6cc9e651018fc0e"
+    },
+    {
+      "id": "EVT-ARTICLE-ACTIVATED",
+      "fingerprint": "07eab4d0ddbf31d6"
+    },
+    {
+      "id": "EVT-PURCHASE-PRICE-CHANGED",
+      "fingerprint": "f87c7ddf855b8ffd"
+    },
+    {
+      "id": "FLOW-001",
+      "status": "refined",
+      "fingerprint": "8405b70448aba721"
+    },
+    {
+      "id": "FLOW-002",
+      "status": "refined",
+      "fingerprint": "a8842cf09db87d5a"
+    },
+    {
+      "id": "MOD-PRC",
+      "status": "refined",
+      "fingerprint": "06351fd2e7d00606"
+    },
+    {
+      "id": "PER-PRICING-ANALYST",
+      "fingerprint": "c57876584917a16a"
+    },
+    {
+      "id": "ROLE-PRICING-MANAGER",
+      "fingerprint": "2d7e0b93551b58c0"
+    },
+    {
+      "id": "RULE-001",
+      "fingerprint": "0e9a4b68b987fc39"
+    },
+    {
+      "id": "RULE-PRC-001",
+      "fingerprint": "44e9104af731b7b6"
+    },
+    {
+      "id": "SCR-PRC-01",
+      "status": "refined",
+      "fingerprint": "28f647e78ef43b65"
+    },
+    {
+      "id": "term:Article",
+      "fingerprint": "792fffebabe9a476"
+    },
+    {
+      "id": "term:Purchase price",
+      "fingerprint": "240289b3b470d80e"
+    },
+    {
+      "id": "term:Sales price",
+      "fingerprint": "c0358d6e0c28cfc0"
+    }
+  ]
+}

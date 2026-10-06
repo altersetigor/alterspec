@@ -114,6 +114,15 @@ Statuses: `draft → refined → ready → approved → implemented`.
   `proposal.md` and an overlay `spec/` holding only touched objects (whole docs, single collection items). `change
   edit|remove|status`, `new --change`, `validate --change`, `impact`, `apply` live in `src/changes/` and
   `src/commands/change.ts`. Approval is always the person's explicit word; `apply` checks `approved_hash`.
+- Handoff (Phase 5): `alterspec handoff <CAP|MOD> --target bundle|speckit|openspec|bmad|all` builds a bundle
+  (`src/handoff/bundle.ts`) and renders it per target (`src/handoff/targets/`), writing only to
+  `handoff/<target>/<ID>/`. Target formats were checked on 2026-10-07 (Spec Kit v1.1.1, OpenSpec v1.14.1, BMAD v6.12.1
+  `epics.md`); re-check the upstream templates before changing a renderer. alterspec never gets a tech layer.
+- `examples/catalog/` is the reference example and a golden fixture: tests require 0 findings, current views, and that
+  re-running its handoffs (`--date 2026-10-07`) reproduces `examples/catalog/handoff/` byte for byte. After changing a
+  renderer or bumping the package version, regenerate it:
+  `node dist/cli.js handoff CAP-PRC-001 --target all --date 2026-10-07 -C examples/catalog` and
+  `node dist/cli.js handoff MOD-PRC --date 2026-10-07 -C examples/catalog`.
 - Decided: interview-then-draft; one capability = one goal, one acting role, one session; `refine` moves status to
   `refined` at most, anything beyond needs the person's explicit word.
 

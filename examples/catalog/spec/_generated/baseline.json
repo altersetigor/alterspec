@@ -1,0 +1,278 @@
+{
+  "created": "2026-10-06",
+  "objects": {
+    "APP": {
+      "hash": "4dcee37e5241c0d2",
+      "file": "application/application.md"
+    },
+    "CAP-CAT-001": {
+      "hash": "e766187603961de4",
+      "file": "modules/cat/capabilities/CAP-CAT-001.md"
+    },
+    "CAP-CAT-002": {
+      "hash": "75ce77f41d7af3a8",
+      "file": "modules/cat/capabilities/CAP-CAT-002.md"
+    },
+    "CAP-CAT-003": {
+      "hash": "f7e25d6fce68860f",
+      "file": "modules/cat/capabilities/CAP-CAT-003.md"
+    },
+    "CAP-CAT-004": {
+      "hash": "b517e2789325a460",
+      "file": "modules/cat/capabilities/CAP-CAT-004.md"
+    },
+    "CAP-CAT-005": {
+      "hash": "c0b05f6332461016",
+      "file": "modules/cat/capabilities/CAP-CAT-005.md"
+    },
+    "CAP-CAT-006": {
+      "hash": "7a10adbdb7c29a66",
+      "file": "modules/cat/capabilities/CAP-CAT-006.md"
+    },
+    "CAP-GLB-001": {
+      "hash": "6ae2978ad32ae1a5",
+      "file": "modules/glb/capabilities/CAP-GLB-001.md"
+    },
+    "CAP-PRC-001": {
+      "hash": "dc3ea39de94e625e",
+      "file": "modules/prc/capabilities/CAP-PRC-001.md"
+    },
+    "CAP-PRC-002": {
+      "hash": "9a91749ce7ecc07b",
+      "file": "modules/prc/capabilities/CAP-PRC-002.md"
+    },
+    "CAP-PRC-003": {
+      "hash": "3403d7a116ac2ce1",
+      "file": "modules/prc/capabilities/CAP-PRC-003.md"
+    },
+    "CAP-SUP-001": {
+      "hash": "b72b1c6c89e8d7af",
+      "file": "modules/sup/capabilities/CAP-SUP-001.md"
+    },
+    "CAP-SUP-002": {
+      "hash": "800020152edd0f79",
+      "file": "modules/sup/capabilities/CAP-SUP-002.md"
+    },
+    "CAP-SUP-003": {
+      "hash": "2f00caae402eeec7",
+      "file": "modules/sup/capabilities/CAP-SUP-003.md"
+    },
+    "CAP-SUP-004": {
+      "hash": "43f8053d70a664e9",
+      "file": "modules/sup/capabilities/CAP-SUP-004.md"
+    },
+    "CAP-SUP-005": {
+      "hash": "6a8193cbd0d11933",
+      "file": "modules/sup/capabilities/CAP-SUP-005.md"
+    },
+    "CAP-SUP-006": {
+      "hash": "a069a71f10dc5ae5",
+      "file": "modules/sup/capabilities/CAP-SUP-006.md"
+    },
+    "DEC-001": {
+      "hash": "cf4e6facca30c430",
+      "file": "application/decisions.md"
+    },
+    "DEC-002": {
+      "hash": "e50a5bb134d939d3",
+      "file": "application/decisions.md"
+    },
+    "ENT-ARTICLE": {
+      "hash": "54c3745940d09110",
+      "file": "application/entities/ENT-ARTICLE.md"
+    },
+    "ENT-BRAND": {
+      "hash": "159aa654a7b17752",
+      "file": "application/entities/ENT-BRAND.md"
+    },
+    "ENT-CATEGORY": {
+      "hash": "1f4733d040f41f63",
+      "file": "application/entities/ENT-CATEGORY.md"
+    },
+    "ENT-PURCHASE-PRICE": {
+      "hash": "9a18a6388757f94f",
+      "file": "application/entities/ENT-PURCHASE-PRICE.md"
+    },
+    "ENT-SALES-PRICE": {
+      "hash": "a6cc9e651018fc0e",
+      "file": "application/entities/ENT-SALES-PRICE.md"
+    },
+    "ENT-SUPPLIER": {
+      "hash": "47321f9c36cf114a",
+      "file": "application/entities/ENT-SUPPLIER.md"
+    },
+    "ENT-UNIT-OF-MEASURE": {
+      "hash": "60f6303d7367b117",
+      "file": "application/entities/ENT-UNIT-OF-MEASURE.md"
+    },
+    "EVT-ARTICLE-ACTIVATED": {
+      "hash": "07eab4d0ddbf31d6",
+      "file": "application/events.md"
+    },
+    "EVT-ARTICLE-DISCONTINUED": {
+      "hash": "5aa6845769811a24",
+      "file": "application/events.md"
+    },
+    "EVT-PURCHASE-PRICE-CHANGED": {
+      "hash": "f87c7ddf855b8ffd",
+      "file": "application/events.md"
+    },
+    "EVT-SUPPLIER-PRICE-LIST-RECEIVED": {
+      "hash": "85f22ab5dc46657e",
+      "file": "application/events.md"
+    },
+    "FLOW-001": {
+      "hash": "8405b70448aba721",
+      "file": "application/flows/FLOW-001.md"
+    },
+    "FLOW-002": {
+      "hash": "a8842cf09db87d5a",
+      "file": "application/flows/FLOW-002.md"
+    },
+    "FLOW-003": {
+      "hash": "9440da8fb3069b19",
+      "file": "application/flows/FLOW-003.md"
+    },
+    "FLOW-004": {
+      "hash": "90693ad3c780084a",
+      "file": "application/flows/FLOW-004.md"
+    },
+    "FLOW-005": {
+      "hash": "82b97ee103601a20",
+      "file": "application/flows/FLOW-005.md"
+    },
+    "MOD-CAT": {
+      "hash": "2fe12a3b9a99d7d3",
+      "file": "modules/cat/module.md"
+    },
+    "MOD-GLB": {
+      "hash": "549e6b5147e4fa77",
+      "file": "modules/glb/module.md"
+    },
+    "MOD-PRC": {
+      "hash": "06351fd2e7d00606",
+      "file": "modules/prc/module.md"
+    },
+    "MOD-SUP": {
+      "hash": "38151f5d6d5a0fd1",
+      "file": "modules/sup/module.md"
+    },
+    "PER-BUYER": {
+      "hash": "43b2b04c288711e9",
+      "file": "application/personas-roles.md"
+    },
+    "PER-CATALOG-LEAD": {
+      "hash": "bd98815012dc4662",
+      "file": "application/personas-roles.md"
+    },
+    "PER-PRICING-ANALYST": {
+      "hash": "c57876584917a16a",
+      "file": "application/personas-roles.md"
+    },
+    "PER-SALES-REP": {
+      "hash": "4a2cfed8aa7571e5",
+      "file": "application/personas-roles.md"
+    },
+    "ROLE-CATALOG-MANAGER": {
+      "hash": "1d552c03f0df69d8",
+      "file": "application/personas-roles.md"
+    },
+    "ROLE-PRICING-MANAGER": {
+      "hash": "2d7e0b93551b58c0",
+      "file": "application/personas-roles.md"
+    },
+    "ROLE-PURCHASER": {
+      "hash": "7037b434b2a44751",
+      "file": "application/personas-roles.md"
+    },
+    "ROLE-SALES-STAFF": {
+      "hash": "1a2ae4d886f085b7",
+      "file": "application/personas-roles.md"
+    },
+    "RULE-001": {
+      "hash": "0e9a4b68b987fc39",
+      "file": "application/rules.md"
+    },
+    "RULE-CAT-001": {
+      "hash": "0d480604ff99b358",
+      "file": "modules/cat/rules.md"
+    },
+    "RULE-CAT-002": {
+      "hash": "d5685c3aece1681e",
+      "file": "modules/cat/rules.md"
+    },
+    "RULE-PRC-001": {
+      "hash": "44e9104af731b7b6",
+      "file": "modules/prc/rules.md"
+    },
+    "RULE-PRC-002": {
+      "hash": "ee128698e2ce619b",
+      "file": "modules/prc/rules.md"
+    },
+    "RULE-SUP-001": {
+      "hash": "c5d1294fe3259690",
+      "file": "modules/sup/rules.md"
+    },
+    "SCR-CAT-01": {
+      "hash": "c0ff7abed1a3de1f",
+      "file": "modules/cat/screens/SCR-CAT-01.md"
+    },
+    "SCR-CAT-02": {
+      "hash": "7099ca6497f45eb7",
+      "file": "modules/cat/screens/SCR-CAT-02.md"
+    },
+    "SCR-GLB-01": {
+      "hash": "83ee2db12aa21698",
+      "file": "modules/glb/screens/SCR-GLB-01.md"
+    },
+    "SCR-PRC-01": {
+      "hash": "28f647e78ef43b65",
+      "file": "modules/prc/screens/SCR-PRC-01.md"
+    },
+    "SCR-SUP-01": {
+      "hash": "cf6892edae959ee4",
+      "file": "modules/sup/screens/SCR-SUP-01.md"
+    },
+    "SCR-SUP-02": {
+      "hash": "e578f6ebaccee336",
+      "file": "modules/sup/screens/SCR-SUP-02.md"
+    },
+    "file:application/integrations.md": {
+      "hash": "70735aa80a774337",
+      "file": "application/integrations.md"
+    },
+    "file:application/nfr.md": {
+      "hash": "90228b02c597f0ef",
+      "file": "application/nfr.md"
+    },
+    "term:Article": {
+      "hash": "792fffebabe9a476",
+      "file": "application/glossary.md"
+    },
+    "term:Brand": {
+      "hash": "5bf8284dd321b3db",
+      "file": "application/glossary.md"
+    },
+    "term:Category": {
+      "hash": "6b0064ddde040cad",
+      "file": "application/glossary.md"
+    },
+    "term:Purchase price": {
+      "hash": "240289b3b470d80e",
+      "file": "application/glossary.md"
+    },
+    "term:Sales price": {
+      "hash": "c0358d6e0c28cfc0",
+      "file": "application/glossary.md"
+    },
+    "term:Supplier": {
+      "hash": "37fe7072cd9d6180",
+      "file": "application/glossary.md"
+    },
+    "term:Unit of measure": {
+      "hash": "cb9f1e2c46b33d7c",
+      "file": "application/glossary.md"
+    }
+  },
+  "updated": "2026-10-06"
+}

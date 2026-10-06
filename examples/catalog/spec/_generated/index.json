@@ -1,0 +1,1742 @@
+{
+  "application": {
+    "id": "APP",
+    "title": "Product Catalog",
+    "status": "refined",
+    "version": 1,
+    "channels": [
+      {
+        "name": "Backoffice",
+        "kind": "backoffice",
+        "audience": "Catalog, purchasing and pricing staff"
+      },
+      {
+        "name": "Sales desk",
+        "kind": "web",
+        "audience": "Sales staff looking up articles and prices"
+      }
+    ],
+    "modules": [
+      "MOD-GLB",
+      "MOD-CAT",
+      "MOD-SUP",
+      "MOD-PRC"
+    ],
+    "file": "application/application.md"
+  },
+  "modules": [
+    {
+      "id": "MOD-CAT",
+      "title": "Catalog",
+      "status": "refined",
+      "depends_on": [],
+      "file": "modules/cat/module.md"
+    },
+    {
+      "id": "MOD-GLB",
+      "title": "Shared",
+      "status": "refined",
+      "depends_on": [],
+      "file": "modules/glb/module.md"
+    },
+    {
+      "id": "MOD-PRC",
+      "title": "Pricing",
+      "status": "refined",
+      "depends_on": [
+        "MOD-CAT",
+        "MOD-SUP"
+      ],
+      "file": "modules/prc/module.md"
+    },
+    {
+      "id": "MOD-SUP",
+      "title": "Suppliers",
+      "status": "refined",
+      "depends_on": [
+        "MOD-CAT"
+      ],
+      "file": "modules/sup/module.md"
+    }
+  ],
+  "capabilities": [
+    {
+      "id": "CAP-CAT-001",
+      "title": "Maintain brands",
+      "module": "MOD-CAT",
+      "status": "refined",
+      "version": 1,
+      "roles": [
+        {
+          "role": "ROLE-CATALOG-MANAGER",
+          "scope": "org"
+        }
+      ],
+      "screens": [
+        "SCR-CAT-02"
+      ],
+      "entities": [
+        {
+          "entity": "ENT-BRAND",
+          "ops": [
+            "C",
+            "R",
+            "U",
+            "A"
+          ],
+          "transitions": [
+            "active->archived",
+            "archived->active"
+          ]
+        }
+      ],
+      "rules": [],
+      "events": {
+        "emits": [],
+        "consumes": []
+      },
+      "depends_on": [
+        "CAP-CAT-003"
+      ],
+      "flows": [
+        "FLOW-003"
+      ],
+      "acceptance_criteria": [
+        "CAP-CAT-001-AC-01",
+        "CAP-CAT-001-AC-02"
+      ],
+      "file": "modules/cat/capabilities/CAP-CAT-001.md"
+    },
+    {
+      "id": "CAP-CAT-002",
+      "title": "Maintain categories",
+      "module": "MOD-CAT",
+      "status": "refined",
+      "version": 1,
+      "roles": [
+        {
+          "role": "ROLE-CATALOG-MANAGER",
+          "scope": "org"
+        }
+      ],
+      "screens": [
+        "SCR-CAT-02"
+      ],
+      "entities": [
+        {
+          "entity": "ENT-CATEGORY",
+          "ops": [
+            "C",
+            "R",
+            "U",
+            "A"
+          ],
+          "transitions": [
+            "active->archived",
+            "archived->active"
+          ]
+        }
+      ],
+      "rules": [],
+      "events": {
+        "emits": [],
+        "consumes": []
+      },
+      "depends_on": [
+        "CAP-CAT-001"
+      ],
+      "flows": [
+        "FLOW-003"
+      ],
+      "acceptance_criteria": [
+        "CAP-CAT-002-AC-01",
+        "CAP-CAT-002-AC-02"
+      ],
+      "file": "modules/cat/capabilities/CAP-CAT-002.md"
+    },
+    {
+      "id": "CAP-CAT-003",
+      "title": "Maintain units of measure",
+      "module": "MOD-CAT",
+      "status": "refined",
+      "version": 1,
+      "roles": [
+        {
+          "role": "ROLE-CATALOG-MANAGER",
+          "scope": "org"
+        }
+      ],
+      "screens": [
+        "SCR-CAT-02"
+      ],
+      "entities": [
+        {
+          "entity": "ENT-UNIT-OF-MEASURE",
+          "ops": [
+            "C",
+            "R",
+            "U",
+            "A"
+          ],
+          "transitions": [
+            "active->archived",
+            "archived->active"
+          ]
+        }
+      ],
+      "rules": [],
+      "events": {
+        "emits": [],
+        "consumes": []
+      },
+      "depends_on": [],
+      "flows": [
+        "FLOW-003"
+      ],
+      "acceptance_criteria": [
+        "CAP-CAT-003-AC-01",
+        "CAP-CAT-003-AC-02"
+      ],
+      "file": "modules/cat/capabilities/CAP-CAT-003.md"
+    },
+    {
+      "id": "CAP-CAT-004",
+      "title": "Create article",
+      "module": "MOD-CAT",
+      "status": "refined",
+      "version": 1,
+      "roles": [
+        {
+          "role": "ROLE-CATALOG-MANAGER",
+          "scope": "org"
+        }
+      ],
+      "screens": [
+        "SCR-CAT-01"
+      ],
+      "entities": [
+        {
+          "entity": "ENT-ARTICLE",
+          "ops": [
+            "C",
+            "R",
+            "U"
+          ],
+          "transitions": []
+        },
+        {
+          "entity": "ENT-BRAND",
+          "ops": [
+            "R"
+          ],
+          "transitions": []
+        },
+        {
+          "entity": "ENT-CATEGORY",
+          "ops": [
+            "R"
+          ],
+          "transitions": []
+        },
+        {
+          "entity": "ENT-UNIT-OF-MEASURE",
+          "ops": [
+            "R"
+          ],
+          "transitions": []
+        }
+      ],
+      "rules": [
+        "RULE-CAT-001"
+      ],
+      "events": {
+        "emits": [],
+        "consumes": []
+      },
+      "depends_on": [
+        "CAP-CAT-002"
+      ],
+      "flows": [
+        "FLOW-001"
+      ],
+      "acceptance_criteria": [
+        "CAP-CAT-004-AC-01",
+        "CAP-CAT-004-AC-02"
+      ],
+      "file": "modules/cat/capabilities/CAP-CAT-004.md"
+    },
+    {
+      "id": "CAP-CAT-005",
+      "title": "Activate article",
+      "module": "MOD-CAT",
+      "status": "refined",
+      "version": 1,
+      "roles": [
+        {
+          "role": "ROLE-CATALOG-MANAGER",
+          "scope": "org"
+        }
+      ],
+      "screens": [
+        "SCR-CAT-01"
+      ],
+      "entities": [
+        {
+          "entity": "ENT-ARTICLE",
+          "ops": [
+            "R",
+            "U"
+          ],
+          "transitions": [
+            "draft->active"
+          ]
+        }
+      ],
+      "rules": [
+        "RULE-CAT-002"
+      ],
+      "events": {
+        "emits": [
+          "EVT-ARTICLE-ACTIVATED"
+        ],
+        "consumes": []
+      },
+      "depends_on": [
+        "CAP-CAT-004"
+      ],
+      "flows": [
+        "FLOW-001"
+      ],
+      "acceptance_criteria": [
+        "CAP-CAT-005-AC-01",
+        "CAP-CAT-005-AC-02"
+      ],
+      "file": "modules/cat/capabilities/CAP-CAT-005.md"
+    },
+    {
+      "id": "CAP-CAT-006",
+      "title": "Discontinue article",
+      "module": "MOD-CAT",
+      "status": "refined",
+      "version": 1,
+      "roles": [
+        {
+          "role": "ROLE-CATALOG-MANAGER",
+          "scope": "org"
+        }
+      ],
+      "screens": [
+        "SCR-CAT-01"
+      ],
+      "entities": [
+        {
+          "entity": "ENT-ARTICLE",
+          "ops": [
+            "R",
+            "U",
+            "A"
+          ],
+          "transitions": [
+            "active->discontinued"
+          ]
+        }
+      ],
+      "rules": [],
+      "events": {
+        "emits": [
+          "EVT-ARTICLE-DISCONTINUED"
+        ],
+        "consumes": []
+      },
+      "depends_on": [
+        "CAP-CAT-005"
+      ],
+      "flows": [
+        "FLOW-004"
+      ],
+      "acceptance_criteria": [
+        "CAP-CAT-006-AC-01"
+      ],
+      "file": "modules/cat/capabilities/CAP-CAT-006.md"
+    },
+    {
+      "id": "CAP-GLB-001",
+      "title": "Look up article prices",
+      "module": "MOD-GLB",
+      "status": "refined",
+      "version": 1,
+      "roles": [
+        {
+          "role": "ROLE-SALES-STAFF",
+          "scope": "all"
+        }
+      ],
+      "screens": [
+        "SCR-GLB-01"
+      ],
+      "entities": [
+        {
+          "entity": "ENT-ARTICLE",
+          "ops": [
+            "R"
+          ],
+          "transitions": []
+        },
+        {
+          "entity": "ENT-SALES-PRICE",
+          "ops": [
+            "R"
+          ],
+          "transitions": []
+        }
+      ],
+      "rules": [
+        "RULE-001"
+      ],
+      "events": {
+        "emits": [],
+        "consumes": []
+      },
+      "depends_on": [],
+      "flows": [
+        "FLOW-001"
+      ],
+      "acceptance_criteria": [
+        "CAP-GLB-001-AC-01"
+      ],
+      "file": "modules/glb/capabilities/CAP-GLB-001.md"
+    },
+    {
+      "id": "CAP-PRC-001",
+      "title": "Propose sales price",
+      "module": "MOD-PRC",
+      "status": "ready",
+      "version": 1,
+      "roles": [
+        {
+          "role": "ROLE-PRICING-MANAGER",
+          "scope": "org"
+        }
+      ],
+      "screens": [
+        "SCR-PRC-01"
+      ],
+      "entities": [
+        {
+          "entity": "ENT-SALES-PRICE",
+          "ops": [
+            "C",
+            "R",
+            "U"
+          ],
+          "transitions": []
+        },
+        {
+          "entity": "ENT-ARTICLE",
+          "ops": [
+            "R"
+          ],
+          "transitions": []
+        },
+        {
+          "entity": "ENT-PURCHASE-PRICE",
+          "ops": [
+            "R"
+          ],
+          "transitions": []
+        }
+      ],
+      "rules": [
+        "RULE-001",
+        "RULE-PRC-001"
+      ],
+      "events": {
+        "emits": [],
+        "consumes": [
+          "EVT-ARTICLE-ACTIVATED",
+          "EVT-PURCHASE-PRICE-CHANGED"
+        ]
+      },
+      "depends_on": [],
+      "flows": [
+        "FLOW-001",
+        "FLOW-002"
+      ],
+      "acceptance_criteria": [
+        "CAP-PRC-001-AC-01",
+        "CAP-PRC-001-AC-02",
+        "CAP-PRC-001-AC-03"
+      ],
+      "file": "modules/prc/capabilities/CAP-PRC-001.md"
+    },
+    {
+      "id": "CAP-PRC-002",
+      "title": "Approve sales price",
+      "module": "MOD-PRC",
+      "status": "ready",
+      "version": 2,
+      "roles": [
+        {
+          "role": "ROLE-PRICING-MANAGER",
+          "scope": "org"
+        }
+      ],
+      "screens": [
+        "SCR-PRC-01"
+      ],
+      "entities": [
+        {
+          "entity": "ENT-SALES-PRICE",
+          "ops": [
+            "R",
+            "U",
+            "A"
+          ],
+          "transitions": [
+            "proposed->valid",
+            "valid->expired"
+          ]
+        }
+      ],
+      "rules": [
+        "RULE-001",
+        "RULE-PRC-001",
+        "RULE-PRC-002"
+      ],
+      "events": {
+        "emits": [],
+        "consumes": []
+      },
+      "depends_on": [
+        "CAP-PRC-001"
+      ],
+      "flows": [
+        "FLOW-001",
+        "FLOW-002"
+      ],
+      "acceptance_criteria": [
+        "CAP-PRC-002-AC-01",
+        "CAP-PRC-002-AC-02",
+        "CAP-PRC-002-AC-03"
+      ],
+      "file": "modules/prc/capabilities/CAP-PRC-002.md"
+    },
+    {
+      "id": "CAP-PRC-003",
+      "title": "Expire sales prices of a discontinued article",
+      "module": "MOD-PRC",
+      "status": "ready",
+      "version": 1,
+      "roles": [
+        {
+          "role": "ROLE-PRICING-MANAGER",
+          "scope": "org"
+        }
+      ],
+      "screens": [
+        "SCR-PRC-01"
+      ],
+      "entities": [
+        {
+          "entity": "ENT-SALES-PRICE",
+          "ops": [
+            "R",
+            "U",
+            "A"
+          ],
+          "transitions": [
+            "valid->expired"
+          ]
+        }
+      ],
+      "rules": [
+        "RULE-001"
+      ],
+      "events": {
+        "emits": [],
+        "consumes": [
+          "EVT-ARTICLE-DISCONTINUED"
+        ]
+      },
+      "depends_on": [],
+      "flows": [
+        "FLOW-004"
+      ],
+      "acceptance_criteria": [
+        "CAP-PRC-003-AC-01"
+      ],
+      "file": "modules/prc/capabilities/CAP-PRC-003.md"
+    },
+    {
+      "id": "CAP-SUP-001",
+      "title": "Register supplier",
+      "module": "MOD-SUP",
+      "status": "refined",
+      "version": 1,
+      "roles": [
+        {
+          "role": "ROLE-PURCHASER",
+          "scope": "org"
+        }
+      ],
+      "screens": [
+        "SCR-SUP-01"
+      ],
+      "entities": [
+        {
+          "entity": "ENT-SUPPLIER",
+          "ops": [
+            "C",
+            "R",
+            "U"
+          ],
+          "transitions": []
+        }
+      ],
+      "rules": [],
+      "events": {
+        "emits": [],
+        "consumes": []
+      },
+      "depends_on": [],
+      "flows": [
+        "FLOW-005"
+      ],
+      "acceptance_criteria": [
+        "CAP-SUP-001-AC-01"
+      ],
+      "file": "modules/sup/capabilities/CAP-SUP-001.md"
+    },
+    {
+      "id": "CAP-SUP-002",
+      "title": "Approve supplier",
+      "module": "MOD-SUP",
+      "status": "refined",
+      "version": 1,
+      "roles": [
+        {
+          "role": "ROLE-PURCHASER",
+          "scope": "org"
+        }
+      ],
+      "screens": [
+        "SCR-SUP-01"
+      ],
+      "entities": [
+        {
+          "entity": "ENT-SUPPLIER",
+          "ops": [
+            "R",
+            "U"
+          ],
+          "transitions": [
+            "prospective->approved"
+          ]
+        }
+      ],
+      "rules": [],
+      "events": {
+        "emits": [],
+        "consumes": []
+      },
+      "depends_on": [
+        "CAP-SUP-001"
+      ],
+      "flows": [
+        "FLOW-005"
+      ],
+      "acceptance_criteria": [
+        "CAP-SUP-002-AC-01"
+      ],
+      "file": "modules/sup/capabilities/CAP-SUP-002.md"
+    },
+    {
+      "id": "CAP-SUP-003",
+      "title": "Block supplier",
+      "module": "MOD-SUP",
+      "status": "refined",
+      "version": 1,
+      "roles": [
+        {
+          "role": "ROLE-PURCHASER",
+          "scope": "org"
+        }
+      ],
+      "screens": [
+        "SCR-SUP-01"
+      ],
+      "entities": [
+        {
+          "entity": "ENT-SUPPLIER",
+          "ops": [
+            "R",
+            "U",
+            "A"
+          ],
+          "transitions": [
+            "approved->blocked",
+            "blocked->approved"
+          ]
+        }
+      ],
+      "rules": [],
+      "events": {
+        "emits": [],
+        "consumes": []
+      },
+      "depends_on": [
+        "CAP-SUP-002"
+      ],
+      "flows": [
+        "FLOW-005"
+      ],
+      "acceptance_criteria": [
+        "CAP-SUP-003-AC-01"
+      ],
+      "file": "modules/sup/capabilities/CAP-SUP-003.md"
+    },
+    {
+      "id": "CAP-SUP-004",
+      "title": "Record purchase price",
+      "module": "MOD-SUP",
+      "status": "refined",
+      "version": 1,
+      "roles": [
+        {
+          "role": "ROLE-PURCHASER",
+          "scope": "org"
+        }
+      ],
+      "screens": [
+        "SCR-SUP-02"
+      ],
+      "entities": [
+        {
+          "entity": "ENT-PURCHASE-PRICE",
+          "ops": [
+            "C",
+            "R",
+            "U"
+          ],
+          "transitions": []
+        },
+        {
+          "entity": "ENT-ARTICLE",
+          "ops": [
+            "R"
+          ],
+          "transitions": []
+        },
+        {
+          "entity": "ENT-SUPPLIER",
+          "ops": [
+            "R"
+          ],
+          "transitions": []
+        }
+      ],
+      "rules": [
+        "RULE-SUP-001"
+      ],
+      "events": {
+        "emits": [],
+        "consumes": []
+      },
+      "depends_on": [
+        "CAP-SUP-002"
+      ],
+      "flows": [
+        "FLOW-001"
+      ],
+      "acceptance_criteria": [
+        "CAP-SUP-004-AC-01",
+        "CAP-SUP-004-AC-02"
+      ],
+      "file": "modules/sup/capabilities/CAP-SUP-004.md"
+    },
+    {
+      "id": "CAP-SUP-005",
+      "title": "Import supplier price list",
+      "module": "MOD-SUP",
+      "status": "refined",
+      "version": 1,
+      "roles": [
+        {
+          "role": "ROLE-PURCHASER",
+          "scope": "org"
+        }
+      ],
+      "screens": [
+        "SCR-SUP-02"
+      ],
+      "entities": [
+        {
+          "entity": "ENT-PURCHASE-PRICE",
+          "ops": [
+            "C",
+            "R"
+          ],
+          "transitions": []
+        },
+        {
+          "entity": "ENT-SUPPLIER",
+          "ops": [
+            "R"
+          ],
+          "transitions": []
+        },
+        {
+          "entity": "ENT-ARTICLE",
+          "ops": [
+            "R"
+          ],
+          "transitions": []
+        }
+      ],
+      "rules": [
+        "RULE-SUP-001"
+      ],
+      "events": {
+        "emits": [],
+        "consumes": [
+          "EVT-SUPPLIER-PRICE-LIST-RECEIVED"
+        ]
+      },
+      "depends_on": [],
+      "flows": [
+        "FLOW-002"
+      ],
+      "acceptance_criteria": [
+        "CAP-SUP-005-AC-01",
+        "CAP-SUP-005-AC-02"
+      ],
+      "file": "modules/sup/capabilities/CAP-SUP-005.md"
+    },
+    {
+      "id": "CAP-SUP-006",
+      "title": "Approve purchase price",
+      "module": "MOD-SUP",
+      "status": "refined",
+      "version": 1,
+      "roles": [
+        {
+          "role": "ROLE-PURCHASER",
+          "scope": "org"
+        }
+      ],
+      "screens": [
+        "SCR-SUP-02"
+      ],
+      "entities": [
+        {
+          "entity": "ENT-PURCHASE-PRICE",
+          "ops": [
+            "R",
+            "U",
+            "A"
+          ],
+          "transitions": [
+            "proposed->valid",
+            "valid->expired"
+          ]
+        }
+      ],
+      "rules": [
+        "RULE-SUP-001"
+      ],
+      "events": {
+        "emits": [
+          "EVT-PURCHASE-PRICE-CHANGED"
+        ],
+        "consumes": []
+      },
+      "depends_on": [
+        "CAP-SUP-005"
+      ],
+      "flows": [
+        "FLOW-002"
+      ],
+      "acceptance_criteria": [
+        "CAP-SUP-006-AC-01"
+      ],
+      "file": "modules/sup/capabilities/CAP-SUP-006.md"
+    }
+  ],
+  "screens": [
+    {
+      "id": "SCR-CAT-01",
+      "title": "Article record",
+      "module": "MOD-CAT",
+      "status": "refined",
+      "roles": [
+        {
+          "role": "ROLE-CATALOG-MANAGER"
+        }
+      ],
+      "entry_points": [
+        "SCR-GLB-01"
+      ],
+      "actions": [
+        {
+          "id": "A01",
+          "label": "Create",
+          "capability": "CAP-CAT-004"
+        },
+        {
+          "id": "A02",
+          "label": "Activate",
+          "capability": "CAP-CAT-005"
+        },
+        {
+          "id": "A03",
+          "label": "Discontinue",
+          "capability": "CAP-CAT-006"
+        }
+      ],
+      "mockups": [],
+      "file": "modules/cat/screens/SCR-CAT-01.md"
+    },
+    {
+      "id": "SCR-CAT-02",
+      "title": "Master data",
+      "module": "MOD-CAT",
+      "status": "refined",
+      "roles": [
+        {
+          "role": "ROLE-CATALOG-MANAGER"
+        }
+      ],
+      "entry_points": [],
+      "actions": [
+        {
+          "id": "A01",
+          "label": "Units of measure",
+          "capability": "CAP-CAT-003"
+        },
+        {
+          "id": "A02",
+          "label": "Brands",
+          "capability": "CAP-CAT-001"
+        },
+        {
+          "id": "A03",
+          "label": "Categories",
+          "capability": "CAP-CAT-002"
+        }
+      ],
+      "mockups": [],
+      "file": "modules/cat/screens/SCR-CAT-02.md"
+    },
+    {
+      "id": "SCR-GLB-01",
+      "title": "Article search",
+      "module": "MOD-GLB",
+      "status": "refined",
+      "roles": [
+        {
+          "role": "ROLE-SALES-STAFF"
+        }
+      ],
+      "entry_points": [],
+      "actions": [],
+      "mockups": [],
+      "file": "modules/glb/screens/SCR-GLB-01.md"
+    },
+    {
+      "id": "SCR-PRC-01",
+      "title": "Sales price review",
+      "module": "MOD-PRC",
+      "status": "refined",
+      "roles": [
+        {
+          "role": "ROLE-PRICING-MANAGER"
+        }
+      ],
+      "entry_points": [],
+      "actions": [
+        {
+          "id": "A01",
+          "label": "Propose",
+          "capability": "CAP-PRC-001"
+        },
+        {
+          "id": "A02",
+          "label": "Approve",
+          "capability": "CAP-PRC-002"
+        },
+        {
+          "id": "A03",
+          "label": "Expire",
+          "capability": "CAP-PRC-003"
+        }
+      ],
+      "mockups": [],
+      "file": "modules/prc/screens/SCR-PRC-01.md"
+    },
+    {
+      "id": "SCR-SUP-01",
+      "title": "Supplier record",
+      "module": "MOD-SUP",
+      "status": "refined",
+      "roles": [
+        {
+          "role": "ROLE-PURCHASER"
+        }
+      ],
+      "entry_points": [],
+      "actions": [
+        {
+          "id": "A01",
+          "label": "Register",
+          "capability": "CAP-SUP-001"
+        },
+        {
+          "id": "A02",
+          "label": "Approve",
+          "capability": "CAP-SUP-002"
+        },
+        {
+          "id": "A03",
+          "label": "Block",
+          "capability": "CAP-SUP-003"
+        }
+      ],
+      "mockups": [],
+      "file": "modules/sup/screens/SCR-SUP-01.md"
+    },
+    {
+      "id": "SCR-SUP-02",
+      "title": "Purchase prices",
+      "module": "MOD-SUP",
+      "status": "refined",
+      "roles": [
+        {
+          "role": "ROLE-PURCHASER"
+        }
+      ],
+      "entry_points": [
+        "SCR-SUP-01"
+      ],
+      "actions": [
+        {
+          "id": "A01",
+          "label": "Record",
+          "capability": "CAP-SUP-004"
+        },
+        {
+          "id": "A02",
+          "label": "Import",
+          "capability": "CAP-SUP-005"
+        },
+        {
+          "id": "A03",
+          "label": "Approve",
+          "capability": "CAP-SUP-006"
+        }
+      ],
+      "mockups": [],
+      "file": "modules/sup/screens/SCR-SUP-02.md"
+    }
+  ],
+  "entities": [
+    {
+      "id": "ENT-ARTICLE",
+      "title": "Article",
+      "status": "refined",
+      "attributes": [
+        {
+          "name": "Article number",
+          "kind": "text",
+          "required": true,
+          "description": "Unique, never reused"
+        },
+        {
+          "name": "Name",
+          "kind": "text",
+          "required": true
+        },
+        {
+          "name": "Brand",
+          "kind": "reference",
+          "required": false
+        },
+        {
+          "name": "Category",
+          "kind": "reference",
+          "required": true
+        },
+        {
+          "name": "Unit of measure",
+          "kind": "reference",
+          "required": true,
+          "description": "The unit it is sold in"
+        },
+        {
+          "name": "Description",
+          "kind": "text",
+          "required": false
+        }
+      ],
+      "relationships": [
+        {
+          "entity": "ENT-BRAND",
+          "cardinality": "one"
+        },
+        {
+          "entity": "ENT-CATEGORY",
+          "cardinality": "one"
+        },
+        {
+          "entity": "ENT-UNIT-OF-MEASURE",
+          "cardinality": "one"
+        }
+      ],
+      "states": [
+        "draft",
+        "active",
+        "discontinued"
+      ],
+      "initial_state": "draft",
+      "transitions": [
+        {
+          "from": "draft",
+          "to": "active"
+        },
+        {
+          "from": "active",
+          "to": "discontinued"
+        }
+      ],
+      "file": "application/entities/ENT-ARTICLE.md"
+    },
+    {
+      "id": "ENT-BRAND",
+      "title": "Brand",
+      "status": "refined",
+      "attributes": [
+        {
+          "name": "Name",
+          "kind": "text",
+          "required": true
+        }
+      ],
+      "relationships": [],
+      "states": [
+        "active",
+        "archived"
+      ],
+      "initial_state": "active",
+      "transitions": [
+        {
+          "from": "active",
+          "to": "archived"
+        },
+        {
+          "from": "archived",
+          "to": "active"
+        }
+      ],
+      "file": "application/entities/ENT-BRAND.md"
+    },
+    {
+      "id": "ENT-CATEGORY",
+      "title": "Category",
+      "status": "refined",
+      "attributes": [
+        {
+          "name": "Name",
+          "kind": "text",
+          "required": true
+        },
+        {
+          "name": "Parent category",
+          "kind": "reference",
+          "required": false,
+          "description": "Categories can be nested"
+        }
+      ],
+      "relationships": [
+        {
+          "entity": "ENT-CATEGORY",
+          "cardinality": "one"
+        }
+      ],
+      "states": [
+        "active",
+        "archived"
+      ],
+      "initial_state": "active",
+      "transitions": [
+        {
+          "from": "active",
+          "to": "archived"
+        },
+        {
+          "from": "archived",
+          "to": "active"
+        }
+      ],
+      "file": "application/entities/ENT-CATEGORY.md"
+    },
+    {
+      "id": "ENT-PURCHASE-PRICE",
+      "title": "Purchase price",
+      "status": "refined",
+      "attributes": [
+        {
+          "name": "Article",
+          "kind": "reference",
+          "required": true
+        },
+        {
+          "name": "Supplier",
+          "kind": "reference",
+          "required": true
+        },
+        {
+          "name": "Amount",
+          "kind": "amount",
+          "required": true
+        },
+        {
+          "name": "Valid from",
+          "kind": "date",
+          "required": true
+        }
+      ],
+      "relationships": [
+        {
+          "entity": "ENT-ARTICLE",
+          "cardinality": "one"
+        },
+        {
+          "entity": "ENT-SUPPLIER",
+          "cardinality": "one"
+        }
+      ],
+      "states": [
+        "proposed",
+        "valid",
+        "expired"
+      ],
+      "initial_state": "proposed",
+      "transitions": [
+        {
+          "from": "proposed",
+          "to": "valid"
+        },
+        {
+          "from": "valid",
+          "to": "expired"
+        }
+      ],
+      "file": "application/entities/ENT-PURCHASE-PRICE.md"
+    },
+    {
+      "id": "ENT-SALES-PRICE",
+      "title": "Sales price",
+      "status": "refined",
+      "attributes": [
+        {
+          "name": "Article",
+          "kind": "reference",
+          "required": true
+        },
+        {
+          "name": "Amount",
+          "kind": "amount",
+          "required": true
+        },
+        {
+          "name": "Valid from",
+          "kind": "date",
+          "required": true
+        }
+      ],
+      "relationships": [
+        {
+          "entity": "ENT-ARTICLE",
+          "cardinality": "one"
+        }
+      ],
+      "states": [
+        "proposed",
+        "valid",
+        "expired"
+      ],
+      "initial_state": "proposed",
+      "transitions": [
+        {
+          "from": "proposed",
+          "to": "valid"
+        },
+        {
+          "from": "valid",
+          "to": "expired"
+        }
+      ],
+      "file": "application/entities/ENT-SALES-PRICE.md"
+    },
+    {
+      "id": "ENT-SUPPLIER",
+      "title": "Supplier",
+      "status": "refined",
+      "attributes": [
+        {
+          "name": "Name",
+          "kind": "text",
+          "required": true
+        },
+        {
+          "name": "Registration number",
+          "kind": "text",
+          "required": true
+        },
+        {
+          "name": "Contact person",
+          "kind": "text",
+          "required": false
+        }
+      ],
+      "relationships": [],
+      "states": [
+        "prospective",
+        "approved",
+        "blocked"
+      ],
+      "initial_state": "prospective",
+      "transitions": [
+        {
+          "from": "prospective",
+          "to": "approved"
+        },
+        {
+          "from": "approved",
+          "to": "blocked"
+        },
+        {
+          "from": "blocked",
+          "to": "approved"
+        }
+      ],
+      "file": "application/entities/ENT-SUPPLIER.md"
+    },
+    {
+      "id": "ENT-UNIT-OF-MEASURE",
+      "title": "Unit of measure",
+      "status": "refined",
+      "attributes": [
+        {
+          "name": "Code",
+          "kind": "text",
+          "required": true,
+          "description": "Short code such as PC or KG"
+        },
+        {
+          "name": "Name",
+          "kind": "text",
+          "required": true
+        }
+      ],
+      "relationships": [],
+      "states": [
+        "active",
+        "archived"
+      ],
+      "initial_state": "active",
+      "transitions": [
+        {
+          "from": "active",
+          "to": "archived"
+        },
+        {
+          "from": "archived",
+          "to": "active"
+        }
+      ],
+      "file": "application/entities/ENT-UNIT-OF-MEASURE.md"
+    }
+  ],
+  "flows": [
+    {
+      "id": "FLOW-001",
+      "title": "New article to sellable",
+      "status": "refined",
+      "roles": [
+        "ROLE-CATALOG-MANAGER",
+        "ROLE-PURCHASER",
+        "ROLE-PRICING-MANAGER",
+        "ROLE-SALES-STAFF"
+      ],
+      "steps": [
+        {
+          "step": 1,
+          "capability": "CAP-CAT-004",
+          "role": "ROLE-CATALOG-MANAGER"
+        },
+        {
+          "step": 2,
+          "capability": "CAP-CAT-005",
+          "role": "ROLE-CATALOG-MANAGER"
+        },
+        {
+          "step": 3,
+          "capability": "CAP-SUP-004",
+          "role": "ROLE-PURCHASER"
+        },
+        {
+          "step": 4,
+          "capability": "CAP-PRC-001",
+          "role": "ROLE-PRICING-MANAGER"
+        },
+        {
+          "step": 5,
+          "capability": "CAP-PRC-002",
+          "role": "ROLE-PRICING-MANAGER"
+        },
+        {
+          "step": 6,
+          "capability": "CAP-GLB-001",
+          "role": "ROLE-SALES-STAFF"
+        }
+      ],
+      "file": "application/flows/FLOW-001.md"
+    },
+    {
+      "id": "FLOW-002",
+      "title": "Supplier price update",
+      "status": "refined",
+      "roles": [
+        "ROLE-PURCHASER",
+        "ROLE-PRICING-MANAGER"
+      ],
+      "steps": [
+        {
+          "step": 1,
+          "capability": "CAP-SUP-005",
+          "role": "ROLE-PURCHASER"
+        },
+        {
+          "step": 2,
+          "capability": "CAP-SUP-006",
+          "role": "ROLE-PURCHASER"
+        },
+        {
+          "step": 3,
+          "capability": "CAP-PRC-001",
+          "role": "ROLE-PRICING-MANAGER"
+        },
+        {
+          "step": 4,
+          "capability": "CAP-PRC-002",
+          "role": "ROLE-PRICING-MANAGER"
+        }
+      ],
+      "file": "application/flows/FLOW-002.md"
+    },
+    {
+      "id": "FLOW-003",
+      "title": "Prepare catalog master data",
+      "status": "refined",
+      "roles": [
+        "ROLE-CATALOG-MANAGER"
+      ],
+      "steps": [
+        {
+          "step": 1,
+          "capability": "CAP-CAT-003",
+          "role": "ROLE-CATALOG-MANAGER"
+        },
+        {
+          "step": 2,
+          "capability": "CAP-CAT-001",
+          "role": "ROLE-CATALOG-MANAGER"
+        },
+        {
+          "step": 3,
+          "capability": "CAP-CAT-002",
+          "role": "ROLE-CATALOG-MANAGER"
+        }
+      ],
+      "file": "application/flows/FLOW-003.md"
+    },
+    {
+      "id": "FLOW-004",
+      "title": "Discontinue article",
+      "status": "refined",
+      "roles": [
+        "ROLE-CATALOG-MANAGER",
+        "ROLE-PRICING-MANAGER"
+      ],
+      "steps": [
+        {
+          "step": 1,
+          "capability": "CAP-CAT-006",
+          "role": "ROLE-CATALOG-MANAGER"
+        },
+        {
+          "step": 2,
+          "capability": "CAP-PRC-003",
+          "role": "ROLE-PRICING-MANAGER"
+        }
+      ],
+      "file": "application/flows/FLOW-004.md"
+    },
+    {
+      "id": "FLOW-005",
+      "title": "Supplier lifecycle",
+      "status": "refined",
+      "roles": [
+        "ROLE-PURCHASER"
+      ],
+      "steps": [
+        {
+          "step": 1,
+          "capability": "CAP-SUP-001",
+          "role": "ROLE-PURCHASER"
+        },
+        {
+          "step": 2,
+          "capability": "CAP-SUP-002",
+          "role": "ROLE-PURCHASER"
+        },
+        {
+          "step": 3,
+          "capability": "CAP-SUP-003",
+          "role": "ROLE-PURCHASER"
+        }
+      ],
+      "file": "application/flows/FLOW-005.md"
+    }
+  ],
+  "rules": [
+    {
+      "id": "RULE-001",
+      "title": "Only active articles are sold",
+      "status": "refined",
+      "entities": [
+        "ENT-ARTICLE",
+        "ENT-SALES-PRICE"
+      ],
+      "file": "application/rules.md"
+    },
+    {
+      "id": "RULE-CAT-001",
+      "title": "Article numbers are unique",
+      "status": "refined",
+      "entities": [
+        "ENT-ARTICLE"
+      ],
+      "file": "modules/cat/rules.md"
+    },
+    {
+      "id": "RULE-CAT-002",
+      "title": "Only complete articles are activated",
+      "status": "refined",
+      "entities": [
+        "ENT-ARTICLE"
+      ],
+      "file": "modules/cat/rules.md"
+    },
+    {
+      "id": "RULE-PRC-001",
+      "title": "Sales price covers the purchase price",
+      "status": "refined",
+      "entities": [
+        "ENT-SALES-PRICE",
+        "ENT-PURCHASE-PRICE"
+      ],
+      "file": "modules/prc/rules.md"
+    },
+    {
+      "id": "RULE-PRC-002",
+      "title": "Sales prices keep a minimum margin",
+      "status": "refined",
+      "entities": [
+        "ENT-SALES-PRICE",
+        "ENT-PURCHASE-PRICE"
+      ],
+      "file": "modules/prc/rules.md"
+    },
+    {
+      "id": "RULE-SUP-001",
+      "title": "Purchase prices come from approved suppliers",
+      "status": "refined",
+      "entities": [
+        "ENT-SUPPLIER",
+        "ENT-PURCHASE-PRICE"
+      ],
+      "file": "modules/sup/rules.md"
+    }
+  ],
+  "events": [
+    {
+      "id": "EVT-ARTICLE-ACTIVATED",
+      "title": "Article activated",
+      "external": false,
+      "entities": [
+        "ENT-ARTICLE"
+      ],
+      "file": "application/events.md"
+    },
+    {
+      "id": "EVT-ARTICLE-DISCONTINUED",
+      "title": "Article discontinued",
+      "external": false,
+      "entities": [
+        "ENT-ARTICLE"
+      ],
+      "file": "application/events.md"
+    },
+    {
+      "id": "EVT-PURCHASE-PRICE-CHANGED",
+      "title": "Purchase price changed",
+      "external": false,
+      "entities": [
+        "ENT-PURCHASE-PRICE"
+      ],
+      "file": "application/events.md"
+    },
+    {
+      "id": "EVT-SUPPLIER-PRICE-LIST-RECEIVED",
+      "title": "Supplier price list received",
+      "external": true,
+      "entities": [
+        "ENT-SUPPLIER",
+        "ENT-PURCHASE-PRICE"
+      ],
+      "file": "application/events.md"
+    }
+  ],
+  "personas": [
+    {
+      "id": "PER-BUYER",
+      "title": "Buyer",
+      "roles": [
+        "ROLE-PURCHASER"
+      ],
+      "file": "application/personas-roles.md"
+    },
+    {
+      "id": "PER-CATALOG-LEAD",
+      "title": "Catalog lead",
+      "roles": [
+        "ROLE-CATALOG-MANAGER"
+      ],
+      "file": "application/personas-roles.md"
+    },
+    {
+      "id": "PER-PRICING-ANALYST",
+      "title": "Pricing analyst",
+      "roles": [
+        "ROLE-PRICING-MANAGER"
+      ],
+      "file": "application/personas-roles.md"
+    },
+    {
+      "id": "PER-SALES-REP",
+      "title": "Sales representative",
+      "roles": [
+        "ROLE-SALES-STAFF"
+      ],
+      "file": "application/personas-roles.md"
+    }
+  ],
+  "roles": [
+    {
+      "id": "ROLE-CATALOG-MANAGER",
+      "title": "Catalog manager",
+      "file": "application/personas-roles.md"
+    },
+    {
+      "id": "ROLE-PRICING-MANAGER",
+      "title": "Pricing manager",
+      "file": "application/personas-roles.md"
+    },
+    {
+      "id": "ROLE-PURCHASER",
+      "title": "Purchaser",
+      "file": "application/personas-roles.md"
+    },
+    {
+      "id": "ROLE-SALES-STAFF",
+      "title": "Sales staff",
+      "file": "application/personas-roles.md"
+    }
+  ],
+  "decisions": [
+    {
+      "id": "DEC-001",
+      "title": "Do sales prices differ per customer group?",
+      "kind": "open_question",
+      "status": "open",
+      "affects": [
+        "ENT-SALES-PRICE"
+      ],
+      "file": "application/decisions.md"
+    },
+    {
+      "id": "DEC-002",
+      "title": "One currency",
+      "kind": "decision",
+      "status": "decided",
+      "date": "2026-10-01",
+      "affects": [
+        "ENT-PURCHASE-PRICE",
+        "ENT-SALES-PRICE"
+      ],
+      "file": "application/decisions.md"
+    }
+  ],
+  "glossary": [
+    {
+      "term": "Article",
+      "forbidden": [
+        "item"
+      ],
+      "file": "application/glossary.md"
+    },
+    {
+      "term": "Brand",
+      "forbidden": [
+        "trademark"
+      ],
+      "file": "application/glossary.md"
+    },
+    {
+      "term": "Category",
+      "forbidden": [
+        "product group"
+      ],
+      "file": "application/glossary.md"
+    },
+    {
+      "term": "Unit of measure",
+      "forbidden": [
+        "UoM"
+      ],
+      "file": "application/glossary.md"
+    },
+    {
+      "term": "Supplier",
+      "forbidden": [
+        "vendor"
+      ],
+      "file": "application/glossary.md"
+    },
+    {
+      "term": "Purchase price",
+      "forbidden": [
+        "cost price"
+      ],
+      "file": "application/glossary.md"
+    },
+    {
+      "term": "Sales price",
+      "forbidden": [
+        "selling price"
+      ],
+      "file": "application/glossary.md"
+    }
+  ]
+}

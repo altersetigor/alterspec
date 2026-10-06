@@ -1,0 +1,93 @@
+{
+  "alterspec": "0.0.1",
+  "target": "openspec",
+  "scope": {
+    "id": "CAP-PRC-001",
+    "kind": "capability",
+    "title": "Propose sales price"
+  },
+  "exported": "2026-10-07",
+  "sources": [
+    {
+      "id": "CAP-PRC-001",
+      "status": "ready",
+      "version": 1,
+      "fingerprint": "dc3ea39de94e625e"
+    },
+    {
+      "id": "DEC-001",
+      "fingerprint": "cf4e6facca30c430"
+    },
+    {
+      "id": "ENT-ARTICLE",
+      "status": "refined",
+      "fingerprint": "54c3745940d09110"
+    },
+    {
+      "id": "ENT-PURCHASE-PRICE",
+      "status": "refined",
+      "fingerprint": "9a18a6388757f94f"
+    },
+    {
+      "id": "ENT-SALES-PRICE",
+      "status": "refined",
+      "fingerprint": "a6cc9e651018fc0e"
+    },
+    {
+      "id": "EVT-ARTICLE-ACTIVATED",
+      "fingerprint": "07eab4d0ddbf31d6"
+    },
+    {
+      "id": "EVT-PURCHASE-PRICE-CHANGED",
+      "fingerprint": "f87c7ddf855b8ffd"
+    },
+    {
+      "id": "FLOW-001",
+      "status": "refined",
+      "fingerprint": "8405b70448aba721"
+    },
+    {
+      "id": "FLOW-002",
+      "status": "refined",
+      "fingerprint": "a8842cf09db87d5a"
+    },
+    {
+      "id": "MOD-PRC",
+      "status": "refined",
+      "fingerprint": "06351fd2e7d00606"
+    },
+    {
+      "id": "PER-PRICING-ANALYST",
+      "fingerprint": "c57876584917a16a"
+    },
+    {
+      "id": "ROLE-PRICING-MANAGER",
+      "fingerprint": "2d7e0b93551b58c0"
+    },
+    {
+      "id": "RULE-001",
+      "fingerprint": "0e9a4b68b987fc39"
+    },
+    {
+      "id": "RULE-PRC-001",
+      "fingerprint": "44e9104af731b7b6"
+    },
+    {
+      "id": "SCR-PRC-01",
+      "status": "refined",
+      "fingerprint": "28f647e78ef43b65"
+    },
+    {
+      "id": "term:Article",
+      "fingerprint": "792fffebabe9a476"
+    },
+    {
+      "id": "term:Purchase price",
+      "fingerprint": "240289b3b470d80e"
+    },
+    {
+      "id": "term:Sales price",
+      "fingerprint": "c0358d6e0c28cfc0"
+    }
+  ]
+}

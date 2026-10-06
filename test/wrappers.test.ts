@@ -113,6 +113,7 @@ describe('prompts', () => {
     'apply',
     'baseline',
     'change',
+    'handoff',
   ];
 
   it('only mention real CLI commands and `new` types', () => {
@@ -135,7 +136,7 @@ describe('prompts', () => {
     }
   });
 
-  it('every command except handoff, and both agents, have real prompts', () => {
+  it('every command and both agents have real prompts', () => {
     for (const p of [
       'init.md',
       'module.md',
@@ -146,6 +147,7 @@ describe('prompts', () => {
       'validate.md',
       'views.md',
       'agents/analyst.md',
+      'handoff.md',
     ]) {
       expect(readAsset(`prompts/${p}`), p).not.toMatch(/not available yet/);
       expect(readAsset(`prompts/${p}`).length, p).toBeGreaterThan(400);

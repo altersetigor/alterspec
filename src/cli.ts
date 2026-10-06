@@ -6,6 +6,7 @@ import { NEW_TYPES, runNew, type NewOptions, type NewType } from './commands/new
 import { formatShow, runShow } from './commands/show.js';
 import { runUpdate } from './commands/update.js';
 import { runBaseline } from './commands/baseline.js';
+import { runHandoff } from './commands/handoff.js';
 import { runChangeEdit, runChangeNew, runChangeRemove, runChangeStatus } from './commands/change.js';
 import { runApply } from './changes/apply.js';
 import { computeImpact, formatImpact } from './changes/impact.js';
@@ -25,9 +26,10 @@ program
   .command('init')
   .description('Install alterspec into a project: .alterspec/, .claude/ wrappers and the spec/ skeleton')
   .argument('[dir]', 'project directory', '.')
+  .option('-C, --dir <dir>', 'project directory (same as [dir])')
   .option('-n, --name <name>', 'application name (defaults to the directory name)')
-  .action((dir: string, opts: { name?: string }) => {
-    const result = runInit(dir, opts);
+  .action((pos: string, opts: { name?: string; dir?: string }) => {
+    const result = runInit(opts.dir ?? pos, opts);
     printResult(result);
     console.log('\nNext: open Claude Code in this project and run /alter-init.');
   });
@@ -36,17 +38,19 @@ program
   .command('update')
   .description('Refresh framework files (.alterspec/ and .claude/ wrappers). Never touches spec/ or custom/')
   .argument('[dir]', 'project directory', '.')
+  .option('-C, --dir <dir>', 'project directory (same as [dir])')
   .option('-f, --force', 'overwrite .claude/ wrappers you modified')
-  .action((dir: string, opts: { force?: boolean }) => {
-    printResult(runUpdate(dir, opts));
+  .action((pos: string, opts: { force?: boolean; dir?: string }) => {
+    printResult(runUpdate(opts.dir ?? pos, opts));
   });
 
 program
   .command('doctor')
   .description('Check the alterspec installation')
   .argument('[dir]', 'project directory', '.')
-  .action((dir: string) => {
-    const checks = runDoctor(dir);
+  .option('-C, --dir <dir>', 'project directory (same as [dir])')
+  .action((pos: string, opts: { dir?: string }) => {
+    const checks = runDoctor(opts.dir ?? pos);
     for (const c of checks) console.log(`${c.ok ? '✓' : '✗'} ${c.message}`);
     if (checks.some((c) => !c.ok)) process.exitCode = 1;
   });
@@ -55,6 +59,7 @@ program
   .command('validate')
   .description('Lint the spec: references, coverage, generated views, glossary and technology words')
   .argument('[dir]', 'project directory', '.')
+  .option('-C, --dir <dir>', 'project directory (same as [dir])')
   .option('--spec <path>', 'spec folder, relative to the project', 'spec')
   .option('--json', 'print findings as JSON')
   .option('--report', 'also write spec/_generated/lint-report.md')
@@ -62,9 +67,17 @@ program
   .option('--change <CHG>', 'validate the spec as it would be after this change')
   .action(
     (
-      dir: string,
-      opts: { spec: string; json?: boolean; report?: boolean; listRules?: boolean; change?: string },
+      pos: string,
+      opts: {
+        spec: string;
+        json?: boolean;
+        report?: boolean;
+        listRules?: boolean;
+        change?: string;
+        dir?: string;
+      },
     ) => {
+      const dir = opts.dir ?? pos;
       if (opts.listRules) {
         console.log(listRules());
         return;
@@ -79,9 +92,11 @@ program
   .command('views')
   .description('Regenerate GENERATED blocks and spec/_generated/ from the spec front-matter')
   .argument('[dir]', 'project directory', '.')
+  .option('-C, --dir <dir>', 'project directory (same as [dir])')
   .option('--spec <path>', 'spec folder, relative to the project', 'spec')
   .option('--check', "don't write; exit 1 if anything is out of date")
-  .action((dir: string, opts: { spec: string; check?: boolean }) => {
+  .action((pos: string, opts: { spec: string; check?: boolean; dir?: string }) => {
+    const dir = opts.dir ?? pos;
     const result = runViews(dir, opts);
     for (const s of result.skipped) console.log(`skipped (invalid front-matter): ${opts.spec}/${s}`);
     for (const m of result.missing)
@@ -208,6 +223,39 @@ program
     console.log(opts.json ? JSON.stringify(impact, null, 2) : md);
     if (impact.conflicts.length || impact.errors) process.exitCode = 1;
   });
+
+program
+  .command('handoff')
+  .description(
+    'Export a capability or module for Spec Kit, OpenSpec, BMAD or a technical design (into handoff/)',
+  )
+  .argument('<id>', 'capability or module ID')
+  .option('-C, --dir <dir>', 'project directory', '.')
+  .option('--spec <path>', 'spec folder, relative to the project', 'spec')
+  .option('-t, --target <target>', 'bundle | speckit | openspec | bmad | all', 'bundle')
+  .option('--allow-draft', 'export capabilities that are not ready yet')
+  .option('--date <date>', 'date written into the output (YYYY-MM-DD)')
+  .option('--json', 'print as JSON')
+  .action(
+    (
+      id: string,
+      opts: {
+        dir: string;
+        spec: string;
+        target: string;
+        allowDraft?: boolean;
+        date?: string;
+        json?: boolean;
+      },
+    ) => {
+      const r = runHandoff(opts.dir, id, opts);
+      if (opts.json) console.log(JSON.stringify(r, null, 2));
+      else {
+        for (const w of r.warnings) console.log(`warning: ${w}`);
+        for (const o of r.outputs) console.log(`${o.target}: ${o.folder}/ (${o.files.join(', ')})`);
+      }
+    },
+  );
 
 program
   .command('apply')
