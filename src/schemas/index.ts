@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { ApplicationSchema } from './application.js';
 import { CapabilitySchema } from './capability.js';
-import { ChangeSchema, DeltaSchema } from './change.js';
+import { ChangeSchema } from './change.js';
 import {
   DecisionItemSchema,
   EventItemSchema,
@@ -84,12 +84,6 @@ export const SPEC_TYPES = {
     template: 'change-proposal.md',
     location: 'changes/<ID>/proposal.md',
   },
-  delta: {
-    kind: 'document',
-    schema: DeltaSchema,
-    template: 'delta.md',
-    location: 'changes/<CHG>/deltas/<ID>.md',
-  },
   'personas-roles': {
     kind: 'collection',
     items: { PER: PersonaItemSchema, ROLE: RoleItemSchema },
@@ -142,7 +136,6 @@ export const JSON_SCHEMAS: Record<string, z.ZodType> = {
   entity: EntitySchema,
   flow: FlowSchema,
   change: ChangeSchema,
-  delta: DeltaSchema,
   rule: RuleItemSchema,
   event: EventItemSchema,
   persona: PersonaItemSchema,

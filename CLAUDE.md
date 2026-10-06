@@ -109,6 +109,11 @@ Statuses: `draft → refined → ready → approved → implemented`.
   `-change`, `-impact`, `-apply`, `-handoff`.
 - Agents: `alter-analyst` (gap analysis and drafting; it does not interview, the skill in the main conversation does)
   and `alter-reviewer` (read-only; reports findings with severity and never edits the spec).
+- Change management (Phase 4): `alterspec baseline` records object fingerprints in `spec/_generated/baseline.json`;
+  after that the `direct-edit` rule makes every edit go through a change. A change is `spec/changes/CHG-NNN/` with
+  `proposal.md` and an overlay `spec/` holding only touched objects (whole docs, single collection items). `change
+  edit|remove|status`, `new --change`, `validate --change`, `impact`, `apply` live in `src/changes/` and
+  `src/commands/change.ts`. Approval is always the person's explicit word; `apply` checks `approved_hash`.
 - Decided: interview-then-draft; one capability = one goal, one acting role, one session; `refine` moves status to
   `refined` at most, anything beyond needs the person's explicit word.
 

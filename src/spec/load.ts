@@ -30,7 +30,6 @@ const LOCATIONS: [FileType, RegExp][] = [
   ['capability', /^modules\/(?<mod>[^/]+)\/capabilities\/(?<name>[^/]+)\.md$/],
   ['screen', /^modules\/(?<mod>[^/]+)\/screens\/(?<name>[^/]+)\.md$/],
   ['change', /^changes\/(?<change>[^/]+)\/proposal\.md$/],
-  ['delta', /^changes\/(?<change>[^/]+)\/deltas\/(?<name>[^/]+)\.md$/],
 ];
 
 /** Files the loader never reads: generated output, archived changes, READMEs, non-markdown. */
@@ -38,6 +37,8 @@ export function isIgnored(path: string): boolean {
   return (
     path.startsWith('_generated/') ||
     path.startsWith('changes/archive/') ||
+    /^changes\/[^/]+\/spec\//.test(path) ||
+    /^changes\/[^/]+\/impact\.md$/.test(path) ||
     posix.basename(path).toLowerCase() === 'readme.md' ||
     !path.endsWith('.md')
   );
@@ -147,10 +148,6 @@ export function loadSpec(files: SpecFile[]): LoadResult {
       const located = validate<unknown>(def.schema, new YamlSource(split.raw, 2), path, 1, 'front-matter');
       if (!located) continue;
       const doc = { ...located, body: split.body, bodyLine: split.bodyLine } as LocatedDoc<never>;
-      if (file.type === 'delta') {
-        model.deltas.push(doc);
-        continue;
-      }
       define(doc.id, path, 1);
       const target = {
         application: undefined,

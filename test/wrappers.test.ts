@@ -101,7 +101,19 @@ describe('prompts', () => {
   const prompts = readdirSync(join(ASSETS_DIR, 'prompts'), { recursive: true })
     .map(String)
     .filter((p) => p.endsWith('.md'));
-  const CLI_COMMANDS = ['init', 'update', 'doctor', 'validate', 'views', 'new', 'show', 'impact', 'apply'];
+  const CLI_COMMANDS = [
+    'init',
+    'update',
+    'doctor',
+    'validate',
+    'views',
+    'new',
+    'show',
+    'impact',
+    'apply',
+    'baseline',
+    'change',
+  ];
 
   it('only mention real CLI commands and `new` types', () => {
     for (const p of prompts) {
@@ -123,7 +135,7 @@ describe('prompts', () => {
     }
   });
 
-  it('authoring commands and the analyst are no longer stubs', () => {
+  it('every command except handoff, and both agents, have real prompts', () => {
     for (const p of [
       'init.md',
       'module.md',

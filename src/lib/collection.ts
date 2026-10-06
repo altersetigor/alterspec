@@ -50,3 +50,35 @@ export function parseCollection(body: string): CollectionItem[] {
     return item;
   });
 }
+
+export interface ItemRange {
+  heading: string;
+  /** 1-based line of the heading. */
+  line: number;
+  /** Character offsets of the item: from its `## ` heading up to the next `# ` / `## ` heading or the end. */
+  start: number;
+  end: number;
+  text: string;
+}
+
+/** Item sections of a collection file. Fenced blocks are respected; HTML comments are not special here. */
+export function splitItems(text: string): ItemRange[] {
+  const items: ItemRange[] = [];
+  let offset = 0;
+  let inFence = false;
+  let current: Omit<ItemRange, 'end' | 'text'> | undefined;
+  const close = (end: number) => {
+    if (current) items.push({ ...current, end, text: text.slice(current.start, end) });
+    current = undefined;
+  };
+  text.split('\n').forEach((line, i) => {
+    if (line.startsWith('```')) inFence = !inFence;
+    else if (!inFence && /^#{1,2} /.test(line)) {
+      close(offset);
+      if (line.startsWith('## ')) current = { heading: line.slice(3).trim(), line: i + 1, start: offset };
+    }
+    offset += line.length + 1;
+  });
+  close(text.length);
+  return items;
+}

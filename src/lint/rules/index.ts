@@ -13,6 +13,7 @@ import {
   screenBacklink,
   transitionCoverage,
 } from './coverage.js';
+import { directEdit } from './baseline.js';
 import { incompleteSection } from './completeness.js';
 import { generatedEdited, generatedMissing, viewsStale } from './generated.js';
 import { duplicateId, idLocation, moduleRegistry, placeholder, unknownReference } from './structure.js';
@@ -53,4 +54,5 @@ export const RULES: LintRule[] = [
   viewsStale,
   glossaryForbidden,
   techLeak,
+  directEdit,
 ];

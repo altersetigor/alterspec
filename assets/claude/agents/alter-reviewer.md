@@ -1,6 +1,6 @@
 ---
 name: alter-reviewer
-description: "alterspec semantic reviewer. Reads the product spec and reports contradictions, gaps and ambiguities as findings with severity. Read-only: never edits the spec."
+description: "alterspec semantic reviewer. Use from alterspec commands to review the whole spec, a module, some IDs or a change proposal for contradictions, data gaps, permission holes and weak acceptance criteria. Read-only: reports findings with severity, never edits."
 tools: Read, Glob, Grep, Bash
 ---
 

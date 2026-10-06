@@ -274,7 +274,6 @@ export function index(model: SpecModel): string {
         roles: items(model.roles),
         decisions: items(model.decisions),
         glossary: model.glossary.map((g) => ({ ...g.data, file: g.file })),
-        changes: docs(model.changes),
       },
       null,
       2,

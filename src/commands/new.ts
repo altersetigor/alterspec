@@ -10,7 +10,10 @@ import { ID_REGEX, Scope, moduleCode } from '../schemas/index.js';
 import { readSpecDir } from '../spec/files.js';
 import { loadSpec } from '../spec/load.js';
 import type { SpecModel } from '../spec/model.js';
+import { changeEdit, recordNew } from './change.js';
 import { runViews } from './views.js';
+import { loadChange } from '../changes/change.js';
+import { mergeChange } from '../changes/merge.js';
 
 export const NEW_TYPES = [
   'module',
@@ -29,6 +32,8 @@ export type NewType = (typeof NEW_TYPES)[number];
 
 export interface NewOptions {
   spec?: string;
+  /** Create the object inside this change proposal instead of the spec. */
+  change?: string;
   code?: string;
   module?: string;
   title?: string;
@@ -88,21 +93,55 @@ export function runNew(dir: string, type: NewType, opts: NewOptions): NewResult 
   const specDir = opts.spec ?? 'spec';
   const specRoot = join(root, specDir);
   const files = readSpecDir(specRoot);
+
+  if (opts.change) {
+    const change = loadChange(specRoot, opts.change);
+    if (change.proposal.status !== 'draft' && change.proposal.status !== 'in_review') {
+      throw new NewError(`${change.id} is ${change.proposal.status} and can't be edited`);
+    }
+    const { model } = loadSpec(mergeChange(files, change));
+    const ctx: Ctx = {
+      specRoot: change.overlayRoot,
+      files,
+      model,
+      exists: (path) => existsSync(join(change.overlayRoot, path)) || existsSync(join(specRoot, path)),
+      touch: (key) => changeEdit(specRoot, change.id, key),
+      overlay: true,
+    };
+    const result = create(type, opts, ctx);
+    recordNew(specRoot, change.id, type === 'term' ? `term:${result.id}` : result.id);
+    return { ...result, file: `${specDir}/changes/${change.id}/spec/${result.file}` };
+  }
+
   const { model } = loadSpec(files);
-  const result = create(type, opts, { specRoot, files, model });
+  const result = create(type, opts, {
+    specRoot,
+    files,
+    model,
+    exists: (path) => existsSync(join(specRoot, path)),
+    touch: () => undefined,
+    overlay: false,
+  });
   runViews(root, { spec: specDir });
   return { ...result, file: `${specDir}/${result.file}` };
 }
 
 interface Ctx {
+  /** Where files are written: spec/, or a change's overlay. */
   specRoot: string;
+  /** Raw spec files (including open changes), for ID allocation. */
   files: ReturnType<typeof readSpecDir>;
+  /** The model the new object must fit into (the merged spec when working in a change). */
   model: SpecModel;
+  exists: (path: string) => boolean;
+  /** Called before an existing object is edited (in a change: copies it into the overlay). */
+  touch: (key: string) => void;
+  overlay: boolean;
 }
 
 function writeNew(ctx: Ctx, path: string, content: string) {
   const full = join(ctx.specRoot, path);
-  if (existsSync(full)) throw new NewError(`${path} already exists`);
+  if (ctx.exists(path)) throw new NewError(`${path} already exists`);
   mkdirSync(dirname(full), { recursive: true });
   writeFileSync(full, content);
 }
@@ -112,9 +151,10 @@ function appendItem(ctx: Ctx, path: string, item: string, createFrom?: string): 
   const full = join(ctx.specRoot, path);
   let current: string;
   if (existsSync(full)) current = readFileSync(full, 'utf8');
+  else if (ctx.overlay) current = '';
   else if (createFrom !== undefined) current = createFrom;
   else throw new NewError(`${path} doesn't exist; run \`alterspec init\` first`);
-  const base = current.trimEnd() + '\n\n';
+  const base = current.trim() ? current.trimEnd() + '\n\n' : '';
   mkdirSync(dirname(full), { recursive: true });
   writeFileSync(full, base + item);
   return base.split('\n').length;
@@ -322,6 +362,7 @@ const oneLine = (t: string) => t.replace(/\s+/g, ' ').trim();
 /** Insert an item before a top-level heading (e.g. personas go above `# Roles`), or append. */
 function insertBefore(ctx: Ctx, path: string, heading: string, item: string): number {
   const full = join(ctx.specRoot, path);
+  if (!existsSync(full)) return appendItem(ctx, path, item);
   const current = readFileSync(full, 'utf8');
   const lines = current.split('\n');
   const at = lines.findIndex((l) => l.trim() === heading);
@@ -347,6 +388,7 @@ function editFrontMatterList(full: string, key: string, add: string) {
 }
 
 function registerModule(ctx: Ctx, id: string) {
+  ctx.touch('APP');
   const app = join(ctx.specRoot, 'application/application.md');
   if (!existsSync(app))
     throw new NewError('application/application.md is missing; run `alterspec init` first');
@@ -356,7 +398,9 @@ function registerModule(ctx: Ctx, id: string) {
 /** A new flow's first step uses a capability: list the flow in that capability too. */
 function linkFlow(ctx: Ctx, cap: string, flow: string) {
   const c = ctx.model.capabilities.get(cap);
-  if (c) editFrontMatterList(join(ctx.specRoot, c.file), 'flows', flow);
+  if (!c) return;
+  ctx.touch(cap);
+  editFrontMatterList(join(ctx.specRoot, c.file), 'flows', flow);
 }
 
 export { NewError };

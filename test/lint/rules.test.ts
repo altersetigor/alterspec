@@ -2,7 +2,8 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { RULES } from '../../src/lint/rules/index.js';
-import { FIXTURE, defaultConfig, lintFixture, replace, type Edit } from '../fixture.js';
+import { buildBaseline } from '../../src/changes/baseline.js';
+import { FIXTURE, defaultConfig, fixtureFiles, lintFixture, replace, type Edit } from '../fixture.js';
 
 const HR1 = 'modules/hr/capabilities/CAP-HR-001.md';
 const HR2 = 'modules/hr/capabilities/CAP-HR-002.md';
@@ -12,6 +13,7 @@ const PAY2 = 'modules/pay/capabilities/CAP-PAY-002.md';
 const GLB1 = 'modules/glb/capabilities/CAP-GLB-001.md';
 const EMP = 'application/entities/ENT-EMPLOYEE.md';
 const append = (text: string) => (s: string) => s + text;
+const BASELINE = JSON.stringify(buildBaseline(fixtureFiles()));
 const original = (path: string) => readFileSync(join(FIXTURE, 'spec', path), 'utf8');
 
 interface Case {
@@ -299,6 +301,31 @@ const CASES: Record<string, Case[]> = {
       expect: { file: 'application/nfr.md', line: 7 },
     },
   ],
+  'direct-edit': [
+    {
+      label: 'edited after the baseline',
+      edits: {
+        '_generated/baseline.json': BASELINE,
+        [HR2]: replace('title: Activate employee', 'title: Activate an employee'),
+      },
+      expect: { file: HR2, line: 1, message: /edited directly/ },
+    },
+    {
+      label: 'item added after the baseline',
+      edits: {
+        '_generated/baseline.json': BASELINE,
+        'application/rules.md': append(
+          '\n## RULE-002 New\n\n```yaml\nid: RULE-002\ntitle: New\nstatus: draft\n```\n',
+        ),
+      },
+      expect: { file: 'application/rules.md', message: /RULE-002 was added directly/ },
+    },
+    {
+      label: 'removed after the baseline',
+      edits: { '_generated/baseline.json': BASELINE, 'application/nfr.md': null },
+      expect: { file: 'application/nfr.md', message: /removed directly/ },
+    },
+  ],
   'tech-leak': [
     {
       label: 'technology word',
@@ -350,6 +377,19 @@ describe('severity overrides', () => {
     const findings = lintFixture(edits, config);
     expect(findings.find((f) => f.rule === 'tech-leak')?.severity).toBe('error');
     expect(findings.some((f) => f.rule === 'orphan-entity')).toBe(false);
+  });
+});
+
+describe('direct-edit', () => {
+  it('ignores regenerated views and is silent with an untouched baseline', () => {
+    const findings = lintFixture({
+      '_generated/baseline.json': BASELINE,
+      'modules/pay/module.md': replace(
+        '| draft | ROLE-ACCOUNTANT (org) |',
+        '| ready | ROLE-ACCOUNTANT (org) |',
+      ),
+    });
+    expect(findings.filter((f) => f.rule === 'direct-edit')).toEqual([]);
   });
 });
 

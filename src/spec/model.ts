@@ -1,13 +1,4 @@
-import type {
-  Application,
-  Capability,
-  Change,
-  Delta,
-  Entity,
-  Flow,
-  Module,
-  Screen,
-} from '../schemas/index.js';
+import type { Application, Capability, Change, Entity, Flow, Module, Screen } from '../schemas/index.js';
 import type { z } from 'zod';
 import type {
   DecisionItemSchema,
@@ -35,7 +26,6 @@ export type FileType =
   | 'entity'
   | 'flow'
   | 'change'
-  | 'delta'
   | 'personas-roles'
   | 'glossary'
   | 'rules'
@@ -85,7 +75,6 @@ export interface SpecModel {
   entities: Map<string, LocatedDoc<Entity>>;
   flows: Map<string, LocatedDoc<Flow>>;
   changes: Map<string, LocatedDoc<Change>>;
-  deltas: LocatedDoc<Delta>[];
   rules: Map<string, Located<RuleItem>>;
   events: Map<string, Located<EventItem>>;
   personas: Map<string, Located<PersonaItem>>;
@@ -107,7 +96,6 @@ export function emptyModel(): SpecModel {
     entities: new Map(),
     flows: new Map(),
     changes: new Map(),
-    deltas: [],
     rules: new Map(),
     events: new Map(),
     personas: new Map(),

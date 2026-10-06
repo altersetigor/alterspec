@@ -6,7 +6,6 @@ import {
   ChangeSchema,
   ConfigSchema,
   DecisionItemSchema,
-  DeltaSchema,
   EntitySchema,
   EventItemSchema,
   FlowSchema,
@@ -214,22 +213,21 @@ const cases: Case[] = [
       title: 'Add probation',
       status: 'draft',
       created: '2026-10-06',
-      affects: { added: ['CAP-HR-010'], modified: ['ENT-EMPLOYEE'], removed: [] },
+      removes: ['CAP-HR-003', 'term:Worker', 'file:application/nfr.md'],
+      base: { 'CAP-HR-002': 'abc', 'CAP-HR-010': null },
     },
     invalid: [
       ['bad date', { id: 'CHG-001', title: 'x', status: 'draft', created: '06.10.2026' }],
       [
-        'bad affected ID',
-        { id: 'CHG-001', title: 'x', status: 'draft', created: '2026-10-06', affects: { added: ['foo'] } },
+        'bad removed key',
+        { id: 'CHG-001', title: 'x', status: 'draft', created: '2026-10-06', removes: ['foo'] },
+      ],
+      [
+        'bad base key',
+        { id: 'CHG-001', title: 'x', status: 'draft', created: '2026-10-06', base: { foo: null } },
       ],
       ['lifecycle status', { id: 'CHG-001', title: 'x', status: 'implemented', created: '2026-10-06' }],
     ],
-  },
-  {
-    name: 'delta',
-    schema: DeltaSchema,
-    valid: { change: 'CHG-001', op: 'modified', target: 'CAP-HR-004' },
-    invalid: [['bad op', { change: 'CHG-001', op: 'changed', target: 'CAP-HR-004' }]],
   },
   {
     name: 'rule item',

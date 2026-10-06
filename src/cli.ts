@@ -5,6 +5,12 @@ import { printResult, runInit } from './commands/init.js';
 import { NEW_TYPES, runNew, type NewOptions, type NewType } from './commands/new.js';
 import { formatShow, runShow } from './commands/show.js';
 import { runUpdate } from './commands/update.js';
+import { runBaseline } from './commands/baseline.js';
+import { runChangeEdit, runChangeNew, runChangeRemove, runChangeStatus } from './commands/change.js';
+import { runApply } from './changes/apply.js';
+import { computeImpact, formatImpact } from './changes/impact.js';
+import { writeFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { formatHuman, listRules, runValidate } from './commands/validate.js';
 import { runViews } from './commands/views.js';
 
@@ -53,15 +59,21 @@ program
   .option('--json', 'print findings as JSON')
   .option('--report', 'also write spec/_generated/lint-report.md')
   .option('--list-rules', 'list the lint rules and exit')
-  .action((dir: string, opts: { spec: string; json?: boolean; report?: boolean; listRules?: boolean }) => {
-    if (opts.listRules) {
-      console.log(listRules());
-      return;
-    }
-    const result = runValidate(dir, opts);
-    console.log(opts.json ? JSON.stringify(result, null, 2) : formatHuman(result, opts.spec));
-    if (result.summary.errors > 0) process.exitCode = 1;
-  });
+  .option('--change <CHG>', 'validate the spec as it would be after this change')
+  .action(
+    (
+      dir: string,
+      opts: { spec: string; json?: boolean; report?: boolean; listRules?: boolean; change?: string },
+    ) => {
+      if (opts.listRules) {
+        console.log(listRules());
+        return;
+      }
+      const result = runValidate(dir, opts);
+      console.log(opts.json ? JSON.stringify(result, null, 2) : formatHuman(result, opts.spec));
+      if (result.summary.errors > 0) process.exitCode = 1;
+    },
+  );
 
 program
   .command('views')
@@ -99,6 +111,7 @@ program
   .option('--kind <kind>', 'decision | open_question | assumption (decision)')
   .option('--term <term>', 'canonical term (term)')
   .option('--forbidden <list>', 'comma-separated forbidden synonyms (term)')
+  .option('--change <CHG>', 'create the object inside this change proposal')
   .option('--json', 'print { id, file, line } as JSON')
   .action(
     (type: string, opts: Record<string, string | boolean | undefined> & { dir: string; json?: boolean }) => {
@@ -121,21 +134,97 @@ program
     console.log(opts.json ? JSON.stringify(result, null, 2) : formatShow(result));
   });
 
-const PLANNED: [string, string, string][] = [
-  ['impact', 'Impact analysis of a change proposal', 'change management (phase 4)'],
-  ['apply', 'Merge an approved change proposal', 'change management (phase 4)'],
-];
-for (const [name, description, phase] of PLANNED) {
-  program
-    .command(name)
-    .description(`${description} — not available yet`)
-    .allowUnknownOption()
-    .argument('[args...]')
-    .action(() => {
-      console.error(`alterspec ${name} is not available yet. It arrives with ${phase}.`);
-      process.exitCode = 2;
-    });
-}
+program
+  .command('baseline')
+  .description('Record the agreed first version; from then on every edit goes through a change proposal')
+  .option('-C, --dir <dir>', 'project directory', '.')
+  .option('--spec <path>', 'spec folder, relative to the project', 'spec')
+  .option('--force', 'replace an existing baseline (accepts direct edits)')
+  .action((opts: { dir: string; spec: string; force?: boolean }) => {
+    const r = runBaseline(opts.dir, opts);
+    console.log(
+      `Baseline recorded: ${r.objects} objects. From now on, change the spec through /alter-change.`,
+    );
+  });
+
+const change = program.command('change').description('Create and edit change proposals');
+const changeOpts = (c: Command) =>
+  c
+    .option('-C, --dir <dir>', 'project directory', '.')
+    .option('--spec <path>', 'spec folder, relative to the project', 'spec');
+
+changeOpts(change.command('new').description('Start a change proposal'))
+  .requiredOption('--title <title>', 'what the change is about')
+  .option('--json', 'print { id, file } as JSON')
+  .action((opts: { dir: string; spec: string; title: string; json?: boolean }) => {
+    const r = runChangeNew(opts.dir, opts.title, opts);
+    console.log(opts.json ? JSON.stringify(r) : `created ${r.id} in ${r.file}`);
+  });
+
+changeOpts(change.command('edit').description('Copy an object into a change so it can be edited there'))
+  .argument('<CHG>')
+  .argument('<key>', 'object ID, term:<Term> or file:<path>')
+  .option('--rebase', 'accept the current spec version as the new base (after resolving a conflict)')
+  .option('--json', 'print the result as JSON')
+  .action(
+    (id: string, key: string, opts: { dir: string; spec: string; rebase?: boolean; json?: boolean }) => {
+      const r = runChangeEdit(opts.dir, id, key, opts);
+      console.log(
+        opts.json
+          ? JSON.stringify({ ...r, file: `${opts.spec}/${r.file}` })
+          : `${r.copied ? 'copied' : 'already in the change'}: ${opts.spec}/${r.file}`,
+      );
+    },
+  );
+
+changeOpts(change.command('remove').description('Mark an object for removal in a change'))
+  .argument('<CHG>')
+  .argument('<key>', 'object ID, term:<Term> or file:<path>')
+  .action((id: string, key: string, opts: { dir: string; spec: string }) => {
+    const r = runChangeRemove(opts.dir, id, key, opts);
+    console.log(`${id.toUpperCase()} removes ${r.key}`);
+  });
+
+changeOpts(change.command('status').description('Move a change: draft | in_review | approved | rejected'))
+  .argument('<CHG>')
+  .argument('<status>')
+  .action((id: string, status: string, opts: { dir: string; spec: string }) => {
+    const r = runChangeStatus(opts.dir, id, status, opts);
+    console.log(`${r.id} is ${r.status}`);
+  });
+
+program
+  .command('impact')
+  .description('Impact analysis of a change proposal')
+  .argument('<CHG>')
+  .option('-C, --dir <dir>', 'project directory', '.')
+  .option('--spec <path>', 'spec folder, relative to the project', 'spec')
+  .option('--json', 'print as JSON')
+  .option('--write', 'also write impact.md in the change folder')
+  .action((id: string, opts: { dir: string; spec: string; json?: boolean; write?: boolean }) => {
+    const impact = computeImpact(opts.dir, id, opts);
+    const md = formatImpact(impact);
+    if (opts.write) writeFileSync(join(opts.dir, opts.spec, 'changes', impact.id, 'impact.md'), md);
+    console.log(opts.json ? JSON.stringify(impact, null, 2) : md);
+    if (impact.conflicts.length || impact.errors) process.exitCode = 1;
+  });
+
+program
+  .command('apply')
+  .description('Merge an approved change into the spec, regenerate views and archive the change')
+  .argument('<CHG>')
+  .option('-C, --dir <dir>', 'project directory', '.')
+  .option('--spec <path>', 'spec folder, relative to the project', 'spec')
+  .option('--json', 'print as JSON')
+  .action((id: string, opts: { dir: string; spec: string; json?: boolean }) => {
+    const r = runApply(opts.dir, id, opts);
+    if (opts.json) console.log(JSON.stringify(r, null, 2));
+    else {
+      console.log(`Applied ${r.id}: ${r.written.length} file(s) written, ${r.deleted.length} deleted.`);
+      for (const v of r.versions) console.log(`  ${v.key} is now version ${v.version}`);
+      console.log(`Archived in ${r.archivedTo}`);
+    }
+  });
 
 program.parseAsync().catch((err: unknown) => {
   console.error(err instanceof Error ? err.message : err);

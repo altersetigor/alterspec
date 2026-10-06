@@ -27,6 +27,22 @@ The CLI is `npx @alterset/alterspec`. Below it is written as `alterspec`; always
   open gaps. Moving to `ready`, `approved` or `implemented` needs the person to say so explicitly; then raise
   `version` by 1.
 
+## Baseline: changes go through change proposals
+
+Check whether `spec/_generated/baseline.json` exists.
+
+- **No baseline yet:** the first version is still being written. Edit `spec/` directly as described below. When the
+  person says the first version is agreed, suggest `alterspec baseline` — never run it without their say-so.
+- **Baseline exists:** every edit, including new objects, goes through a change proposal. Never edit `spec/` directly;
+  `alterspec validate` reports direct edits as `direct-edit` errors.
+  - Ask which open change to use (`spec/changes/CHG-*/proposal.md` with status `draft` or `in_review`), or start one
+    with `/alter-change`.
+  - Existing object: `alterspec change edit <CHG> <ID> --json`, then edit the copy it reports, under
+    `spec/changes/<CHG>/spec/`. Glossary terms are `term:<Term>`; prose files are `file:<path>`.
+  - New object: add `--change <CHG>` to `alterspec new`.
+  - Removal: `alterspec change remove <CHG> <ID>`.
+  - Check with `alterspec validate --change <CHG>` instead of `alterspec show`.
+
 ## How you change files
 
 - **Create objects only with `alterspec new <type> ... --json`.** It picks the next free ID, uses the right template

@@ -38,8 +38,8 @@ describe('loader', () => {
       type: 'capability',
       parts: { mod: 'hr', name: 'CAP-HR-001' },
     });
-    expect(classify({ path: 'changes/CHG-001/deltas/CAP-HR-001.md', content: '' })).toMatchObject({
-      type: 'delta',
+    expect(classify({ path: 'changes/CHG-001/proposal.md', content: '' })).toMatchObject({
+      type: 'change',
       parts: { change: 'CHG-001' },
     });
     expect(classify({ path: 'modules/hr/notes.md', content: '' }).type).toBeUndefined();

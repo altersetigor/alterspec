@@ -7,10 +7,13 @@ import { RULES } from '../lint/rules/index.js';
 import type { Finding } from '../lint/types.js';
 import { readSpecDir } from '../spec/files.js';
 import { loadSpec } from '../spec/load.js';
+import { lintMerged, mergedFiles } from '../changes/impact.js';
 
 export interface ValidateOptions {
   spec?: string;
   report?: boolean;
+  /** Validate the spec as it would be after this change is applied. */
+  change?: string;
 }
 
 export interface ValidateResult {
@@ -22,7 +25,9 @@ export interface ValidateResult {
 export function runValidate(dir: string, opts: ValidateOptions = {}): ValidateResult {
   const root = resolve(dir);
   const specRoot = join(root, opts.spec ?? 'spec');
-  const findings = lint(loadSpec(readSpecDir(specRoot)), loadConfig(root));
+  const findings = opts.change
+    ? lintMerged(root, mergedFiles(specRoot, opts.change).merged)
+    : lint(loadSpec(readSpecDir(specRoot)), loadConfig(root));
   const result = { version: packageVersion(), summary: summarize(findings), findings };
   if (opts.report) {
     mkdirSync(join(specRoot, '_generated'), { recursive: true });

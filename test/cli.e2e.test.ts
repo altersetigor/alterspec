@@ -36,12 +36,6 @@ describe('built CLI', () => {
     expect(run(['--version']).stdout.trim()).toMatch(/^\d+\.\d+\.\d+/);
   });
 
-  it('planned commands exit with code 2', () => {
-    const r = run(['impact', 'CHG-001']);
-    expect(r.status).toBe(2);
-    expect(r.stderr).toMatch(/not available yet/);
-  });
-
   it('update without init fails cleanly', () => {
     const r = run(['update', tmpProject()]);
     expect(r.status).toBe(1);
@@ -125,5 +119,32 @@ describe('built CLI', () => {
     const r = run(['new', 'capability', '-C', copyFixture(), '--module', 'PAY']);
     expect(r.status).toBe(1);
     expect(r.stderr).toMatch(/needs --title, --role/);
+  });
+
+  it('baseline → change → impact → approve → apply', () => {
+    const dir = copyFixture();
+    const ok = (args: string[]) => {
+      const r = run(args);
+      expect(r.status, `${args.join(' ')}\n${r.stdout}\n${r.stderr}`).toBe(0);
+      return r.stdout;
+    };
+    ok(['baseline', '-C', dir]);
+    expect(JSON.parse(ok(['change', 'new', '-C', dir, '--title', 'Probation', '--json'])).id).toBe('CHG-001');
+    ok(['change', 'edit', 'CHG-001', 'CAP-HR-002', '-C', dir]);
+    const file = join(dir, 'spec/changes/CHG-001/spec/modules/hr/capabilities/CAP-HR-002.md');
+    writeFileSync(
+      file,
+      readFileSync(file, 'utf8').replace(
+        'title: Activate employee',
+        'title: Activate employee after probation',
+      ),
+    );
+    expect(JSON.parse(ok(['impact', 'CHG-001', '-C', dir, '--json'])).modified[0].fields).toEqual(['title']);
+    ok(['validate', dir, '--change', 'CHG-001']);
+    expect(run(['apply', 'CHG-001', '-C', dir]).status).toBe(1);
+    ok(['change', 'status', 'CHG-001', 'in_review', '-C', dir]);
+    ok(['change', 'status', 'CHG-001', 'approved', '-C', dir]);
+    expect(ok(['apply', 'CHG-001', '-C', dir])).toMatch(/CAP-HR-002 is now version 2/);
+    expect(JSON.parse(ok(['validate', dir, '--json'])).findings).toEqual([]);
   });
 });
