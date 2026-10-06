@@ -11,7 +11,7 @@ export const directEdit: LintRule = {
     if (!baseline) return [];
     const out: RawFinding[] = [];
     const current = specObjects(model.raw);
-    const how = 'make the edit through a change proposal (/alter-change), or undo it';
+    const how = 'make the edit through a change proposal (/alterspec-change), or undo it';
     for (const [key, o] of current) {
       const base = baseline.objects[key];
       if (!base)

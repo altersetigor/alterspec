@@ -1,4 +1,4 @@
-# /alter-init — start the product spec
+# /alterspec-init — start the product spec
 
 Read `.alterspec/prompts/_shared.md` first and follow it.
 
@@ -25,4 +25,4 @@ Goal: from a short interview, write the application skeleton in `spec/applicatio
      the module covers and does not cover
    - glossary: `alterspec new term --term "<Term>" --forbidden "<a>,<b>" --json`, then a one or two sentence definition
 5. Run `alterspec views` and `alterspec validate`; fix any errors.
-6. Suggest next steps: `/alter-entity` for the main business things, then `/alter-capability` per module.
+6. Suggest next steps: `/alterspec-create-entity` for the main business things, then `/alterspec-create-capability` per module.

@@ -1,4 +1,4 @@
-# /alter-handoff — hand a capability or module over to development
+# /alterspec-handoff — hand a capability or module over to development
 
 Read `.alterspec/prompts/_shared.md` first and follow it.
 
@@ -16,7 +16,7 @@ alterspec stays a product spec: it never makes technology decisions. Handoff is 
 1. If the target is missing, ask which one (offer the list above).
 2. Run `npx @alterset/alterspec show <ID>` for a capability, or `npx @alterset/alterspec validate` for a module.
    Handoff refuses objects with lint errors, and capabilities below `ready`.
-   - If capabilities are still `draft` or `refined`, suggest `/alter-refine` first. Only use `--allow-draft` when the
+   - If capabilities are still `draft` or `refined`, suggest `/alterspec-refine` first. Only use `--allow-draft` when the
      person explicitly wants a draft export.
    - Open questions in scope are exported as clarification points; mention them.
 
@@ -41,5 +41,5 @@ changed. Re-running the export overwrites the polish, so suggest polishing as th
   formats are changing between versions; check the stories after import.
 - **bundle:** use `handoff/bundle/<ID>/README.md` as the input for the technical design.
 
-Remind the person that the alterspec spec stays the source of truth: product changes go through `/alter-change`, then
+Remind the person that the alterspec spec stays the source of truth: product changes go through `/alterspec-change`, then
 a new handoff. The manifest shows which version was handed over.

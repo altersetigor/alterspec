@@ -31,7 +31,7 @@ program
   .action((pos: string, opts: { name?: string; dir?: string }) => {
     const result = runInit(opts.dir ?? pos, opts);
     printResult(result);
-    console.log('\nNext: open Claude Code in this project and run /alter-init.');
+    console.log('\nNext: open Claude Code in this project and run /alterspec-init.');
   });
 
 program
@@ -158,7 +158,7 @@ program
   .action((opts: { dir: string; spec: string; force?: boolean }) => {
     const r = runBaseline(opts.dir, opts);
     console.log(
-      `Baseline recorded: ${r.objects} objects. From now on, change the spec through /alter-change.`,
+      `Baseline recorded: ${r.objects} objects. From now on, change the spec through /alterspec-change.`,
     );
   });
 

@@ -1,7 +1,7 @@
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { parse } from 'yaml';
-import { packageVersion } from '../assets.js';
+import { ASSETS_DIR, packageVersion } from '../assets.js';
 import { sha256 } from '../install/hash.js';
 import { readManifest } from '../install/installer.js';
 import { ConfigSchema } from '../schemas/config.js';
@@ -45,6 +45,24 @@ export function runDoctor(dir: string): Check[] {
         ? '.alterspec/config.yaml is valid'
         : `.alterspec/config.yaml is invalid: ${parsed.error.issues.map((i) => `${i.path.join('.')}: ${i.message}`).join('; ')}`,
     });
+  }
+
+  const customPrompts = join(root, '.alterspec/custom/prompts');
+  if (existsSync(customPrompts)) {
+    const shipped = new Set(
+      (readdirSync(join(ASSETS_DIR, 'prompts'), { recursive: true }) as string[]).map((p) =>
+        p.split('\\').join('/'),
+      ),
+    );
+    for (const p of readdirSync(customPrompts, { recursive: true }) as string[]) {
+      const rel = p.split('\\').join('/');
+      if (rel.endsWith('.md') && !shipped.has(rel)) {
+        checks.push({
+          ok: false,
+          message: `.alterspec/custom/prompts/${rel} overrides no prompt (renamed in this version?); it is not used`,
+        });
+      }
+    }
   }
 
   const manifest = readManifest(root);

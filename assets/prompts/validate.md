@@ -1,4 +1,4 @@
-# /alter-validate — validate the product spec
+# /alterspec-validate — validate the product spec
 
 Read `.alterspec/prompts/_shared.md` first and follow it.
 
@@ -12,7 +12,7 @@ If the command fails to run (not a findings result), show the error and stop.
 
 ## 2. Semantic review
 
-Ask the `alter-reviewer` agent to review the same scope. Tell it the scope exactly as given. It returns a table and a
+Ask the `alterspec-reviewer` agent to review the same scope. Tell it the scope exactly as given. It returns a table and a
 JSON block of findings with severity `critical`, `major` or `minor`.
 
 If the linter reported errors that make the spec unreadable (`yaml-syntax`, `schema`), say the review may be incomplete.
@@ -25,7 +25,7 @@ Merge both into one report for the person:
 - group by object (ID), showing `path:line`, the source (linter rule or "review"), the problem in plain language, and
   the smallest fix
 - when a linter finding and a review finding describe the same problem on the same object, show it once
-- if the only linter findings are `views-stale` or `generated-missing`, suggest `/alter-views`
+- if the only linter findings are `views-stale` or `generated-missing`, suggest `/alterspec-views`
 
 **Don't edit any file** unless the person asks you to fix something. When they do, follow the shared rules (a change
 proposal if a baseline exists), never edit GENERATED blocks, then run views and validate again.

@@ -1,4 +1,4 @@
-# /alter-impact — impact analysis of a change
+# /alterspec-impact — impact analysis of a change
 
 Read `.alterspec/prompts/_shared.md` first and follow it.
 
@@ -6,7 +6,7 @@ Arguments: `<CHG>`.
 
 1. Run `npx @alterset/alterspec impact <CHG> --json`. If it fails because the change doesn't exist, list the open
    changes (`spec/changes/CHG-*/proposal.md`) and stop.
-2. Ask the `alter-reviewer` agent to review the change (scope `<CHG>`).
+2. Ask the `alterspec-reviewer` agent to review the change (scope `<CHG>`).
 3. Write a summary for a business reader:
    - what the change does, in two or three sentences (from the proposal and the added / modified / removed objects)
    - conflicts with the current spec, if any, and what to do (re-read the object, then

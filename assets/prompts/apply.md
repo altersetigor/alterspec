@@ -1,4 +1,4 @@
-# /alter-apply — approve and apply a change
+# /alterspec-apply — approve and apply a change
 
 Read `.alterspec/prompts/_shared.md` first and follow it.
 
@@ -8,8 +8,8 @@ Arguments: `<CHG>`.
 
 Read `spec/changes/<CHG>/proposal.md` and run `npx @alterset/alterspec impact <CHG> --json`.
 
-- `draft`: it hasn't been reviewed. Suggest finishing it with `/alter-change <CHG>`, and stop.
-- conflicts or errors: show them and stop. Suggest `/alter-change <CHG>` to fix them.
+- `draft`: it hasn't been reviewed. Suggest finishing it with `/alterspec-change <CHG>`, and stop.
+- conflicts or errors: show them and stop. Suggest `/alterspec-change <CHG>` to fix them.
 - `in_review`: continue with approval.
 - `approved`: continue with apply.
 

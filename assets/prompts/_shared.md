@@ -23,7 +23,7 @@ The CLI is `npx @alterset/alterspec`. Below it is written as `alterspec`; always
 - **Granularity.** One capability = one user goal, done by one acting role, in one session. Propose a split when a
   description covers two goals, two acting roles, or work that pauses for someone else (an approval, a reply from a
   partner). Each part becomes its own capability, and the hand-over between them becomes a flow step or an event.
-- **Status.** New objects start as `draft`. Only `/alter-refine` moves an object to `refined`, and only when it has no
+- **Status.** New objects start as `draft`. Only `/alterspec-refine` moves an object to `refined`, and only when it has no
   open gaps. Moving to `ready`, `approved` or `implemented` needs the person to say so explicitly; then raise
   `version` by 1.
 
@@ -36,11 +36,13 @@ Check whether `spec/_generated/baseline.json` exists.
 - **Baseline exists:** every edit, including new objects, goes through a change proposal. Never edit `spec/` directly;
   `alterspec validate` reports direct edits as `direct-edit` errors.
   - Ask which open change to use (`spec/changes/CHG-*/proposal.md` with status `draft` or `in_review`), or start one
-    with `/alter-change`.
+    with `/alterspec-change`.
   - Existing object: `alterspec change edit <CHG> <ID> --json`, then edit the copy it reports, under
     `spec/changes/<CHG>/spec/`. Glossary terms are `term:<Term>`; prose files are `file:<path>`.
   - New object: add `--change <CHG>` to `alterspec new`.
   - Removal: `alterspec change remove <CHG> <ID>`.
+  - To change one existing object, the person can also use `/alterspec-change-module`, `-capability`, `-screen` or
+    `-entity`; they follow these same rules.
   - Check with `alterspec validate --change <CHG>` instead of `alterspec show`.
 
 ## How you change files

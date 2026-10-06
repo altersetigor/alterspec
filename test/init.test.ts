@@ -29,13 +29,13 @@ describe('alterspec init', () => {
       '.alterspec/version',
       '.alterspec/custom/README.md',
       '.alterspec/templates/capability.md',
-      '.alterspec/prompts/capability.md',
+      '.alterspec/prompts/create-capability.md',
       '.alterspec/prompts/agents/reviewer.md',
       '.alterspec/schemas/capability.schema.json',
-      '.claude/skills/alter-init/SKILL.md',
-      '.claude/skills/alter-handoff/SKILL.md',
-      '.claude/agents/alter-analyst.md',
-      '.claude/agents/alter-reviewer.md',
+      '.claude/skills/alterspec-init/SKILL.md',
+      '.claude/skills/alterspec-handoff/SKILL.md',
+      '.claude/agents/alterspec-analyst.md',
+      '.claude/agents/alterspec-reviewer.md',
       'spec/application/application.md',
       'spec/application/personas-roles.md',
       'spec/application/glossary.md',
@@ -91,13 +91,13 @@ describe('alterspec init', () => {
     runInit(root);
     put(root, 'spec/application/glossary.md', 'edited glossary');
     put(root, '.alterspec/config.yaml', 'version: "0.0.1"\nlanguage: en\n');
-    put(root, '.alterspec/custom/prompts/capability.md', 'my prompt');
+    put(root, '.alterspec/custom/prompts/create-capability.md', 'my prompt');
     rmSync(join(root, 'spec/application/nfr.md'));
 
     const again = runInit(root);
     expect(read(root, 'spec/application/glossary.md')).toBe('edited glossary');
     expect(read(root, '.alterspec/config.yaml')).toBe('version: "0.0.1"\nlanguage: en\n');
-    expect(read(root, '.alterspec/custom/prompts/capability.md')).toBe('my prompt');
+    expect(read(root, '.alterspec/custom/prompts/create-capability.md')).toBe('my prompt');
     expect(read(root, '.claude/skills/my-own/SKILL.md')).toBe('mine');
     expect(read(root, '.claude/settings.json')).toBe('{}');
     // missing user files are filled in again
@@ -136,7 +136,7 @@ describe('alterspec update', () => {
   it('skips a wrapper the user modified, unless --force', () => {
     const root = tmpProject();
     runInit(root);
-    const wrapper = '.claude/skills/alter-capability/SKILL.md';
+    const wrapper = '.claude/skills/alterspec-create-capability/SKILL.md';
     const original = read(root, wrapper);
     put(root, wrapper, 'my wrapper');
 
@@ -155,7 +155,7 @@ describe('alterspec update', () => {
   it('replaces an unmodified wrapper that a new version changed', () => {
     const root = tmpProject();
     runInit(root);
-    const wrapper = '.claude/skills/alter-capability/SKILL.md';
+    const wrapper = '.claude/skills/alterspec-create-capability/SKILL.md';
     // Simulate an older shipped version: file and manifest agree on old content.
     put(root, wrapper, 'old shipped wrapper');
     const manifest = readManifest(root)!;
@@ -170,14 +170,14 @@ describe('alterspec update', () => {
     runInit(root);
     const manifest = readManifest(root)!;
     put(root, '.alterspec/prompts/obsolete.md', 'old');
-    put(root, '.claude/skills/alter-gone/SKILL.md', 'changed by user');
+    put(root, '.claude/skills/alterspec-gone/SKILL.md', 'changed by user');
     manifest.files['.alterspec/prompts/obsolete.md'] = sha256('old');
-    manifest.files['.claude/skills/alter-gone/SKILL.md'] = sha256('shipped');
+    manifest.files['.claude/skills/alterspec-gone/SKILL.md'] = sha256('shipped');
     writeFileSync(join(root, MANIFEST_PATH), JSON.stringify(manifest));
 
     const result = runUpdate(root);
     expect(result.removed).toEqual(['.alterspec/prompts/obsolete.md']);
-    expect(result.conflicts).toEqual(['.claude/skills/alter-gone/SKILL.md']);
+    expect(result.conflicts).toEqual(['.claude/skills/alterspec-gone/SKILL.md']);
     expect(existsSync(join(root, '.alterspec/prompts/obsolete.md'))).toBe(false);
   });
 });
@@ -193,17 +193,41 @@ describe('alterspec doctor', () => {
     expect(runDoctor(tmpProject()).some((c) => !c.ok && c.message.includes('alterspec init'))).toBe(true);
   });
 
+  it('reports custom prompt overrides that no longer match a shipped prompt', () => {
+    const root = tmpProject();
+    runInit(root);
+    put(root, '.alterspec/custom/prompts/module.md', 'old name');
+    put(root, '.alterspec/custom/prompts/create-module.md', 'current name');
+    const failed = runDoctor(root)
+      .filter((c) => !c.ok)
+      .map((c) => c.message);
+    expect(failed).toEqual([expect.stringContaining('custom/prompts/module.md overrides no prompt')]);
+  });
+
+  it('update replaces old alter-* wrappers with alterspec-* ones', () => {
+    const root = tmpProject();
+    runInit(root);
+    const old = '.claude/skills/alter-module/SKILL.md';
+    put(root, old, 'old wrapper');
+    const manifest = readManifest(root)!;
+    manifest.files[old] = sha256('old wrapper');
+    writeFileSync(join(root, MANIFEST_PATH), JSON.stringify(manifest));
+    const result = runUpdate(root);
+    expect(result.removed).toEqual([old]);
+    expect(existsSync(join(root, '.claude/skills/alterspec-create-module/SKILL.md'))).toBe(true);
+  });
+
   it('reports modified and missing wrappers, and an invalid config', () => {
     const root = tmpProject();
     runInit(root);
-    put(root, '.claude/agents/alter-reviewer.md', 'changed');
-    rmSync(join(root, '.claude/skills/alter-views/SKILL.md'));
+    put(root, '.claude/agents/alterspec-reviewer.md', 'changed');
+    rmSync(join(root, '.claude/skills/alterspec-views/SKILL.md'));
     put(root, '.alterspec/config.yaml', 'version: "0.0.1"\nlanguage: sr\n');
     const failed = runDoctor(root)
       .filter((c) => !c.ok)
       .map((c) => c.message);
-    expect(failed.some((m) => m.startsWith('Modified .claude/agents/alter-reviewer.md'))).toBe(true);
-    expect(failed.some((m) => m.startsWith('Missing .claude/skills/alter-views/SKILL.md'))).toBe(true);
+    expect(failed.some((m) => m.startsWith('Modified .claude/agents/alterspec-reviewer.md'))).toBe(true);
+    expect(failed.some((m) => m.startsWith('Missing .claude/skills/alterspec-views/SKILL.md'))).toBe(true);
     expect(failed.some((m) => m.includes('config.yaml is invalid'))).toBe(true);
   });
 });

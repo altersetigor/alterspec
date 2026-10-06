@@ -5,7 +5,7 @@ published as `@alterset/alterspec` by Alterset d.o.o. (MIT).
 
 It keeps a tech-agnostic product spec (**Application → Module → Capability**) as the single source of truth and
 evolves it through reviewed change proposals (deltas). It sits upstream of Spec Kit, OpenSpec and BMAD, and
-hands off to them via `/alter-handoff`.
+hands off to them via `/alterspec-handoff`.
 
 The full build brief, with every decision made so far, is in [docs/HANDOVER.md](docs/HANDOVER.md). Read it
 before starting a phase or changing the content model, IDs, validation rules or install layout.
@@ -55,10 +55,10 @@ via the built-in `z.toJSONSchema`). Dev: `tsup`, `vitest`, `eslint` + `typescrip
 ## Two different `.claude/` folders
 
 1. **This repo's `.claude/`**: tooling for developing alterspec (settings, dev agents). It is not shipped.
-2. **The `.claude/` that `alterspec init` writes into user projects**: thin `alter-*` skill and agent wrappers
+2. **The `.claude/` that `alterspec init` writes into user projects**: thin `alterspec-*` skill and agent wrappers
    whose sources live in this repo's package assets, not in this repo's own `.claude/`.
 
-Don't mix them. Never put product skills such as `alter-init` in this repo's `.claude/skills/`.
+Don't mix them. Never put product skills such as `alterspec-init` in this repo's `.claude/skills/`.
 
 ## What `alterspec init` installs (target layout)
 
@@ -72,13 +72,13 @@ my-project/
 │   ├── custom/        # user overrides, NEVER touched by update
 │   └── version
 ├── .claude/
-│   ├── skills/alter-<cmd>/SKILL.md   # thin: "Read .alterspec/prompts/<cmd>.md and follow it"
-│   └── agents/alter-*.md             # thin: points to .alterspec/prompts/agents/*
+│   ├── skills/alterspec-<cmd>/SKILL.md   # thin: "Read .alterspec/prompts/<cmd>.md and follow it"
+│   └── agents/alterspec-*.md             # thin: points to .alterspec/prompts/agents/*
 └── spec/              # user-owned product spec, never overwritten
 ```
 
 `init` must be idempotent. It must never overwrite `spec/` or `.alterspec/custom/`. Prefix every installed
-skill and agent with `alter-`.
+skill and agent with `alterspec-`.
 
 ## Spec content model (`spec/`)
 
@@ -105,10 +105,12 @@ Statuses: `draft → refined → ready → approved → implemented`.
 - CLI: `init`, `update`, `doctor`, `validate [--json]`, `views [--check]`, `new <type>`, `show <ID>`, and later
   `impact <CHG>`, `apply <CHG>`. All deterministic work lives in the CLI (IDs, file locations, references); skills
   call it through Bash and prompts never pick IDs or copy templates themselves.
-- Skills: `/alter-init`, `-module`, `-capability`, `-screen`, `-entity`, `-refine`, `-validate`, `-views`,
-  `-change`, `-impact`, `-apply`, `-handoff`.
-- Agents: `alter-analyst` (gap analysis and drafting; it does not interview, the skill in the main conversation does)
-  and `alter-reviewer` (read-only; reports findings with severity and never edits the spec).
+- Skills (16): `/alterspec-init`; `-create-module|capability|screen|entity`; `-change-module|capability|screen|entity`
+  (edit one existing object, via a change proposal after the baseline; shared flow in `prompts/_change-object.md`);
+  `-refine`, `-validate`, `-views`, `-change`, `-impact`, `-apply`, `-handoff`. The skill name minus `alterspec-` is the
+  prompt file name in `assets/prompts/`.
+- Agents: `alterspec-analyst` (gap analysis and drafting; it does not interview, the skill in the main conversation does)
+  and `alterspec-reviewer` (read-only; reports findings with severity and never edits the spec).
 - Change management (Phase 4): `alterspec baseline` records object fingerprints in `spec/_generated/baseline.json`;
   after that the `direct-edit` rule makes every edit go through a change. A change is `spec/changes/CHG-NNN/` with
   `proposal.md` and an overlay `spec/` holding only touched objects (whole docs, single collection items). `change

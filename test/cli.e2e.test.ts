@@ -21,7 +21,7 @@ describe('built CLI', () => {
     const first = run(['init', dir, '--name', 'Demo']);
     expect(first.status, first.stderr).toBe(0);
     expect(first.stdout).toMatch(/created: \d+/);
-    expect(existsSync(join(dir, '.claude/skills/alter-init/SKILL.md'))).toBe(true);
+    expect(existsSync(join(dir, '.claude/skills/alterspec-init/SKILL.md'))).toBe(true);
 
     const second = run(['init', dir]);
     expect(second.status).toBe(0);

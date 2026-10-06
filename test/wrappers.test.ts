@@ -9,10 +9,14 @@ import { issues, readAsset } from './helpers.js';
 
 const COMMANDS = [
   'init',
-  'module',
-  'capability',
-  'screen',
-  'entity',
+  'create-module',
+  'create-capability',
+  'create-screen',
+  'create-entity',
+  'change-module',
+  'change-capability',
+  'change-screen',
+  'change-entity',
   'refine',
   'validate',
   'views',
@@ -24,7 +28,7 @@ const COMMANDS = [
 
 const SkillFrontMatter = z
   .object({
-    name: z.string().regex(/^alter-[a-z]+$/),
+    name: z.string().regex(/^alterspec-[a-z-]+$/),
     description: z.string().min(20),
     'argument-hint': z.string().optional(),
     'disable-model-invocation': z.boolean().optional(),
@@ -34,7 +38,7 @@ const SkillFrontMatter = z
 
 const AgentFrontMatter = z
   .object({
-    name: z.string().regex(/^alter-[a-z]+$/),
+    name: z.string().regex(/^alterspec-[a-z-]+$/),
     description: z.string().min(20),
     tools: z.string().min(1),
   })
@@ -43,16 +47,16 @@ const AgentFrontMatter = z
 describe('skill wrappers', () => {
   const dirs = readdirSync(join(ASSETS_DIR, 'claude/skills'));
 
-  it('ships exactly the 12 alter-* skills', () => {
-    expect(dirs.sort()).toEqual(COMMANDS.map((c) => `alter-${c}`).sort());
+  it('ships exactly the 16 alterspec-* skills', () => {
+    expect(dirs.sort()).toEqual(COMMANDS.map((c) => `alterspec-${c}`).sort());
   });
 
   for (const cmd of COMMANDS) {
-    it(`alter-${cmd} is a valid thin wrapper`, () => {
-      const src = readAsset(`claude/skills/alter-${cmd}/SKILL.md`);
+    it(`alterspec-${cmd} is a valid thin wrapper`, () => {
+      const src = readAsset(`claude/skills/alterspec-${cmd}/SKILL.md`);
       const { data, body } = parseFrontMatter(src);
       expect(issues(SkillFrontMatter.safeParse(data))).toEqual([]);
-      expect((data as { name: string }).name).toBe(`alter-${cmd}`);
+      expect((data as { name: string }).name).toBe(`alterspec-${cmd}`);
       expect(body).toContain(`.alterspec/prompts/${cmd}.md`);
       expect(body).toContain(`.alterspec/custom/prompts/${cmd}.md`);
       expect(body).toContain('$ARGUMENTS');
@@ -63,26 +67,26 @@ describe('skill wrappers', () => {
   it('only lets the model invoke read-only commands', () => {
     const modelInvocable = COMMANDS.filter(
       (c) =>
-        !(parseFrontMatter(readAsset(`claude/skills/alter-${c}/SKILL.md`)).data as Record<string, unknown>)[
-          'disable-model-invocation'
-        ],
+        !(
+          parseFrontMatter(readAsset(`claude/skills/alterspec-${c}/SKILL.md`)).data as Record<string, unknown>
+        )['disable-model-invocation'],
     );
     expect(modelInvocable.sort()).toEqual(['impact', 'validate', 'views']);
   });
 
   it('never pre-approves the unscoped `npx alterspec` package', () => {
     for (const cmd of COMMANDS) {
-      expect(readAsset(`claude/skills/alter-${cmd}/SKILL.md`)).not.toMatch(/npx alterspec/);
+      expect(readAsset(`claude/skills/alterspec-${cmd}/SKILL.md`)).not.toMatch(/npx alterspec/);
     }
   });
 });
 
 describe('agent wrappers', () => {
   for (const agent of ['analyst', 'reviewer']) {
-    it(`alter-${agent} is a valid thin wrapper`, () => {
-      const { data, body } = parseFrontMatter(readAsset(`claude/agents/alter-${agent}.md`));
+    it(`alterspec-${agent} is a valid thin wrapper`, () => {
+      const { data, body } = parseFrontMatter(readAsset(`claude/agents/alterspec-${agent}.md`));
       expect(issues(AgentFrontMatter.safeParse(data))).toEqual([]);
-      expect((data as { name: string }).name).toBe(`alter-${agent}`);
+      expect((data as { name: string }).name).toBe(`alterspec-${agent}`);
       expect(body).toContain(`.alterspec/prompts/agents/${agent}.md`);
       expect(existsSync(join(ASSETS_DIR, 'prompts/agents', `${agent}.md`))).toBe(true);
     });
@@ -90,9 +94,9 @@ describe('agent wrappers', () => {
 
   it('the analyst can run the CLI; the reviewer cannot write files', () => {
     expect(
-      (parseFrontMatter(readAsset('claude/agents/alter-analyst.md')).data as { tools: string }).tools,
+      (parseFrontMatter(readAsset('claude/agents/alterspec-analyst.md')).data as { tools: string }).tools,
     ).toContain('Bash');
-    const { data } = parseFrontMatter(readAsset('claude/agents/alter-reviewer.md'));
+    const { data } = parseFrontMatter(readAsset('claude/agents/alterspec-reviewer.md'));
     expect((data as { tools: string }).tools).not.toMatch(/Write|Edit/);
   });
 });
@@ -137,18 +141,7 @@ describe('prompts', () => {
   });
 
   it('every command and both agents have real prompts', () => {
-    for (const p of [
-      'init.md',
-      'module.md',
-      'capability.md',
-      'screen.md',
-      'entity.md',
-      'refine.md',
-      'validate.md',
-      'views.md',
-      'agents/analyst.md',
-      'handoff.md',
-    ]) {
+    for (const p of [...COMMANDS.map((c) => `${c}.md`), 'agents/analyst.md', 'agents/reviewer.md']) {
       expect(readAsset(`prompts/${p}`), p).not.toMatch(/not available yet/);
       expect(readAsset(`prompts/${p}`).length, p).toBeGreaterThan(400);
     }
