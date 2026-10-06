@@ -18,3 +18,21 @@ export function stripItems(template: string): string {
       .trimEnd() + '\n'
   );
 }
+
+/** The example `## ` items of a collection template (the parts `stripItems` drops). */
+export function extractItems(template: string): string[] {
+  const items: string[] = [];
+  let current: string[] | undefined;
+  let inFence = false;
+  for (const line of template.split('\n')) {
+    if (line.startsWith('```')) inFence = !inFence;
+    if (!inFence && /^#{1,2} /.test(line)) {
+      if (current) items.push(current.join('\n').trimEnd() + '\n');
+      current = line.startsWith('## ') ? [line] : undefined;
+      continue;
+    }
+    current?.push(line);
+  }
+  if (current) items.push(current.join('\n').trimEnd() + '\n');
+  return items;
+}

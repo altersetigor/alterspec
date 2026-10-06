@@ -89,4 +89,41 @@ describe('built CLI', () => {
     const r = run(['validate', '--list-rules']);
     expect(r.stdout).toMatch(/unknown-reference\s+error/);
   });
+
+  it('new --json → show --json → validate', () => {
+    const dir = copyFixture();
+    const created = run([
+      'new',
+      'capability',
+      '-C',
+      dir,
+      '--module',
+      'PAY',
+      '--title',
+      'Correct payslip',
+      '--role',
+      'ACCOUNTANT',
+      '--scope',
+      'org',
+      '--json',
+    ]);
+    expect(created.status, created.stderr).toBe(0);
+    expect(JSON.parse(created.stdout)).toEqual({
+      id: 'CAP-PAY-003',
+      file: 'spec/modules/pay/capabilities/CAP-PAY-003.md',
+      line: 1,
+    });
+    const shown = run(['show', 'CAP-PAY-003', '-C', dir, '--json']);
+    expect(JSON.parse(shown.stdout).references.map((r: { id: string }) => r.id)).toEqual([
+      'MOD-PAY',
+      'ROLE-ACCOUNTANT',
+    ]);
+    expect(run(['validate', dir]).status).toBe(0);
+  });
+
+  it('new with missing options fails with a clear message', () => {
+    const r = run(['new', 'capability', '-C', copyFixture(), '--module', 'PAY']);
+    expect(r.status).toBe(1);
+    expect(r.stderr).toMatch(/needs --title, --role/);
+  });
 });

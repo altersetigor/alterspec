@@ -11,8 +11,8 @@ Each item is a `## <ID> <Title>` heading followed by a yaml block, then prose.
 
 ```yaml
 id: DEC-{{NNN}}
-title: {{title}}
-kind: open_question
+title: "{{title}}"
+kind: {{kind}}
 status: open
 affects: []
 ```

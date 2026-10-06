@@ -11,7 +11,7 @@ Each item is a `## <ID> <Title>` heading followed by a yaml block, then the rule
 
 ```yaml
 id: RULE-{{NNN}}
-title: {{title}}
+title: "{{title}}"
 status: draft
 entities: []
 ```

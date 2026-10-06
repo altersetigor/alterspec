@@ -9,7 +9,7 @@ Each item is a `## <ID> <Title>` heading followed by a yaml block, then the rule
 
 ```yaml
 id: RULE-{{MOD}}-{{NNN}}
-title: {{title}}
+title: "{{title}}"
 status: draft
 entities: []
 ```

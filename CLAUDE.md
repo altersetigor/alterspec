@@ -102,12 +102,15 @@ Statuses: `draft → refined → ready → approved → implemented`.
 
 ## CLI and skills
 
-- CLI: `init`, `update`, `validate [--json]`, `views`, `impact <CHG>`, `apply <CHG>`, `new <type>`, `doctor`.
-  All deterministic work lives in the CLI. Skills call it through Bash.
+- CLI: `init`, `update`, `doctor`, `validate [--json]`, `views [--check]`, `new <type>`, `show <ID>`, and later
+  `impact <CHG>`, `apply <CHG>`. All deterministic work lives in the CLI (IDs, file locations, references); skills
+  call it through Bash and prompts never pick IDs or copy templates themselves.
 - Skills: `/alter-init`, `-module`, `-capability`, `-screen`, `-entity`, `-refine`, `-validate`, `-views`,
   `-change`, `-impact`, `-apply`, `-handoff`.
-- Agents: `alter-analyst` (interviewer, writes spec) and `alter-reviewer` (read-only; reports findings with
-  severity and never edits the spec).
+- Agents: `alter-analyst` (gap analysis and drafting; it does not interview, the skill in the main conversation does)
+  and `alter-reviewer` (read-only; reports findings with severity and never edits the spec).
+- Decided: interview-then-draft; one capability = one goal, one acting role, one session; `refine` moves status to
+  `refined` at most, anything beyond needs the person's explicit word.
 
 ## Phases
 

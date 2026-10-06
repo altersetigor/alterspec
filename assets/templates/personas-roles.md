@@ -15,8 +15,8 @@ Each item is a `## <ID> <Title>` heading followed by a yaml block, then prose.
 
 ```yaml
 id: PER-{{persona}}
-title: {{persona_title}}
-roles: [ROLE-{{role}}]
+title: "{{persona_title}}"
+roles: [{{persona_roles}}]
 ```
 
 **Goals:** <!-- what this person wants to achieve -->
@@ -29,7 +29,7 @@ roles: [ROLE-{{role}}]
 
 ```yaml
 id: ROLE-{{role}}
-title: {{role_title}}
+title: "{{role_title}}"
 ```
 
 <!-- What this role is responsible for. Scopes are granted per capability, not here. -->

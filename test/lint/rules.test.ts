@@ -224,6 +224,28 @@ const CASES: Record<string, Case[]> = {
       expect: { file: HR1, line: 5, message: /no acceptance criteria/ },
     },
   ],
+  'incomplete-section': [
+    {
+      label: 'refined capability with an empty section',
+      edits: { [HR1]: replace('Every employee must be known before they can be paid.\n', '') },
+      expect: { file: HR1, line: 26, message: /"Business value \/ problem" is empty/ },
+    },
+    {
+      label: 'section left as the template scaffold',
+      edits: {
+        [HR1]: replace(
+          'As an HR lead (PER-HR-LEAD), I want to register a new employee, so that they can be activated and paid.',
+          'As a , I want , so that .',
+        ),
+      },
+      expect: { file: HR1, message: /Summary and user story/ },
+    },
+    {
+      label: 'refined entity missing a section',
+      edits: { [EMP]: replace('status: draft', 'status: refined') },
+      expect: { file: EMP, line: 1, message: /no "Attributes" section/ },
+    },
+  ],
   placeholder: [
     {
       label: 'unfilled placeholder',

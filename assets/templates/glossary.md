@@ -9,8 +9,8 @@ Each item is a `## <Term>` heading followed by a yaml block, then the definition
 ## {{term}}
 
 ```yaml
-term: {{term}}
-forbidden: []
+term: "{{term}}"
+forbidden: [{{forbidden}}]
 ```
 
 <!-- Definition in one or two sentences. -->

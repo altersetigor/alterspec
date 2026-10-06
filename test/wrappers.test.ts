@@ -3,6 +3,7 @@ import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { z } from 'zod';
 import { ASSETS_DIR } from '../src/assets.js';
+import { NEW_TYPES } from '../src/commands/new.js';
 import { parseFrontMatter } from '../src/lib/frontmatter.js';
 import { issues, readAsset } from './helpers.js';
 
@@ -87,8 +88,59 @@ describe('agent wrappers', () => {
     });
   }
 
-  it('the reviewer cannot write files', () => {
+  it('the analyst can run the CLI; the reviewer cannot write files', () => {
+    expect(
+      (parseFrontMatter(readAsset('claude/agents/alter-analyst.md')).data as { tools: string }).tools,
+    ).toContain('Bash');
     const { data } = parseFrontMatter(readAsset('claude/agents/alter-reviewer.md'));
     expect((data as { tools: string }).tools).not.toMatch(/Write|Edit/);
+  });
+});
+
+describe('prompts', () => {
+  const prompts = readdirSync(join(ASSETS_DIR, 'prompts'), { recursive: true })
+    .map(String)
+    .filter((p) => p.endsWith('.md'));
+  const CLI_COMMANDS = ['init', 'update', 'doctor', 'validate', 'views', 'new', 'show', 'impact', 'apply'];
+
+  it('only mention real CLI commands and `new` types', () => {
+    for (const p of prompts) {
+      const text = readAsset(`prompts/${p}`);
+      for (const m of text.matchAll(/(?:`|npx @alterset\/)alterspec (\w+)(?: (\w+))?/g)) {
+        expect(CLI_COMMANDS, `${p}: alterspec ${m[1]}`).toContain(m[1]);
+        if (m[1] === 'new' && m[2] && !['type'].includes(m[2]))
+          expect(NEW_TYPES as readonly string[], `${p}: new ${m[2]}`).toContain(m[2]);
+      }
+    }
+  });
+
+  it('only mention templates that exist', () => {
+    const templates = readdirSync(join(ASSETS_DIR, 'templates'));
+    for (const p of prompts) {
+      for (const m of readAsset(`prompts/${p}`).matchAll(/`([\w-]+\.md)` template/g)) {
+        expect(templates, `${p}: ${m[1]}`).toContain(m[1]);
+      }
+    }
+  });
+
+  it('authoring commands and the analyst are no longer stubs', () => {
+    for (const p of [
+      'init.md',
+      'module.md',
+      'capability.md',
+      'screen.md',
+      'entity.md',
+      'refine.md',
+      'validate.md',
+      'views.md',
+      'agents/analyst.md',
+    ]) {
+      expect(readAsset(`prompts/${p}`), p).not.toMatch(/not available yet/);
+      expect(readAsset(`prompts/${p}`).length, p).toBeGreaterThan(400);
+    }
+  });
+
+  it('never tell the agent to run the unscoped package', () => {
+    for (const p of prompts) expect(readAsset(`prompts/${p}`), p).not.toMatch(/npx alterspec/);
   });
 });

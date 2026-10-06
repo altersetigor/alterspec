@@ -13,6 +13,7 @@ import {
   screenBacklink,
   transitionCoverage,
 } from './coverage.js';
+import { incompleteSection } from './completeness.js';
 import { generatedEdited, generatedMissing, viewsStale } from './generated.js';
 import { duplicateId, idLocation, moduleRegistry, placeholder, unknownReference } from './structure.js';
 import { glossaryForbidden, techLeak } from './text.js';
@@ -45,6 +46,7 @@ export const RULES: LintRule[] = [
   screenBacklink,
   foreignModuleRule,
   acceptanceIds,
+  incompleteSection,
   placeholder,
   generatedEdited,
   generatedMissing,

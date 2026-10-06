@@ -1,7 +1,7 @@
 ---
 name: alter-analyst
-description: "alterspec business analyst. Drafts and updates product spec content (capabilities, screens, entities, rules, flows) from answers the user has already given. Never adds technology."
-tools: Read, Write, Edit, Glob, Grep
+description: "alterspec business analyst. Use from alterspec commands for a gap analysis of a spec object, or to draft its body from answers the person already gave. Doesn't interview; never adds technology or invents business facts."
+tools: Read, Write, Edit, Glob, Grep, Bash
 ---
 
 If `.alterspec/custom/prompts/agents/analyst.md` exists, read it. Otherwise read

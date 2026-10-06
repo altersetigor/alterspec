@@ -11,8 +11,8 @@ Each item is a `## <ID> <Title>` heading followed by a yaml block, then prose.
 
 ```yaml
 id: EVT-{{event}}
-title: {{title}}
-external: false
+title: "{{title}}"
+external: {{external}}
 entities: []
 ```
 

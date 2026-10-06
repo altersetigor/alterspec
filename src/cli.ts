@@ -2,6 +2,8 @@ import { Command } from 'commander';
 import { packageVersion } from './assets.js';
 import { runDoctor } from './commands/doctor.js';
 import { printResult, runInit } from './commands/init.js';
+import { NEW_TYPES, runNew, type NewOptions, type NewType } from './commands/new.js';
+import { formatShow, runShow } from './commands/show.js';
 import { runUpdate } from './commands/update.js';
 import { formatHuman, listRules, runValidate } from './commands/validate.js';
 import { runViews } from './commands/views.js';
@@ -80,10 +82,48 @@ program
     }
   });
 
+program
+  .command('new')
+  .description(`Create a spec object with the next free ID: ${NEW_TYPES.join(', ')}`)
+  .argument('<type>', NEW_TYPES.join(' | '))
+  .option('-C, --dir <dir>', 'project directory', '.')
+  .option('--spec <path>', 'spec folder, relative to the project', 'spec')
+  .option('--code <code>', 'module code (module)')
+  .option('--module <code>', 'owning module (capability, screen, module rule)')
+  .option('--title <title>', 'title')
+  .option('--name <name>', 'name part of the ID (entity, event, persona, role)')
+  .option('--role <role>', 'acting role (capability) or role of a persona')
+  .option('--scope <scope>', 'permission scope of the role (capability): own | team | org | all')
+  .option('--capability <id>', 'first step (flow)')
+  .option('--external', 'event comes from or goes to an external party')
+  .option('--kind <kind>', 'decision | open_question | assumption (decision)')
+  .option('--term <term>', 'canonical term (term)')
+  .option('--forbidden <list>', 'comma-separated forbidden synonyms (term)')
+  .option('--json', 'print { id, file, line } as JSON')
+  .action(
+    (type: string, opts: Record<string, string | boolean | undefined> & { dir: string; json?: boolean }) => {
+      const result = runNew(opts.dir, type as NewType, opts as NewOptions);
+      console.log(
+        opts.json ? JSON.stringify(result) : `created ${result.id} in ${result.file}:${result.line}`,
+      );
+    },
+  );
+
+program
+  .command('show')
+  .description('Show a spec object: references both ways, empty sections, open questions and findings')
+  .argument('<id>', 'spec object ID')
+  .option('-C, --dir <dir>', 'project directory', '.')
+  .option('--spec <path>', 'spec folder, relative to the project', 'spec')
+  .option('--json', 'print as JSON')
+  .action((id: string, opts: { dir: string; spec: string; json?: boolean }) => {
+    const result = runShow(opts.dir, id, opts);
+    console.log(opts.json ? JSON.stringify(result, null, 2) : formatShow(result));
+  });
+
 const PLANNED: [string, string, string][] = [
   ['impact', 'Impact analysis of a change proposal', 'change management (phase 4)'],
   ['apply', 'Merge an approved change proposal', 'change management (phase 4)'],
-  ['new', 'Create a spec object from a template', 'authoring (phase 3)'],
 ];
 for (const [name, description, phase] of PLANNED) {
   program

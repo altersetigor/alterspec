@@ -1,24 +1,50 @@
 # alterspec shared rules (read by every alterspec command)
 
-- **No technology in the spec.** Never write databases, tables, column types, endpoints, protocols, frameworks,
-  libraries, programming languages or vendor products. Describe what the product does and why, in business terms.
-  If the user gives technical detail, translate it into business language or record it as an open question.
-- **Templates:** create files from `.alterspec/custom/templates/<name>` if it exists, otherwise
-  `.alterspec/templates/<name>`. Replace every `{{placeholder}}`. Keep the guidance comments that are still useful.
-- **IDs are stable and never reused.** To pick the next number, look at existing files and at `spec/changes/archive/`
-  and use the highest number + 1. Formats: `MOD-<CODE>`, `CAP-<CODE>-NNN`, `SCR-<CODE>-NN` (shared screens:
-  `SCR-GLB-NN` in module `MOD-GLB`), `ROLE-<NAME>`, `PER-<NAME>`, `ENT-<NAME>`, `RULE-NNN` (shared) or
-  `RULE-<CODE>-NNN` (module), `FLOW-NNN`, `EVT-<NAME>`, `DEC-NNN`, `CHG-NNN`, acceptance criteria `<CAP>-AC-NN`.
-  Codes are 2–6 uppercase letters.
-- **Front-matter is authoritative.** Capability front-matter decides roles, screens, entities, rules, events and flows.
-  Never hand-edit text between `<!-- GENERATED:start ... -->` and `<!-- GENERATED:end -->`.
-- **Use canonical glossary terms** from `spec/application/glossary.md`, never the listed forbidden synonyms.
-- **Ask, don't invent.** When business information is missing, ask the user (a few focused questions at a time).
-  If they don't know, record an open question in the file and in `spec/application/decisions.md` as a
-  `DEC-NNN` item with `kind: open_question`.
-- **Referenced IDs must exist.** If you reference a role, entity, rule, screen or event that doesn't exist yet,
-  tell the user and offer to create it.
-- New objects start with `status: draft`.
-- **After changing front-matter**, run `npx @alterset/alterspec views` to refresh the generated blocks, then
-  `npx @alterset/alterspec validate` and fix any errors you introduced.
-- Finish with a short summary: files created or changed, and open questions left.
+The CLI is `npx @alterset/alterspec`. Below it is written as `alterspec`; always run it as
+`npx @alterset/alterspec ...` from the project root.
+
+## What the spec is
+
+- **No technology.** Never write databases, tables, column types, endpoints, protocols, frameworks, libraries,
+  programming languages or vendor products. Describe what the product does and why, in business terms. If the person
+  gives technical detail, translate it into business language, or record it as an open question.
+- **Use canonical glossary terms** from `spec/application/glossary.md`, never their forbidden synonyms.
+- **Front-matter is authoritative.** It decides roles, screens, entities, rules, events and flows. The body explains.
+  Never edit text between `<!-- GENERATED:start ... -->` and `<!-- GENERATED:end -->`, or files in `spec/_generated/`.
+
+## How you work with the person
+
+- **Interview, then draft.** Ask at most 3 questions at a time. When the spec already suggests answers (existing roles,
+  entities, rules), offer them as choices. Before writing, summarise what you understood in a few lines and let the
+  person correct it.
+- **Ask, don't invent.** Never fill a gap with a plausible guess. If the person doesn't know, record an open question:
+  `alterspec new decision --title "<question>" --kind open_question --json`, add the object's ID to that item's
+  `affects` list, and add a line under the object's "Open questions" section.
+- **Granularity.** One capability = one user goal, done by one acting role, in one session. Propose a split when a
+  description covers two goals, two acting roles, or work that pauses for someone else (an approval, a reply from a
+  partner). Each part becomes its own capability, and the hand-over between them becomes a flow step or an event.
+- **Status.** New objects start as `draft`. Only `/alter-refine` moves an object to `refined`, and only when it has no
+  open gaps. Moving to `ready`, `approved` or `implemented` needs the person to say so explicitly; then raise
+  `version` by 1.
+
+## How you change files
+
+- **Create objects only with `alterspec new <type> ... --json`.** It picks the next free ID, uses the right template
+  and location, and registers modules and flows. Never pick an ID yourself or copy a template by hand.
+  Types: `module --code --title`, `capability --module --title --role [--scope]`, `screen --module --title`,
+  `entity --name --title`, `flow --title --capability`, `rule --title [--module]`,
+  `event --name --title [--external]`, `persona --name --title [--role]`, `role --name --title`,
+  `decision --title [--kind]`, `term --term [--forbidden a,b]`.
+- **Shared or module rule?** A rule used by one module only is a module rule (`--module`). A rule two modules share
+  is an application rule (no `--module`).
+- **Then edit** the file `new` reported: fill front-matter lists and body sections. Keep YAML valid. Keep the template's
+  section headings; write "None." in a section that really has nothing, rather than deleting it.
+- **References must exist.** Before referencing a role, entity, rule, screen or event, check that it exists
+  (`alterspec show <ID>`). If not, ask whether to create it, then use `new`.
+- **After every change:** run `alterspec views`, then `alterspec show <ID>` for each object you touched. Fix every
+  error it lists before you finish. Mention remaining warnings to the person.
+
+## Finishing
+
+End with a short summary: objects created or changed (ID and title), open questions recorded, and the suggested next
+command.

@@ -5,7 +5,7 @@ status: draft
 roles: []
 steps:
   - step: 1
-    capability: CAP-{{MOD}}-001
+    capability: {{capability}}
     # role: ROLE-...
     # description: What happens in this step
 ---

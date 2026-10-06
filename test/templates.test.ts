@@ -26,6 +26,12 @@ const VARS: Record<string, string> = {
   op: 'added',
   target: 'CAP-HR-001',
   party: 'Tax office',
+  scope: 'org',
+  capability: 'CAP-HR-001',
+  forbidden: 'worker',
+  kind: 'open_question',
+  external: 'false',
+  persona_roles: 'ROLE-HR-MANAGER',
 };
 
 const render = (name: string) => renderTemplate(readAsset(`templates/${name}`), VARS);

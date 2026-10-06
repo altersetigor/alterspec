@@ -6,7 +6,7 @@ status: draft
 version: 1
 roles:
   - role: ROLE-{{role}}
-    scope: own              # own | team | org | all
+    scope: {{scope}}              # own | team | org | all
 screens: []
 entities: []
 # - entity: ENT-...
