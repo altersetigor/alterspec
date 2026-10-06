@@ -1,6 +1,6 @@
 # Proposal
 
-<!-- Exported by alterspec 0.0.1 from CAP-PRC-001 (CAP-PRC-001 v1). Edit the source spec, not this file. -->
+<!-- Exported by alterspec 0.1.0 from CAP-PRC-001 (CAP-PRC-001 v1). Edit the source spec, not this file. -->
 
 ## Why
 
