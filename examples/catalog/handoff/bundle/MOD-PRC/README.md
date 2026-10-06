@@ -1,6 +1,6 @@
 # MOD-PRC — Pricing
 
-<!-- Exported by alterspec 0.2.0 from MOD-PRC (CAP-PRC-001 v1, CAP-PRC-002 v2, CAP-PRC-003 v1). Edit the source spec, not this file. -->
+<!-- Exported by alterspec 0.2.1 from MOD-PRC (CAP-PRC-001 v1, CAP-PRC-002 v2, CAP-PRC-003 v1). Edit the source spec, not this file. -->
 
 Self-contained product specification exported from alterspec on 2026-10-07. It describes what the product does and why, in business terms; technical design decisions are made from here on.
 

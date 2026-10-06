@@ -3,7 +3,7 @@
 **The spec changes with the product.**
 
 [![npm](https://img.shields.io/npm/v/@alterset/alterspec)](https://www.npmjs.com/package/@alterset/alterspec)
-[![license](https://img.shields.io/npm/l/@alterset/alterspec)](LICENSE)
+[![license](https://img.shields.io/npm/l/@alterset/alterspec)](https://github.com/altersetigor/alterspec/blob/main/LICENSE)
 ![node](https://img.shields.io/node/v/@alterset/alterspec)
 
 alterspec is a product specification framework for AI-assisted software delivery. It keeps your product spec as
@@ -438,7 +438,7 @@ npx alterspec doctor
 
 ## Example project
 
-[`examples/catalog`](examples/catalog/README.md) is a complete product catalog spec:
+[`examples/catalog`](https://github.com/altersetigor/alterspec/blob/main/examples/catalog/README.md) is a complete product catalog spec:
 - 4 modules, 16 capabilities and 5 cross-module flows
 - a baseline, one applied change and one change in review
 - handoff output for every target

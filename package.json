@@ -1,9 +1,28 @@
 {
   "name": "@alterset/alterspec",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "alterspec - the spec changes with the product. Product spec framework for AI-assisted delivery.",
   "license": "MIT",
   "author": "Alterset d.o.o.",
+  "homepage": "https://github.com/altersetigor/alterspec#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/altersetigor/alterspec.git"
+  },
+  "bugs": {
+    "url": "https://github.com/altersetigor/alterspec/issues"
+  },
+  "keywords": [
+    "specification",
+    "product-spec",
+    "spec-driven-development",
+    "claude-code",
+    "ai",
+    "requirements",
+    "spec-kit",
+    "openspec",
+    "bmad"
+  ],
   "type": "module",
   "bin": {
     "alterspec": "dist/cli.js"
