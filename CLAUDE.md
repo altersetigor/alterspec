@@ -37,6 +37,10 @@ via the built-in `z.toJSONSchema`). Dev: `tsup`, `vitest`, `eslint` + `typescrip
 - `src/schemas/ids.ts` is the single source for ID formats; `src/schemas/index.ts` registers every spec type.
 - Shipped content lives in `assets/` (templates, prompts, `.claude/` wrappers, default config).
   `src/install/manifest.ts` maps it to install paths and ownership policies.
+- Lint rules live in `src/lint/rules/` and are registered in `src/lint/rules/index.ts`. Every rule needs a
+  passing and a failing case in `test/lint/rules.test.ts`; the test fails when a rule has no case.
+- `test/fixtures/valid/` must stay at zero findings. After editing it, run
+  `node dist/cli.js views test/fixtures/valid` so its generated blocks stay current.
 - Skills reference the CLI as `npx @alterset/alterspec`, never `npx alterspec`: the unscoped name isn't ours yet,
   and npx would download whatever package holds it.
 

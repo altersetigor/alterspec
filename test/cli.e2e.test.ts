@@ -1,8 +1,9 @@
 import { execFileSync, spawnSync } from 'node:child_process';
-import { existsSync } from 'node:fs';
+import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { beforeAll, describe, expect, it } from 'vitest';
+import { copyFixture } from './fixture.js';
 import { tmpProject } from './helpers.js';
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url));
@@ -36,7 +37,7 @@ describe('built CLI', () => {
   });
 
   it('planned commands exit with code 2', () => {
-    const r = run(['validate']);
+    const r = run(['impact', 'CHG-001']);
     expect(r.status).toBe(2);
     expect(r.stderr).toMatch(/not available yet/);
   });
@@ -45,5 +46,47 @@ describe('built CLI', () => {
     const r = run(['update', tmpProject()]);
     expect(r.status).toBe(1);
     expect(r.stderr).toMatch(/alterspec init/);
+  });
+
+  it('validate --json on the valid fixture: exit 0, no findings', () => {
+    const r = run(['validate', copyFixture(), '--json']);
+    expect(r.status, r.stderr).toBe(0);
+    const out = JSON.parse(r.stdout) as {
+      summary: { errors: number; warnings: number };
+      findings: unknown[];
+    };
+    expect(out.summary).toEqual({ errors: 0, warnings: 0 });
+    expect(out.findings).toEqual([]);
+  });
+
+  it('validate on a broken spec: exit 1 with file:line', () => {
+    const dir = copyFixture();
+    const file = join(dir, 'spec/modules/hr/capabilities/CAP-HR-002.md');
+    writeFileSync(file, readFileSync(file, 'utf8').replace('rules: []', 'rules: [RULE-999]'));
+    const r = run(['validate', dir]);
+    expect(r.status).toBe(1);
+    expect(r.stdout).toMatch(
+      /spec\/modules\/hr\/capabilities\/CAP-HR-002\.md\n\s+15\s+error\s+unknown-reference/,
+    );
+  });
+
+  it('views --check: 0 when up to date, 1 when stale; views fixes it', () => {
+    const dir = copyFixture();
+    expect(run(['views', dir, '--check']).status).toBe(0);
+    const file = join(dir, 'spec/modules/hr/capabilities/CAP-HR-001.md');
+    writeFileSync(
+      file,
+      readFileSync(file, 'utf8').replace('title: Register employee', 'title: Register new employee'),
+    );
+    const stale = run(['views', dir, '--check']);
+    expect(stale.status).toBe(1);
+    expect(stale.stdout).toMatch(/spec\/modules\/hr\/module\.md/);
+    expect(run(['views', dir]).status).toBe(0);
+    expect(run(['views', dir, '--check']).status).toBe(0);
+  });
+
+  it('validate --list-rules', () => {
+    const r = run(['validate', '--list-rules']);
+    expect(r.stdout).toMatch(/unknown-reference\s+error/);
   });
 });

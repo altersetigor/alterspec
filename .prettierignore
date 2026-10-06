@@ -4,3 +4,4 @@ assets/
 docs/
 *.md
 .claude/
+test/fixtures/

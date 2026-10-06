@@ -1,7 +1,7 @@
-# /alter-views
+# /alter-views — regenerate generated views
 
-This command is not available yet in this version of alterspec.
-It is planned together with the deterministic linter and generated views (development phase 2).
-
-Tell the user this in one sentence, and suggest running `npx @alterset/alterspec update` after upgrading
-alterspec. Do not try to perform the command by other means.
+1. Run `npx @alterset/alterspec views` from the project root.
+2. Tell the user, in a few lines, which files changed. Mention any file reported as skipped (its front-matter is
+   invalid) or any missing GENERATED block, and suggest `/alter-validate` to see why.
+3. Don't edit GENERATED blocks or files in `spec/_generated/` yourself. They come from the capability, screen
+   and entity front-matter.

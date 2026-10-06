@@ -1,0 +1,634 @@
+{
+  "application": {
+    "id": "APP",
+    "title": "Fixture People",
+    "status": "draft",
+    "version": 1,
+    "channels": [
+      {
+        "name": "Backoffice",
+        "kind": "backoffice",
+        "audience": "HR and finance staff"
+      },
+      {
+        "name": "Employee portal",
+        "kind": "web",
+        "audience": "Employees"
+      }
+    ],
+    "modules": [
+      "MOD-GLB",
+      "MOD-HR",
+      "MOD-PAY"
+    ],
+    "file": "application/application.md"
+  },
+  "modules": [
+    {
+      "id": "MOD-GLB",
+      "title": "Shared",
+      "status": "draft",
+      "depends_on": [],
+      "file": "modules/glb/module.md"
+    },
+    {
+      "id": "MOD-HR",
+      "title": "Employee records",
+      "status": "draft",
+      "depends_on": [],
+      "file": "modules/hr/module.md"
+    },
+    {
+      "id": "MOD-PAY",
+      "title": "Payslips",
+      "status": "draft",
+      "depends_on": [
+        "MOD-HR"
+      ],
+      "file": "modules/pay/module.md"
+    }
+  ],
+  "capabilities": [
+    {
+      "id": "CAP-GLB-001",
+      "title": "View my payslips",
+      "module": "MOD-GLB",
+      "status": "draft",
+      "version": 1,
+      "roles": [
+        {
+          "role": "ROLE-EMPLOYEE",
+          "scope": "own"
+        }
+      ],
+      "screens": [
+        "SCR-GLB-01"
+      ],
+      "entities": [
+        {
+          "entity": "ENT-PAYSLIP",
+          "ops": [
+            "R"
+          ],
+          "transitions": []
+        }
+      ],
+      "rules": [],
+      "events": {
+        "emits": [],
+        "consumes": []
+      },
+      "depends_on": [],
+      "flows": [
+        "FLOW-001"
+      ],
+      "acceptance_criteria": [
+        "CAP-GLB-001-AC-01"
+      ],
+      "file": "modules/glb/capabilities/CAP-GLB-001.md"
+    },
+    {
+      "id": "CAP-HR-001",
+      "title": "Register employee",
+      "module": "MOD-HR",
+      "status": "ready",
+      "version": 1,
+      "roles": [
+        {
+          "role": "ROLE-HR-MANAGER",
+          "scope": "org"
+        }
+      ],
+      "screens": [
+        "SCR-HR-01"
+      ],
+      "entities": [
+        {
+          "entity": "ENT-EMPLOYEE",
+          "ops": [
+            "C",
+            "R",
+            "U"
+          ],
+          "transitions": []
+        }
+      ],
+      "rules": [
+        "RULE-HR-001"
+      ],
+      "events": {
+        "emits": [],
+        "consumes": []
+      },
+      "depends_on": [],
+      "flows": [
+        "FLOW-001"
+      ],
+      "acceptance_criteria": [
+        "CAP-HR-001-AC-01"
+      ],
+      "file": "modules/hr/capabilities/CAP-HR-001.md"
+    },
+    {
+      "id": "CAP-HR-002",
+      "title": "Activate employee",
+      "module": "MOD-HR",
+      "status": "draft",
+      "version": 1,
+      "roles": [
+        {
+          "role": "ROLE-HR-MANAGER",
+          "scope": "org"
+        }
+      ],
+      "screens": [
+        "SCR-HR-01"
+      ],
+      "entities": [
+        {
+          "entity": "ENT-EMPLOYEE",
+          "ops": [
+            "R",
+            "U"
+          ],
+          "transitions": [
+            "draft->active"
+          ]
+        }
+      ],
+      "rules": [],
+      "events": {
+        "emits": [
+          "EVT-EMPLOYEE-HIRED"
+        ],
+        "consumes": []
+      },
+      "depends_on": [
+        "CAP-HR-001"
+      ],
+      "flows": [
+        "FLOW-001"
+      ],
+      "acceptance_criteria": [
+        "CAP-HR-002-AC-01"
+      ],
+      "file": "modules/hr/capabilities/CAP-HR-002.md"
+    },
+    {
+      "id": "CAP-HR-003",
+      "title": "Record employee leaving",
+      "module": "MOD-HR",
+      "status": "draft",
+      "version": 1,
+      "roles": [
+        {
+          "role": "ROLE-HR-MANAGER",
+          "scope": "org"
+        }
+      ],
+      "screens": [
+        "SCR-HR-01"
+      ],
+      "entities": [
+        {
+          "entity": "ENT-EMPLOYEE",
+          "ops": [
+            "R",
+            "U",
+            "A"
+          ],
+          "transitions": [
+            "active->left"
+          ]
+        }
+      ],
+      "rules": [],
+      "events": {
+        "emits": [],
+        "consumes": []
+      },
+      "depends_on": [],
+      "flows": [
+        "FLOW-002"
+      ],
+      "acceptance_criteria": [
+        "CAP-HR-003-AC-01"
+      ],
+      "file": "modules/hr/capabilities/CAP-HR-003.md"
+    },
+    {
+      "id": "CAP-PAY-001",
+      "title": "Prepare payslip",
+      "module": "MOD-PAY",
+      "status": "draft",
+      "version": 1,
+      "roles": [
+        {
+          "role": "ROLE-ACCOUNTANT",
+          "scope": "org"
+        }
+      ],
+      "screens": [
+        "SCR-PAY-01"
+      ],
+      "entities": [
+        {
+          "entity": "ENT-PAYSLIP",
+          "ops": [
+            "C",
+            "R",
+            "U"
+          ],
+          "transitions": []
+        },
+        {
+          "entity": "ENT-EMPLOYEE",
+          "ops": [
+            "R"
+          ],
+          "transitions": []
+        }
+      ],
+      "rules": [
+        "RULE-001"
+      ],
+      "events": {
+        "emits": [],
+        "consumes": [
+          "EVT-EMPLOYEE-HIRED"
+        ]
+      },
+      "depends_on": [],
+      "flows": [
+        "FLOW-001"
+      ],
+      "acceptance_criteria": [
+        "CAP-PAY-001-AC-01"
+      ],
+      "file": "modules/pay/capabilities/CAP-PAY-001.md"
+    },
+    {
+      "id": "CAP-PAY-002",
+      "title": "Issue payslip",
+      "module": "MOD-PAY",
+      "status": "draft",
+      "version": 1,
+      "roles": [
+        {
+          "role": "ROLE-ACCOUNTANT",
+          "scope": "org"
+        }
+      ],
+      "screens": [
+        "SCR-PAY-01"
+      ],
+      "entities": [
+        {
+          "entity": "ENT-PAYSLIP",
+          "ops": [
+            "R",
+            "U",
+            "A"
+          ],
+          "transitions": [
+            "draft->issued"
+          ]
+        }
+      ],
+      "rules": [
+        "RULE-001"
+      ],
+      "events": {
+        "emits": [],
+        "consumes": [
+          "EVT-BANK-PAYMENT-CONFIRMED"
+        ]
+      },
+      "depends_on": [
+        "CAP-PAY-001"
+      ],
+      "flows": [
+        "FLOW-001"
+      ],
+      "acceptance_criteria": [
+        "CAP-PAY-002-AC-01"
+      ],
+      "file": "modules/pay/capabilities/CAP-PAY-002.md"
+    }
+  ],
+  "screens": [
+    {
+      "id": "SCR-GLB-01",
+      "title": "My payslips",
+      "module": "MOD-GLB",
+      "status": "draft",
+      "roles": [
+        {
+          "role": "ROLE-EMPLOYEE"
+        }
+      ],
+      "entry_points": [],
+      "actions": [],
+      "mockups": [],
+      "file": "modules/glb/screens/SCR-GLB-01.md"
+    },
+    {
+      "id": "SCR-HR-01",
+      "title": "Employee record",
+      "module": "MOD-HR",
+      "status": "draft",
+      "roles": [
+        {
+          "role": "ROLE-HR-MANAGER"
+        }
+      ],
+      "entry_points": [],
+      "actions": [
+        {
+          "id": "A01",
+          "label": "Register",
+          "capability": "CAP-HR-001"
+        },
+        {
+          "id": "A02",
+          "label": "Activate",
+          "capability": "CAP-HR-002"
+        },
+        {
+          "id": "A03",
+          "label": "Record leaving",
+          "capability": "CAP-HR-003"
+        }
+      ],
+      "mockups": [],
+      "file": "modules/hr/screens/SCR-HR-01.md"
+    },
+    {
+      "id": "SCR-PAY-01",
+      "title": "Payslip run",
+      "module": "MOD-PAY",
+      "status": "draft",
+      "roles": [
+        {
+          "role": "ROLE-ACCOUNTANT"
+        }
+      ],
+      "entry_points": [],
+      "actions": [
+        {
+          "id": "A01",
+          "label": "Prepare",
+          "capability": "CAP-PAY-001"
+        },
+        {
+          "id": "A02",
+          "label": "Issue",
+          "capability": "CAP-PAY-002"
+        }
+      ],
+      "mockups": [],
+      "file": "modules/pay/screens/SCR-PAY-01.md"
+    }
+  ],
+  "entities": [
+    {
+      "id": "ENT-EMPLOYEE",
+      "title": "Employee",
+      "status": "draft",
+      "attributes": [
+        {
+          "name": "Full name",
+          "kind": "text",
+          "required": true
+        },
+        {
+          "name": "Start date",
+          "kind": "date",
+          "required": true
+        }
+      ],
+      "relationships": [],
+      "states": [
+        "draft",
+        "active",
+        "left"
+      ],
+      "initial_state": "draft",
+      "transitions": [
+        {
+          "from": "draft",
+          "to": "active"
+        },
+        {
+          "from": "active",
+          "to": "left"
+        }
+      ],
+      "file": "application/entities/ENT-EMPLOYEE.md"
+    },
+    {
+      "id": "ENT-PAYSLIP",
+      "title": "Payslip",
+      "status": "draft",
+      "attributes": [
+        {
+          "name": "Period",
+          "kind": "period",
+          "required": true
+        },
+        {
+          "name": "Net amount",
+          "kind": "amount",
+          "required": true
+        }
+      ],
+      "relationships": [
+        {
+          "entity": "ENT-EMPLOYEE",
+          "cardinality": "one"
+        }
+      ],
+      "states": [
+        "draft",
+        "issued"
+      ],
+      "initial_state": "draft",
+      "transitions": [
+        {
+          "from": "draft",
+          "to": "issued"
+        }
+      ],
+      "file": "application/entities/ENT-PAYSLIP.md"
+    }
+  ],
+  "flows": [
+    {
+      "id": "FLOW-001",
+      "title": "Hire to first payslip",
+      "status": "draft",
+      "roles": [
+        "ROLE-HR-MANAGER",
+        "ROLE-ACCOUNTANT",
+        "ROLE-EMPLOYEE"
+      ],
+      "steps": [
+        {
+          "step": 1,
+          "capability": "CAP-HR-001",
+          "role": "ROLE-HR-MANAGER"
+        },
+        {
+          "step": 2,
+          "capability": "CAP-HR-002",
+          "role": "ROLE-HR-MANAGER"
+        },
+        {
+          "step": 3,
+          "capability": "CAP-PAY-001",
+          "role": "ROLE-ACCOUNTANT"
+        },
+        {
+          "step": 4,
+          "capability": "CAP-PAY-002",
+          "role": "ROLE-ACCOUNTANT"
+        },
+        {
+          "step": 5,
+          "capability": "CAP-GLB-001",
+          "role": "ROLE-EMPLOYEE"
+        }
+      ],
+      "file": "application/flows/FLOW-001.md"
+    },
+    {
+      "id": "FLOW-002",
+      "title": "Employee leaves",
+      "status": "draft",
+      "roles": [
+        "ROLE-HR-MANAGER"
+      ],
+      "steps": [
+        {
+          "step": 1,
+          "capability": "CAP-HR-003",
+          "role": "ROLE-HR-MANAGER"
+        }
+      ],
+      "file": "application/flows/FLOW-002.md"
+    }
+  ],
+  "rules": [
+    {
+      "id": "RULE-001",
+      "title": "Only active employees are paid",
+      "status": "draft",
+      "entities": [
+        "ENT-EMPLOYEE",
+        "ENT-PAYSLIP"
+      ],
+      "file": "application/rules.md"
+    },
+    {
+      "id": "RULE-HR-001",
+      "title": "Start date is not in the past",
+      "status": "draft",
+      "entities": [
+        "ENT-EMPLOYEE"
+      ],
+      "file": "modules/hr/rules.md"
+    }
+  ],
+  "events": [
+    {
+      "id": "EVT-BANK-PAYMENT-CONFIRMED",
+      "title": "Bank payment confirmed",
+      "external": true,
+      "entities": [
+        "ENT-PAYSLIP"
+      ],
+      "file": "application/events.md"
+    },
+    {
+      "id": "EVT-EMPLOYEE-HIRED",
+      "title": "Employee hired",
+      "external": false,
+      "entities": [
+        "ENT-EMPLOYEE"
+      ],
+      "file": "application/events.md"
+    }
+  ],
+  "personas": [
+    {
+      "id": "PER-ACCOUNTANT",
+      "title": "Accountant",
+      "roles": [
+        "ROLE-ACCOUNTANT"
+      ],
+      "file": "application/personas-roles.md"
+    },
+    {
+      "id": "PER-EMPLOYEE",
+      "title": "Employee",
+      "roles": [
+        "ROLE-EMPLOYEE"
+      ],
+      "file": "application/personas-roles.md"
+    },
+    {
+      "id": "PER-HR-LEAD",
+      "title": "HR lead",
+      "roles": [
+        "ROLE-HR-MANAGER"
+      ],
+      "file": "application/personas-roles.md"
+    }
+  ],
+  "roles": [
+    {
+      "id": "ROLE-ACCOUNTANT",
+      "title": "Accountant",
+      "file": "application/personas-roles.md"
+    },
+    {
+      "id": "ROLE-EMPLOYEE",
+      "title": "Employee",
+      "file": "application/personas-roles.md"
+    },
+    {
+      "id": "ROLE-HR-MANAGER",
+      "title": "HR manager",
+      "file": "application/personas-roles.md"
+    }
+  ],
+  "decisions": [
+    {
+      "id": "DEC-001",
+      "title": "Payslip language",
+      "kind": "open_question",
+      "status": "open",
+      "affects": [
+        "ENT-PAYSLIP"
+      ],
+      "file": "application/decisions.md"
+    }
+  ],
+  "glossary": [
+    {
+      "term": "Employee",
+      "forbidden": [
+        "worker"
+      ],
+      "file": "application/glossary.md"
+    },
+    {
+      "term": "Payslip",
+      "forbidden": [
+        "salary slip"
+      ],
+      "file": "application/glossary.md"
+    }
+  ],
+  "changes": []
+}

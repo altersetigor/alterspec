@@ -19,4 +19,6 @@
 - **Referenced IDs must exist.** If you reference a role, entity, rule, screen or event that doesn't exist yet,
   tell the user and offer to create it.
 - New objects start with `status: draft`.
+- **After changing front-matter**, run `npx @alterset/alterspec views` to refresh the generated blocks, then
+  `npx @alterset/alterspec validate` and fix any errors you introduced.
 - Finish with a short summary: files created or changed, and open questions left.
