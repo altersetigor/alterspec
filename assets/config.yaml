@@ -1,0 +1,33 @@
+# alterspec project configuration. This file is yours: `alterspec update` never overwrites it.
+version: "{{version}}"
+language: en
+
+lint:
+  # Per-rule severity overrides: error | warn | off. Rule names arrive with the linter.
+  rules: {}
+  # Words the tech-leak check flags in spec content. Add or remove to suit your product.
+  tech_terms:
+    - database
+    - varchar
+    - uuid
+    - endpoint
+    - REST
+    - GraphQL
+    - JSON
+    - XML
+    - API call
+    - microservice
+    - Kafka
+    - SQL
+    - NoSQL
+    - React
+    - Angular
+    - Spring
+    - Node.js
+    - Java
+    - Python
+    - TypeScript
+    - Docker
+    - Kubernetes
+    - AWS
+    - Azure

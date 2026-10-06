@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "permissions": {
+    "allow": [
+      "Bash(npm install:*)",
+      "Bash(npm ci)",
+      "Bash(npm run:*)",
+      "Bash(npm test:*)",
+      "Bash(npx vitest:*)",
+      "Bash(npx tsc:*)",
+      "Bash(npx tsup:*)",
+      "Bash(node:*)",
+      "Bash(git status)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)"
+    ],
+    "ask": [
+      "Bash(npm publish:*)",
+      "Bash(npm login:*)",
+      "Bash(npm adduser:*)",
+      "Bash(npm config set:*)",
+      "Bash(git push:*)"
+    ],
+    "deny": [
+      "Read(~/.npmrc)",
+      "Edit(~/.npmrc)",
+      "Write(~/.npmrc)"
+    ]
+  }
+}

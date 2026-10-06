@@ -1,0 +1,13 @@
+node_modules/
+dist/
+coverage/
+*.tgz
+.DS_Store
+
+# Claude Code personal settings
+.claude/settings.local.json
+CLAUDE.local.md
+
+# npm auth tokens must never be committed (project .npmrc holds only the registry)
+.npmrc.local
+*.npmrc.auth
