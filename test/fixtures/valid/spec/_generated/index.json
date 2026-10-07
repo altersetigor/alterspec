@@ -328,6 +328,17 @@
         }
       ],
       "entry_points": [],
+      "fields": [
+        {
+          "entity": "ENT-PAYSLIP",
+          "attributes": [
+            "Period",
+            "Net amount"
+          ],
+          "mode": "list",
+          "roles": []
+        }
+      ],
       "actions": [],
       "mockups": [],
       "file": "modules/glb/screens/SCR-GLB-01.md"
@@ -343,21 +354,36 @@
         }
       ],
       "entry_points": [],
+      "fields": [
+        {
+          "entity": "ENT-EMPLOYEE",
+          "attributes": [
+            "Full name",
+            "Start date",
+            "Contract type"
+          ],
+          "mode": "edit",
+          "roles": []
+        }
+      ],
       "actions": [
         {
           "id": "A01",
           "label": "Register",
-          "capability": "CAP-HR-001"
+          "capability": "CAP-HR-001",
+          "roles": []
         },
         {
           "id": "A02",
           "label": "Activate",
-          "capability": "CAP-HR-002"
+          "capability": "CAP-HR-002",
+          "roles": []
         },
         {
           "id": "A03",
           "label": "Record leaving",
-          "capability": "CAP-HR-003"
+          "capability": "CAP-HR-003",
+          "roles": []
         }
       ],
       "mockups": [],
@@ -374,16 +400,30 @@
         }
       ],
       "entry_points": [],
+      "fields": [
+        {
+          "entity": "ENT-PAYSLIP",
+          "attributes": [
+            "Employee",
+            "Period",
+            "Net amount"
+          ],
+          "mode": "list",
+          "roles": []
+        }
+      ],
       "actions": [
         {
           "id": "A01",
           "label": "Prepare",
-          "capability": "CAP-PAY-001"
+          "capability": "CAP-PAY-001",
+          "roles": []
         },
         {
           "id": "A02",
           "label": "Issue",
-          "capability": "CAP-PAY-002"
+          "capability": "CAP-PAY-002",
+          "roles": []
         }
       ],
       "mockups": [],
@@ -405,6 +445,15 @@
           "name": "Start date",
           "kind": "date",
           "required": true
+        },
+        {
+          "name": "Contract type",
+          "kind": "choice",
+          "required": false,
+          "options": [
+            "Permanent",
+            "Fixed term"
+          ]
         }
       ],
       "relationships": [],
@@ -431,6 +480,12 @@
       "title": "Payslip",
       "status": "draft",
       "attributes": [
+        {
+          "name": "Employee",
+          "kind": "reference",
+          "required": true,
+          "references": "ENT-EMPLOYEE"
+        },
         {
           "name": "Period",
           "kind": "period",

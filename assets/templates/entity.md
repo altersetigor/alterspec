@@ -7,6 +7,12 @@ attributes: []
 #   kind: text              # text | number | amount | date | period | yes_no | choice | reference | document | other
 #   required: true
 #   description: As shown on official documents
+# - name: Department
+#   kind: reference
+#   references: ENT-DEPARTMENT   # reference attributes: the entity referred to
+# - name: Contract type
+#   kind: choice
+#   options: [Permanent, Fixed term]   # choice attributes: the values a person can pick
 relationships: []
 # - entity: ENT-DEPARTMENT
 #   cardinality: one        # one | many

@@ -3,7 +3,7 @@
 A small but complete alterspec project: a product catalog with brands, articles, units of measure, categories,
 suppliers and prices. It is the reference example for alterspec and the fixture its tests run against.
 
-Only `spec/` and `handoff/` are committed here. To use the slash commands on it, copy the folder and run
+Only `spec/`, `handoff/`, `design/` and `prototype/` are committed here. To use the slash commands on it, copy the folder and run
 `npx @alterset/alterspec init` in the copy; that adds `.alterspec/` and `.claude/` without touching `spec/`.
 
 ## What's in the spec
@@ -40,6 +40,17 @@ The first version was baselined (`alterspec baseline`), so every later edit goes
 - **[CHG-002 Article replacement on discontinuation](spec/changes/CHG-002/proposal.md)** — in review. It adds a
   replacement article to `ENT-ARTICLE` and changes `CAP-CAT-006`. See its [impact report](spec/changes/CHG-002/impact.md).
 
+## Prototype
+
+Every screen lists the data it shows in `fields`, so the spec renders as a clickable prototype with made-up data:
+
+- [generic prototype](spec/_generated/prototype/index.html), written by `alterspec views`
+- [Bootstrap variant](prototype/bootstrap/index.html), built by `alterspec prototype build` from
+  [design/design.yaml](design/design.yaml) (a purple brand colour)
+
+Pick a role in the header to see what that role sees; the state buttons on each screen show its empty,
+no-permission and validation-error states.
+
 ## Handoff
 
 [CAP-PRC-001 Propose sales price](spec/modules/prc/capabilities/CAP-PRC-001.md) is handed off to every target:
@@ -60,10 +71,12 @@ npx @alterset/alterspec validate examples/catalog
 npx @alterset/alterspec show CAP-PRC-002 -C examples/catalog
 npx @alterset/alterspec impact CHG-002 -C examples/catalog
 npx @alterset/alterspec handoff MOD-CAT --target openspec --allow-draft -C examples/catalog
+npx @alterset/alterspec prototype check -C examples/catalog
 ```
 
 ## How it was built
 
 Every object was created with `alterspec new`, so its ID came from the tool. The content was then written in
 business language, the first version was baselined, and both changes went through `change new`, `change edit`,
-`impact`, `change status` and `apply`. The handoff folders are the unedited output of `alterspec handoff`.
+`impact`, `change status` and `apply`. The handoff folders are the unedited output of `alterspec handoff`, and `prototype/bootstrap/` of
+`alterspec prototype build`.

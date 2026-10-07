@@ -6,7 +6,7 @@ created: 2026-10-06
 removes: []
 # `base` and `approved_hash` are written by the alterspec CLI. Don't edit them.
 base:
-  ENT-ARTICLE: 54c3745940d09110
+  ENT-ARTICLE: 1afe3d222337bbb8
   CAP-CAT-006: 7a10adbdb7c29a66
 ---
 

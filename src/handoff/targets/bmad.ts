@@ -49,7 +49,7 @@ export function renderBmad(b: Bundle, ctx: TargetContext): TargetOutput {
     ...(b.screens.length
       ? b.screens.map(
           (s) =>
-            `- ${s.id} ${s.title}: ${sentence(s.purpose)}${s.actions.length ? ` Actions: ${s.actions.map((a) => a.label).join(', ')}.` : ''}`,
+            `- ${s.id} ${s.title}: ${sentence(s.purpose)}${s.fields.map((f) => ` Shows ${f.entityTitle} (${f.mode}): ${f.attributes.join(', ')}.`).join('')}${s.actions.length ? ` Actions: ${s.actions.map((a) => a.label).join(', ')}.` : ''}`,
         )
       : ['None.']),
     '',

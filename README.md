@@ -35,6 +35,7 @@ check it, change it and hand it over to development.
 - [Validation](#validation)
 - [Change management](#change-management)
 - [Handoff](#handoff)
+- [Prototypes](#prototypes)
 - [Configuration and customisation](#configuration-and-customisation)
 - [Using alterspec in CI](#using-alterspec-in-ci)
 - [Updating](#updating)
@@ -111,6 +112,8 @@ agents or settings.
 2. **Refine.** `/alterspec-refine <ID>` finds the gaps in one object and asks about them until the object is complete.
    Only then does it move the object to `refined`. Moving to `ready` or `approved` always needs your explicit word.
 3. **Validate.** `/alterspec-validate` runs the deterministic linter and a semantic review, and gives you one report.
+   **Look at it.** `spec/_generated/prototype/index.html` is a clickable prototype generated from the spec, and
+   `/alterspec-prototype` renders it in Bootstrap, Tabler, Tailwind or your own design system.
 4. **Baseline.** When the first version is agreed, run `npx alterspec baseline`. From that moment on, every edit goes
    through a change proposal. Direct edits are reported as errors.
 5. **Change.** `/alterspec-change-capability CAP-CAT-001` (or `-module`, `-screen`, `-entity`) changes one object;
@@ -142,6 +145,7 @@ agents or settings.
 | `/alterspec-impact <CHG>` | Impact analysis of a change, for a business reader |
 | `/alterspec-apply <CHG>` | Approve, after your explicit word, and merge a change |
 | `/alterspec-handoff <ID> [target]` | Export to Spec Kit, OpenSpec, BMAD or a bundle |
+| `/alterspec-prototype [variant]` | Set up `design/`, then build and check a design-system variant of the prototype |
 
 Two agents work behind these commands:
 
@@ -194,7 +198,7 @@ alterspec show CAP-CAT-001        # references both ways, empty sections, open q
 
 | Command | Description |
 | --- | --- |
-| `alterspec validate [--json] [--report] [--change <CHG>]` | Run the 27 lint rules. Exits with 1 on errors. |
+| `alterspec validate [--json] [--report] [--change <CHG>]` | Run the 32 lint rules. Exits with 1 on errors. |
 | `alterspec validate --list-rules` | List every rule with its default severity. |
 | `alterspec views [--check]` | Regenerate the generated blocks and `spec/_generated/`. `--check` only reports. |
 
@@ -216,6 +220,14 @@ alterspec show CAP-CAT-001        # references both ways, empty sections, open q
 | Command | Description |
 | --- | --- |
 | `alterspec handoff <CAP\|MOD> --target <t>` | Export to `handoff/<target>/<ID>/`. Targets: `bundle`, `speckit`, `openspec`, `bmad`, `all`. |
+
+### Prototypes
+
+| Command | Description |
+| --- | --- |
+| `alterspec prototype init [--base <b>]` | Write a starter `design/` folder. Never overwrites. |
+| `alterspec prototype build [--variant <v>]` | Render `prototype/<variant>/` (`bootstrap`, `tabler`, `tailwind`) from the spec and `design/`. |
+| `alterspec prototype check [--variant <v>] [--stamp]` | Check variants against the spec. Exits with 1 on findings. |
 
 ## The spec format
 
@@ -299,10 +311,37 @@ flows: [FLOW-001]
 A capability is **one user goal, done by one acting role, in one session**. If work pauses for someone else, such as
 an approval, that becomes a separate capability, connected by a flow step or an event.
 
+### A screen
+
+A screen says what people see and do, never how it looks. `fields` lists the data it shows, per entity:
+
+```yaml
+id: SCR-PRC-01
+title: "Sales price review"
+module: MOD-PRC
+roles:
+  - role: ROLE-PRICING-MANAGER
+fields:
+  - entity: ENT-PURCHASE-PRICE
+    attributes: [Supplier, Amount, Valid from]   # exactly as the entity names them
+    mode: list                                   # list | view | edit
+  - entity: ENT-SALES-PRICE
+    attributes: [Article, Amount, Valid from]
+    mode: edit
+actions:
+  - id: A01
+    label: Propose
+    capability: CAP-PRC-001
+```
+
+The linter checks that the attributes exist, that edited data is created or updated by one of the screen's actions,
+and that someone on the screen can perform each action.
+
 ### Generated content
 
-Module capability lists, role × capability matrices, screen back-references and entity coverage are written by
-`alterspec views` into marked blocks:
+Module capability lists, role × capability matrices, screen back-references, entity coverage and the generic
+prototype (`spec/_generated/prototype/`) are written by `alterspec views`. Inside documents they go into marked
+blocks:
 
 ```markdown
 <!-- GENERATED:start role-matrix hash=… -->
@@ -315,7 +354,7 @@ instead.
 
 ## Validation
 
-`alterspec validate` runs 27 deterministic rules. Here is a selection:
+`alterspec validate` runs 32 deterministic rules. Here is a selection:
 
 | Area | Examples |
 | --- | --- |
@@ -324,6 +363,7 @@ instead.
 | Coverage | every entity transition is performed by some capability; every entity is created, read, updated and archived |
 | Events | every consumed event has an emitter or is marked external |
 | Consistency | flows and capabilities agree; screen actions and capabilities agree |
+| Screens | shown attributes exist; edited data is captured by an action; every action has a role on the screen |
 | Quality | acceptance criteria are numbered and present from `ready`; refined objects have no empty sections |
 | Language | glossary synonyms and technology words in prose |
 | Living spec | generated views up to date and not edited; no direct edits after the baseline |
@@ -366,7 +406,7 @@ npx alterspec handoff CAP-PRC-001 --target openspec
 
 | Target | Output | Next step |
 | --- | --- | --- |
-| `bundle` | `README.md` and `bundle.json`: the capability with every role, entity, rule, event, screen, flow and term it needs | input for your technical design |
+| `bundle` | `README.md` and `bundle.json`: the capability with every role, entity, rule, event, screen, flow and term it needs, plus a clickable prototype of its screens | input for your technical design |
 | `speckit` | GitHub Spec Kit `spec.md`: user stories with priorities, `FR-###`, `SC-###`, key entities, `[NEEDS CLARIFICATION]` | copy to `specs/<NNN>-<name>/spec.md` |
 | `openspec` | OpenSpec change folder: proposal, tasks, SHALL/MUST requirements with scenarios | copy to `openspec/changes/`, run `openspec validate` |
 | `bmad` | BMAD `epics.md`: an epic per module, a story per capability, Given/When/Then | give to BMAD as the epics document |
@@ -375,6 +415,42 @@ npx alterspec handoff CAP-PRC-001 --target openspec
 - **What it refuses:** capabilities below `ready` (unless you pass `--allow-draft`), and anything with lint errors.
 - **Traceability:** every output carries `manifest.json` with the source IDs, versions and fingerprints, so you can see
   later which handoffs are out of date.
+
+## Prototypes
+
+The spec stays the source of truth; prototypes are generated from it and never edited by hand.
+
+```text
+spec/_generated/prototype/   generic prototype: written by `alterspec views`, part of the generated views
+design/                      yours: design.yaml (base, brand, layout, theme) and tokens.css (your own CSS)
+prototype/<variant>/         design-system variants: written by `alterspec prototype build`
+```
+
+- **Generic prototype.** One page per screen, with navigation from modules and entry points, the data from `fields`
+  filled with made-up records, the actions (each says which capability it performs), a role picker that hides what a
+  role can't see, and buttons for the empty, no-permission and validation-error states. Anything the spec doesn't say
+  yet shows as a highlighted "Not specified" note.
+- **Variants.** The same pages in Bootstrap, Tabler or Tailwind (shadcn/ui-style tokens), with your colours, font,
+  radius, logo and layout from `design/design.yaml`. A `custom` variant in your own design system is written with
+  Claude through `/alterspec-prototype`, from HTML examples of your components in `design/components/`. Variants load
+  the design system from a CDN with pinned versions.
+- **No drift.** Every business element carries its spec ID (`data-src="SCR-PRC-01.A01"`). `views --check` catches a
+  stale generic prototype, and `prototype check` fails when a variant misses an element, adds one the spec doesn't
+  have, or was built from an older spec. `impact` lists the screens whose pages a change affects.
+
+```yaml
+# design/design.yaml
+base: bootstrap          # bootstrap | tabler | tailwind | custom
+app:
+  name: Product Catalog
+  logo: assets/logo.svg  # relative to design/
+shell: sidebar           # sidebar | topbar
+theme:
+  primary: "#7c3aed"
+  font: "Inter, system-ui, sans-serif"
+  radius: 6px
+  dark: false
+```
 
 ## Configuration and customisation
 
@@ -420,6 +496,7 @@ jobs:
       - run: npm ci
       - run: npx alterspec validate
       - run: npx alterspec views --check
+      - run: npx alterspec prototype check   # if you commit design-system variants
 ```
 
 `validate` exits with 1 on errors only. To make the build strict about a warning, set that rule to `error` in
@@ -433,6 +510,8 @@ npx alterspec update
 npx alterspec doctor
 ```
 
+After an update, run `npx alterspec views` once: new versions can add generated views, such as the prototype in 0.3.0.
+
 `update` refreshes `.alterspec/` and the `.claude/` commands. It never touches `spec/`, `config.yaml` or
 `.alterspec/custom/`, and it skips any command file you edited by hand (use `--force` to overwrite).
 
@@ -442,6 +521,7 @@ npx alterspec doctor
 - 4 modules, 16 capabilities and 5 cross-module flows
 - a baseline, one applied change and one change in review
 - handoff output for every target
+- a `design/` folder and a Bootstrap variant of the prototype in `prototype/bootstrap/`
 
 It's the quickest way to see what a finished alterspec project looks like.
 
@@ -464,7 +544,8 @@ old ID is never reused.
 
 **Is my spec sent anywhere?**
 The CLI works only on local files and makes no network calls. Claude Code works with your files the way it does for
-any code.
+any code. Design-system variants of the prototype load Bootstrap, Tabler or Tailwind from a CDN when you open them in
+a browser; the generic prototype loads nothing.
 
 ## License
 

@@ -9,6 +9,9 @@ attributes:
   - name: Start date
     kind: date
     required: true
+  - name: Contract type
+    kind: choice
+    options: [Permanent, Fixed term]
 states: [draft, active, left]
 initial_state: draft
 transitions:

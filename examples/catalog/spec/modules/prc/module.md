@@ -33,8 +33,8 @@ Sales prices of articles: proposing them, approving them and expiring them. It m
 
 ## Screens
 
-<!-- GENERATED:start screens hash=5a0060e30fc8 -->
-| Screen | Title | Actions |
-| --- | --- | --- |
-| [SCR-PRC-01](screens/SCR-PRC-01.md) | Sales price review | A01 Propose → CAP-PRC-001<br>A02 Approve → CAP-PRC-002<br>A03 Expire → CAP-PRC-003 |
+<!-- GENERATED:start screens hash=ed42dcd11aff -->
+| Screen | Title | Actions | Prototype |
+| --- | --- | --- | --- |
+| [SCR-PRC-01](screens/SCR-PRC-01.md) | Sales price review | A01 Propose → CAP-PRC-001<br>A02 Approve → CAP-PRC-002<br>A03 Expire → CAP-PRC-003 | [open](../../_generated/prototype/SCR-PRC-01.html) |
 <!-- GENERATED:end -->

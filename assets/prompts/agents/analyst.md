@@ -24,7 +24,9 @@ Input: an object ID.
    - permissions: what each role can see and act on, matching its scope
    - acceptance criteria are testable (concrete Given / When / Then), each with a "Covers" link
    - nothing in the body contradicts a referenced rule, entity lifecycle or another capability
-   For screens and entities, check the same kinds of things for their sections.
+   For screens and entities, check the same kinds of things for their sections. For screens also: `fields` cover what
+   the capabilities on the screen read and capture, and every action has a role on the screen that can perform it.
+   For entities: reference attributes say what they reference, choice attributes list their options.
 3. Return a numbered list. Each item: the section, what is missing or unclear (one sentence), and one suggested
    question for the person. Most important first. Don't edit any file in this mode.
 

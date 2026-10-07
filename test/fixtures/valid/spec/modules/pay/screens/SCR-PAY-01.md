@@ -5,7 +5,11 @@ module: MOD-PAY
 status: draft
 roles:
   - role: ROLE-ACCOUNTANT
-actions: 
+fields:
+  - entity: ENT-PAYSLIP
+    attributes: [Employee, Period, Net amount]
+    mode: list
+actions:
   - id: A01
     label: Prepare
     capability: CAP-PAY-001

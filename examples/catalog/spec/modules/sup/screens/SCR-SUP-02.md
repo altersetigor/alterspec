@@ -5,6 +5,10 @@ module: MOD-SUP
 status: refined
 roles:
   - role: ROLE-PURCHASER
+fields:
+  - entity: ENT-PURCHASE-PRICE
+    attributes: [Article, Supplier, Amount, Valid from]
+    mode: edit
 entry_points: [SCR-SUP-01]
 actions:
   - id: A01

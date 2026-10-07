@@ -17,6 +17,13 @@ import { directEdit } from './baseline.js';
 import { incompleteSection } from './completeness.js';
 import { generatedEdited, generatedMissing, viewsStale } from './generated.js';
 import { duplicateId, idLocation, moduleRegistry, placeholder, unknownReference } from './structure.js';
+import {
+  entityAttributeDetail,
+  screenFieldAttribute,
+  screenFieldOp,
+  screenFieldsMissing,
+  screenRoleAction,
+} from './screens.js';
 import { glossaryForbidden, techLeak } from './text.js';
 
 /** Findings for these rules come from the loader, not from a check. */
@@ -45,6 +52,11 @@ export const RULES: LintRule[] = [
   capabilityWithoutFlow,
   flowBacklink,
   screenBacklink,
+  screenFieldAttribute,
+  screenFieldOp,
+  screenRoleAction,
+  screenFieldsMissing,
+  entityAttributeDetail,
   foreignModuleRule,
   acceptanceIds,
   incompleteSection,

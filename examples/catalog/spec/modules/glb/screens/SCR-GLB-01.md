@@ -5,6 +5,13 @@ module: MOD-GLB
 status: refined
 roles:
   - role: ROLE-SALES-STAFF
+fields:
+  - entity: ENT-ARTICLE
+    attributes: [Article number, Name, Brand, Category, Unit of measure]
+    mode: list
+  - entity: ENT-SALES-PRICE
+    attributes: [Amount, Valid from]
+    mode: view
 entry_points: []
 actions: []
 mockups: []

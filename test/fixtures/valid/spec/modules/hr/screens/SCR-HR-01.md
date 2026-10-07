@@ -5,7 +5,11 @@ module: MOD-HR
 status: draft
 roles:
   - role: ROLE-HR-MANAGER
-actions: 
+fields:
+  - entity: ENT-EMPLOYEE
+    attributes: [Full name, Start date, Contract type]
+    mode: edit
+actions:
   - id: A01
     label: Register
     capability: CAP-HR-001

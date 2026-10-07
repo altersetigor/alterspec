@@ -13,13 +13,16 @@ attributes:
   - name: Brand
     kind: reference
     required: false
+    references: ENT-BRAND
   - name: Category
     kind: reference
     required: true
+    references: ENT-CATEGORY
   - name: Unit of measure
     kind: reference
     required: true
     description: The unit it is sold in
+    references: ENT-UNIT-OF-MEASURE
   - name: Description
     kind: text
     required: false

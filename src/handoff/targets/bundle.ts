@@ -97,9 +97,13 @@ export function renderBundle(b: Bundle, ctx: TargetContext): TargetOutput {
     out.push('## Screens', '');
     for (const s of b.screens) {
       out.push(`### ${s.id} — ${s.title}`, '', s.purpose, '');
+      for (const f of s.fields)
+        out.push(`- Shows ${f.entity} ${f.entityTitle} (${f.mode}): ${f.attributes.join(', ')}`);
       for (const a of s.actions) out.push(`- ${a.id} ${a.label} → ${a.capability}`);
-      if (s.actions.length) out.push('');
+      for (const m of s.mockups) out.push(`- Mockup (${m.type}): ${m.ref}`);
+      if (s.fields.length || s.actions.length || s.mockups.length) out.push('');
     }
+    out.push('A clickable prototype of these screens, with made-up data, is in `prototype/index.html`.', '');
   }
   if (b.roles.length)
     out.push(

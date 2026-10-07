@@ -10,7 +10,9 @@ What to check, depending on what changes:
 - **Attributes** — business kinds only (text, number, amount, date, period, yes_no, choice, reference, document,
   other), never storage types. A new required attribute must be captured by some capability (usually the one that
   creates the entity): update its "Data in / data out" and main flow. A removed attribute must disappear from every
-  capability and screen that shows or uses it.
+  capability and screen that shows or uses it, including screen `fields`. Renaming an attribute means renaming it in
+  every screen's `fields` too. A `reference` attribute says which entity it points to (`references`); a `choice`
+  attribute lists its `options`.
 - **Relationships** — a new relationship to another entity: check that entity exists and that someone sets the
   relationship (a capability's main flow).
 - **States and transitions** — this is the risky part:

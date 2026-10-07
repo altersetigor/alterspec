@@ -68,6 +68,8 @@ export const viewsStale: LintRule = {
       else if (have !== want && !isGeneratedFileEdited(have))
         out.push({ file, line: 1, message: `${file} is out of date; run \`alterspec views\`` });
     }
+    for (const file of views.remove)
+      out.push({ file, message: `${file} is no longer generated; run \`alterspec views\` to remove it` });
     return out;
   },
 };

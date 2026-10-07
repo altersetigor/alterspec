@@ -26,6 +26,8 @@ Merge both into one report for the person:
   the smallest fix
 - when a linter finding and a review finding describe the same problem on the same object, show it once
 - if the only linter findings are `views-stale` or `generated-missing`, suggest `/alterspec-views`
+- if `prototype/` exists, also run `npx @alterset/alterspec prototype check --json` and report its findings; for
+  stale or missing variant pages suggest `/alterspec-prototype`
 
 **Don't edit any file** unless the person asks you to fix something. When they do, follow the shared rules (a change
 proposal if a baseline exists), never edit GENERATED blocks, then run views and validate again.

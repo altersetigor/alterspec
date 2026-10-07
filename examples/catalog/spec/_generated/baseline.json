@@ -78,7 +78,7 @@
       "file": "application/decisions.md"
     },
     "ENT-ARTICLE": {
-      "hash": "54c3745940d09110",
+      "hash": "1afe3d222337bbb8",
       "file": "application/entities/ENT-ARTICLE.md"
     },
     "ENT-BRAND": {
@@ -86,15 +86,15 @@
       "file": "application/entities/ENT-BRAND.md"
     },
     "ENT-CATEGORY": {
-      "hash": "1f4733d040f41f63",
+      "hash": "8503bde8936995b9",
       "file": "application/entities/ENT-CATEGORY.md"
     },
     "ENT-PURCHASE-PRICE": {
-      "hash": "9a18a6388757f94f",
+      "hash": "a27cb2181ff039ff",
       "file": "application/entities/ENT-PURCHASE-PRICE.md"
     },
     "ENT-SALES-PRICE": {
-      "hash": "a6cc9e651018fc0e",
+      "hash": "7dfbff0d768b21b9",
       "file": "application/entities/ENT-SALES-PRICE.md"
     },
     "ENT-SUPPLIER": {
@@ -214,27 +214,27 @@
       "file": "modules/sup/rules.md"
     },
     "SCR-CAT-01": {
-      "hash": "c0ff7abed1a3de1f",
+      "hash": "2d357ec979d8e920",
       "file": "modules/cat/screens/SCR-CAT-01.md"
     },
     "SCR-CAT-02": {
-      "hash": "7099ca6497f45eb7",
+      "hash": "d3273d11f508782c",
       "file": "modules/cat/screens/SCR-CAT-02.md"
     },
     "SCR-GLB-01": {
-      "hash": "83ee2db12aa21698",
+      "hash": "d25f514ce3d869e9",
       "file": "modules/glb/screens/SCR-GLB-01.md"
     },
     "SCR-PRC-01": {
-      "hash": "28f647e78ef43b65",
+      "hash": "2cd7044b9b98f209",
       "file": "modules/prc/screens/SCR-PRC-01.md"
     },
     "SCR-SUP-01": {
-      "hash": "cf6892edae959ee4",
+      "hash": "67fec80a5aa07d54",
       "file": "modules/sup/screens/SCR-SUP-01.md"
     },
     "SCR-SUP-02": {
-      "hash": "e578f6ebaccee336",
+      "hash": "0d7b1ea080178f98",
       "file": "modules/sup/screens/SCR-SUP-02.md"
     },
     "file:application/integrations.md": {

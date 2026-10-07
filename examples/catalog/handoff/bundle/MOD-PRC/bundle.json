@@ -422,18 +422,21 @@
         {
           "name": "Brand",
           "kind": "reference",
-          "required": false
+          "required": false,
+          "references": "ENT-BRAND"
         },
         {
           "name": "Category",
           "kind": "reference",
-          "required": true
+          "required": true,
+          "references": "ENT-CATEGORY"
         },
         {
           "name": "Unit of measure",
           "kind": "reference",
           "required": true,
-          "description": "The unit it is sold in"
+          "description": "The unit it is sold in",
+          "references": "ENT-UNIT-OF-MEASURE"
         },
         {
           "name": "Description",
@@ -480,12 +483,14 @@
         {
           "name": "Article",
           "kind": "reference",
-          "required": true
+          "required": true,
+          "references": "ENT-ARTICLE"
         },
         {
           "name": "Supplier",
           "kind": "reference",
-          "required": true
+          "required": true,
+          "references": "ENT-SUPPLIER"
         },
         {
           "name": "Amount",
@@ -533,7 +538,8 @@
         {
           "name": "Article",
           "kind": "reference",
-          "required": true
+          "required": true,
+          "references": "ENT-ARTICLE"
         },
         {
           "name": "Amount",
@@ -612,23 +618,49 @@
       "id": "SCR-PRC-01",
       "title": "Sales price review",
       "purpose": "Work through articles that need a sales price, proposals that need approval, and discontinued articles whose prices must expire.",
+      "fields": [
+        {
+          "entity": "ENT-PURCHASE-PRICE",
+          "entityTitle": "Purchase price",
+          "attributes": [
+            "Supplier",
+            "Amount",
+            "Valid from"
+          ],
+          "mode": "list"
+        },
+        {
+          "entity": "ENT-SALES-PRICE",
+          "entityTitle": "Sales price",
+          "attributes": [
+            "Article",
+            "Amount",
+            "Valid from"
+          ],
+          "mode": "edit"
+        }
+      ],
       "actions": [
         {
           "id": "A01",
           "label": "Propose",
-          "capability": "CAP-PRC-001"
+          "capability": "CAP-PRC-001",
+          "roles": []
         },
         {
           "id": "A02",
           "label": "Approve",
-          "capability": "CAP-PRC-002"
+          "capability": "CAP-PRC-002",
+          "roles": []
         },
         {
           "id": "A03",
           "label": "Expire",
-          "capability": "CAP-PRC-003"
+          "capability": "CAP-PRC-003",
+          "roles": []
         }
-      ]
+      ],
+      "mockups": []
     }
   ],
   "flows": [
@@ -791,17 +823,17 @@
     {
       "id": "ENT-ARTICLE",
       "status": "refined",
-      "fingerprint": "54c3745940d09110"
+      "fingerprint": "1afe3d222337bbb8"
     },
     {
       "id": "ENT-PURCHASE-PRICE",
       "status": "refined",
-      "fingerprint": "9a18a6388757f94f"
+      "fingerprint": "a27cb2181ff039ff"
     },
     {
       "id": "ENT-SALES-PRICE",
       "status": "refined",
-      "fingerprint": "a6cc9e651018fc0e"
+      "fingerprint": "7dfbff0d768b21b9"
     },
     {
       "id": "EVT-ARTICLE-ACTIVATED",
@@ -858,7 +890,7 @@
     {
       "id": "SCR-PRC-01",
       "status": "refined",
-      "fingerprint": "28f647e78ef43b65"
+      "fingerprint": "2cd7044b9b98f209"
     },
     {
       "id": "term:Article",

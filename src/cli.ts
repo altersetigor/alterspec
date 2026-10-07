@@ -14,6 +14,7 @@ import { writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { formatHuman, listRules, runValidate } from './commands/validate.js';
 import { runViews } from './commands/views.js';
+import { runPrototypeBuild, runPrototypeCheck, runPrototypeInit } from './commands/prototype.js';
 
 const program = new Command();
 
@@ -272,6 +273,58 @@ program
       for (const v of r.versions) console.log(`  ${v.key} is now version ${v.version}`);
       console.log(`Archived in ${r.archivedTo}`);
     }
+  });
+
+const prototype = program
+  .command('prototype')
+  .description('Design-system variants of the generated prototype (design/ → prototype/<variant>/)');
+
+prototype
+  .command('init')
+  .description('Write a starter design/ folder (design.yaml, tokens.css). Never overwrites')
+  .option('-C, --dir <dir>', 'project directory', '.')
+  .option('--base <base>', 'bootstrap | tabler | tailwind | custom', 'bootstrap')
+  .option('--json', 'print as JSON')
+  .action((opts: { dir: string; base: string; json?: boolean }) => {
+    const r = runPrototypeInit(opts.dir, opts);
+    if (opts.json) console.log(JSON.stringify(r, null, 2));
+    else {
+      for (const f of r.created) console.log(`created ${f}`);
+      for (const f of r.skipped) console.log(`kept ${f} (exists)`);
+    }
+  });
+
+prototype
+  .command('build')
+  .description('Render a variant into prototype/<variant>/ from the spec and design/')
+  .option('-C, --dir <dir>', 'project directory', '.')
+  .option('--spec <path>', 'spec folder, relative to the project', 'spec')
+  .option('--variant <variant>', 'bootstrap | tabler | tailwind (default: base in design.yaml)')
+  .option('--json', 'print as JSON')
+  .action((opts: { dir: string; spec: string; variant?: string; json?: boolean }) => {
+    const r = runPrototypeBuild(opts.dir, opts);
+    if (opts.json) console.log(JSON.stringify(r, null, 2));
+    else console.log(`${r.variant}: ${r.folder}/ (${r.files.length} files)`);
+  });
+
+prototype
+  .command('check')
+  .description('Check variants against the spec: every page and element present, nothing added, not stale')
+  .option('-C, --dir <dir>', 'project directory', '.')
+  .option('--spec <path>', 'spec folder, relative to the project', 'spec')
+  .option('--variant <variant>', 'one variant (default: every folder in prototype/)')
+  .option('--stamp', 'when only the stamp is out of date, record the current spec in variant.json')
+  .option('--json', 'print as JSON')
+  .action((opts: { dir: string; spec: string; variant?: string; stamp?: boolean; json?: boolean }) => {
+    const r = runPrototypeCheck(opts.dir, opts);
+    if (opts.json) console.log(JSON.stringify(r, null, 2));
+    else if (r.variants.length === 0) console.log('No variants in prototype/.');
+    else {
+      for (const v of r.stamped) console.log(`stamped ${v}`);
+      for (const f of r.findings) console.log(`${f.file}  ${f.kind}  ${f.message}`);
+      if (r.findings.length === 0) console.log(`✓ ${r.variants.join(', ')} match the spec.`);
+    }
+    if (r.findings.length) process.exitCode = 1;
   });
 
 program.parseAsync().catch((err: unknown) => {

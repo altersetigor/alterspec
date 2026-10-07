@@ -39,9 +39,9 @@ Suppliers, their approval, and the purchase prices they offer for articles. It d
 
 ## Screens
 
-<!-- GENERATED:start screens hash=b2946f416423 -->
-| Screen | Title | Actions |
-| --- | --- | --- |
-| [SCR-SUP-01](screens/SCR-SUP-01.md) | Supplier record | A01 Register → CAP-SUP-001<br>A02 Approve → CAP-SUP-002<br>A03 Block → CAP-SUP-003 |
-| [SCR-SUP-02](screens/SCR-SUP-02.md) | Purchase prices | A01 Record → CAP-SUP-004<br>A02 Import → CAP-SUP-005<br>A03 Approve → CAP-SUP-006 |
+<!-- GENERATED:start screens hash=af4610c031c6 -->
+| Screen | Title | Actions | Prototype |
+| --- | --- | --- | --- |
+| [SCR-SUP-01](screens/SCR-SUP-01.md) | Supplier record | A01 Register → CAP-SUP-001<br>A02 Approve → CAP-SUP-002<br>A03 Block → CAP-SUP-003 | [open](../../_generated/prototype/SCR-SUP-01.html) |
+| [SCR-SUP-02](screens/SCR-SUP-02.md) | Purchase prices | A01 Record → CAP-SUP-004<br>A02 Import → CAP-SUP-005<br>A03 Approve → CAP-SUP-006 | [open](../../_generated/prototype/SCR-SUP-02.html) |
 <!-- GENERATED:end -->

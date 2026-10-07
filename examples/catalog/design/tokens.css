@@ -1,0 +1,5 @@
+/*
+ * Your own CSS for prototype variants, loaded after the design system and the theme.
+ * Use it for brand details design.yaml doesn't cover, for example the CSS variables of your real application.
+ * Elements carry `as-*` classes (as-top, as-nav, as-group, as-action, as-field…) you can target.
+ */

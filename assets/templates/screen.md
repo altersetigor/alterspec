@@ -6,12 +6,18 @@ status: draft
 roles: []
 # - role: ROLE-...
 #   scope: own              # own | team | org | all (optional: narrows what this role sees here)
+fields: []
+# - entity: ENT-...
+#   attributes: [Name, Status]   # attribute names exactly as the entity lists them
+#   mode: list                   # list (many records) | view (one record) | edit (one record being entered)
+#   roles: []                    # optional: only these screen roles see this data
 entry_points: []
 # - SCR-GLB-01              # screens or situations that lead here
 actions: []
 # - id: A01
 #   label: Approve request
 #   capability: CAP-{{MOD}}-001
+#   roles: []               # optional: only these screen roles see the action
 mockups: []
 # - type: figma             # figma | image | html | other
 #   ref: <link or path>
@@ -27,7 +33,7 @@ mockups: []
 
 ## Displayed data
 
-<!-- Business information shown, using entity attribute names from the glossary. -->
+<!-- What `fields` doesn't say: why this data, in which order it matters, what is highlighted. -->
 
 ## Actions
 

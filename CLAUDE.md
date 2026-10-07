@@ -15,8 +15,8 @@ before starting a phase or changing the content model, IDs, validation rules or 
 - **Plan first.** Before each phase (see HANDOVER §9), enter plan mode, present the plan and wait for approval.
   Stop for user review when a phase is done.
 - **Ask about open decisions** (HANDOVER §10) before you build anything that depends on them: capability
-  granularity, where rules live, SR/EN bilingual scope, mockup format, who writes the spec, and whether a
-  tech layer is ever in scope.
+  granularity, where rules live, SR/EN bilingual scope, who writes the spec, and whether a tech layer is ever in
+  scope. (Mockup format is decided: see Prototypes below.)
 - **Check current Claude Code docs** (code.claude.com/docs) before you build or change the `.claude/` files that
   alterspec installs into user projects (skill `SKILL.md` front-matter, invocation control, subagent format).
   Commands are now skills; `.claude/commands/` is legacy. Don't rely on memory for these formats.
@@ -86,7 +86,7 @@ skill and agent with `alterspec-`.
   `flows/FLOW-*.md`, `events.md`, `integrations.md`, `nfr.md`, `decisions.md`
 - `modules/<mod>/`: `module.md`, `screens/SCR-*.md`, `capabilities/CAP-*.md`
 - `changes/CHG-*/`: `proposal.md` and delta files; moved to `changes/archive/` after merge
-- `_generated/`: matrices, traceability, coverage and lint report (never hand-edited)
+- `_generated/`: matrices, traceability, coverage, lint report and the generic `prototype/` (never hand-edited)
 
 **IDs** are stable and never reused: `APP`, `MOD-<CODE>`, `CAP-<MOD>-<NNN>`, `SCR-<MOD>-<NN>` / `SCR-GLB-<NN>`,
 `ROLE-<NAME>`, `PER-<NAME>`, `ENT-<NAME>`, `RULE-<NNN>`, `FLOW-<NNN>`, `EVT-<NAME>`, `DEC-<NNN>`, `CHG-<NNN>`,
@@ -105,9 +105,9 @@ Statuses: `draft → refined → ready → approved → implemented`.
 - CLI: `init`, `update`, `doctor`, `validate [--json]`, `views [--check]`, `new <type>`, `show <ID>`, and later
   `impact <CHG>`, `apply <CHG>`. All deterministic work lives in the CLI (IDs, file locations, references); skills
   call it through Bash and prompts never pick IDs or copy templates themselves.
-- Skills (16): `/alterspec-init`; `-create-module|capability|screen|entity`; `-change-module|capability|screen|entity`
+- Skills (17): `/alterspec-init`; `-create-module|capability|screen|entity`; `-change-module|capability|screen|entity`
   (edit one existing object, via a change proposal after the baseline; shared flow in `prompts/_change-object.md`);
-  `-refine`, `-validate`, `-views`, `-change`, `-impact`, `-apply`, `-handoff`. The skill name minus `alterspec-` is the
+  `-refine`, `-validate`, `-views`, `-change`, `-impact`, `-apply`, `-handoff`, `-prototype`. The skill name minus `alterspec-` is the
   prompt file name in `assets/prompts/`.
 - Agents: `alterspec-analyst` (gap analysis and drafting; it does not interview, the skill in the main conversation does)
   and `alterspec-reviewer` (read-only; reports findings with severity and never edits the spec).
@@ -120,11 +120,20 @@ Statuses: `draft → refined → ready → approved → implemented`.
   (`src/handoff/bundle.ts`) and renders it per target (`src/handoff/targets/`), writing only to
   `handoff/<target>/<ID>/`. Target formats were checked on 2026-10-07 (Spec Kit v1.1.1, OpenSpec v1.14.1, BMAD v6.12.1
   `epics.md`); re-check the upstream templates before changing a renderer. alterspec never gets a tech layer.
-- `examples/catalog/` is the reference example and a golden fixture: tests require 0 findings, current views, and that
-  re-running its handoffs (`--date 2026-10-07`) reproduces `examples/catalog/handoff/` byte for byte. After changing a
-  renderer or bumping the package version, regenerate it:
-  `node dist/cli.js handoff CAP-PRC-001 --target all --date 2026-10-07 -C examples/catalog` and
-  `node dist/cli.js handoff MOD-PRC --date 2026-10-07 -C examples/catalog`.
+- Prototypes (Phase 6): screens list their data in `fields` (entity, attribute names, `list|view|edit`); entity
+  attributes carry `references` / `options`. `src/prototype/model.ts` builds one page model from the spec;
+  `render.ts` renders it with a skin (`skins/`), so the generic prototype (`views` → `spec/_generated/prototype/`) and
+  every variant (`prototype build` → `prototype/<variant>/`, from the user-owned `design/`) carry the same `data-src`
+  markers; `prototype check` compares them with `manifest.json`. Mock data is deterministic. The spec stays
+  tech-agnostic: design-system names live only in `design/`, `prototype/` and `src/prototype/skins/`. CDN versions
+  and SRI hashes are pinned in `skins/cdn.ts` (checked 2026-10-07); recompute the hash when bumping a version.
+- `examples/catalog/` is the reference example and a golden fixture: tests require 0 findings, current views, that
+  re-running its handoffs (`--date 2026-10-07`) reproduces `examples/catalog/handoff/` byte for byte, and that
+  rebuilding `prototype/bootstrap/` reproduces it. After changing a renderer or bumping the package version,
+  regenerate it: `node dist/cli.js views examples/catalog`,
+  `node dist/cli.js handoff CAP-PRC-001 --target all --date 2026-10-07 -C examples/catalog`,
+  `node dist/cli.js handoff MOD-PRC --date 2026-10-07 -C examples/catalog` and
+  `node dist/cli.js prototype build -C examples/catalog`.
 - Decided: interview-then-draft; one capability = one goal, one acting role, one session; `refine` moves status to
   `refined` at most, anything beyond needs the person's explicit word.
 
@@ -135,3 +144,4 @@ Statuses: `draft → refined → ready → approved → implemented`.
 3. Authoring commands and the analyst agent
 4. Semantic review and change management
 5. Handoff and a full example project (reference fixture)
+6. Screen fields, generated prototype and design-system variants

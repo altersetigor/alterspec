@@ -31,8 +31,8 @@ Preparing and issuing payslips.
 
 ## Screens
 
-<!-- GENERATED:start screens hash=8d6f96f176c8 -->
-| Screen | Title | Actions |
-| --- | --- | --- |
-| [SCR-PAY-01](screens/SCR-PAY-01.md) | Payslip run | A01 Prepare → CAP-PAY-001<br>A02 Issue → CAP-PAY-002 |
+<!-- GENERATED:start screens hash=b033c15775d0 -->
+| Screen | Title | Actions | Prototype |
+| --- | --- | --- | --- |
+| [SCR-PAY-01](screens/SCR-PAY-01.md) | Payslip run | A01 Prepare → CAP-PAY-001<br>A02 Issue → CAP-PAY-002 | [open](../../_generated/prototype/SCR-PAY-01.html) |
 <!-- GENERATED:end -->

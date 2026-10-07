@@ -6,6 +6,7 @@ attributes:
   - name: Article
     kind: reference
     required: true
+    references: ENT-ARTICLE
   - name: Amount
     kind: amount
     required: true

@@ -29,8 +29,8 @@ Screens shared by everyone.
 
 ## Screens
 
-<!-- GENERATED:start screens hash=d6255a8b6e18 -->
-| Screen | Title | Actions |
-| --- | --- | --- |
-| [SCR-GLB-01](screens/SCR-GLB-01.md) | My payslips | — |
+<!-- GENERATED:start screens hash=6de3577d9cda -->
+| Screen | Title | Actions | Prototype |
+| --- | --- | --- | --- |
+| [SCR-GLB-01](screens/SCR-GLB-01.md) | My payslips | — | [open](../../_generated/prototype/SCR-GLB-01.html) |
 <!-- GENERATED:end -->

@@ -1,4 +1,4 @@
-import { mkdirSync, writeFileSync } from 'node:fs';
+import { mkdirSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { readSpecDir } from '../spec/files.js';
 import { loadSpec } from '../spec/load.js';
@@ -23,7 +23,9 @@ export function runViews(dir: string, opts: ViewsOptions = {}): ViewsResult {
   const plan = planViews(load.model);
   const changed = changedFiles(load.model, plan);
   if (!opts.check) {
+    for (const path of plan.remove) rmSync(join(specRoot, path), { force: true });
     for (const path of changed) {
+      if (!plan.files.has(path)) continue;
       const full = join(specRoot, path);
       mkdirSync(dirname(full), { recursive: true });
       writeFileSync(full, plan.files.get(path) ?? '');

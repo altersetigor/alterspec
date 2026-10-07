@@ -28,6 +28,10 @@ export const EntitySchema = z
           kind: AttributeKind,
           required: z.boolean().default(false),
           description: z.string().optional(),
+          /** For `reference` attributes: the entity referred to. */
+          references: EntityId.optional(),
+          /** For `choice` attributes: the values a person can pick. */
+          options: z.array(z.string().min(1)).min(1).optional(),
         })
         .strict(),
     ),
@@ -46,6 +50,20 @@ export const EntitySchema = z
   })
   .strict()
   .superRefine((e, ctx) => {
+    e.attributes.forEach((a, i) => {
+      if (a.references && a.kind !== 'reference')
+        ctx.addIssue({
+          code: 'custom',
+          path: ['attributes', i, 'references'],
+          message: `references is only for reference attributes; ${a.name} is ${a.kind}`,
+        });
+      if (a.options && a.kind !== 'choice')
+        ctx.addIssue({
+          code: 'custom',
+          path: ['attributes', i, 'options'],
+          message: `options is only for choice attributes; ${a.name} is ${a.kind}`,
+        });
+    });
     const states = new Set(e.states);
     if (e.initial_state && !states.has(e.initial_state)) {
       ctx.addIssue({ code: 'custom', path: ['initial_state'], message: `unknown state ${e.initial_state}` });

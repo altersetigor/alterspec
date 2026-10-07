@@ -1,3 +1,4 @@
+import { DesignSchema } from './design.js';
 import { z } from 'zod';
 import { ApplicationSchema } from './application.js';
 import { CapabilitySchema } from './capability.js';
@@ -143,6 +144,7 @@ export const JSON_SCHEMAS: Record<string, z.ZodType> = {
   decision: DecisionItemSchema,
   'glossary-term': GlossaryItemSchema,
   config: ConfigSchema,
+  design: DesignSchema,
 };
 
 export function toJsonSchema(name: string, schema: z.ZodType): object {

@@ -36,6 +36,8 @@ _None._
 - RULE-CAT-001 references ENT-ARTICLE (entities.0)
 - RULE-CAT-002 references ENT-ARTICLE (entities.0)
 - SCR-CAT-01 references CAP-CAT-006 (actions.2)
+- SCR-CAT-01 references ENT-ARTICLE (fields.0)
+- SCR-GLB-01 references ENT-ARTICLE (fields.0)
 
 ## Affected flows
 

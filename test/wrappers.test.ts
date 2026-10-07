@@ -24,6 +24,7 @@ const COMMANDS = [
   'impact',
   'apply',
   'handoff',
+  'prototype',
 ];
 
 const SkillFrontMatter = z
@@ -47,7 +48,7 @@ const AgentFrontMatter = z
 describe('skill wrappers', () => {
   const dirs = readdirSync(join(ASSETS_DIR, 'claude/skills'));
 
-  it('ships exactly the 16 alterspec-* skills', () => {
+  it('ships exactly the 17 alterspec-* skills', () => {
     expect(dirs.sort()).toEqual(COMMANDS.map((c) => `alterspec-${c}`).sort());
   });
 
@@ -118,6 +119,7 @@ describe('prompts', () => {
     'baseline',
     'change',
     'handoff',
+    'prototype',
   ];
 
   it('only mention real CLI commands and `new` types', () => {

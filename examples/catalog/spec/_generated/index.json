@@ -876,21 +876,39 @@
       "entry_points": [
         "SCR-GLB-01"
       ],
+      "fields": [
+        {
+          "entity": "ENT-ARTICLE",
+          "attributes": [
+            "Article number",
+            "Name",
+            "Brand",
+            "Category",
+            "Unit of measure",
+            "Description"
+          ],
+          "mode": "edit",
+          "roles": []
+        }
+      ],
       "actions": [
         {
           "id": "A01",
           "label": "Create",
-          "capability": "CAP-CAT-004"
+          "capability": "CAP-CAT-004",
+          "roles": []
         },
         {
           "id": "A02",
           "label": "Activate",
-          "capability": "CAP-CAT-005"
+          "capability": "CAP-CAT-005",
+          "roles": []
         },
         {
           "id": "A03",
           "label": "Discontinue",
-          "capability": "CAP-CAT-006"
+          "capability": "CAP-CAT-006",
+          "roles": []
         }
       ],
       "mockups": [],
@@ -907,21 +925,52 @@
         }
       ],
       "entry_points": [],
+      "fields": [
+        {
+          "entity": "ENT-BRAND",
+          "attributes": [
+            "Name"
+          ],
+          "mode": "list",
+          "roles": []
+        },
+        {
+          "entity": "ENT-CATEGORY",
+          "attributes": [
+            "Name",
+            "Parent category"
+          ],
+          "mode": "list",
+          "roles": []
+        },
+        {
+          "entity": "ENT-UNIT-OF-MEASURE",
+          "attributes": [
+            "Code",
+            "Name"
+          ],
+          "mode": "list",
+          "roles": []
+        }
+      ],
       "actions": [
         {
           "id": "A01",
           "label": "Units of measure",
-          "capability": "CAP-CAT-003"
+          "capability": "CAP-CAT-003",
+          "roles": []
         },
         {
           "id": "A02",
           "label": "Brands",
-          "capability": "CAP-CAT-001"
+          "capability": "CAP-CAT-001",
+          "roles": []
         },
         {
           "id": "A03",
           "label": "Categories",
-          "capability": "CAP-CAT-002"
+          "capability": "CAP-CAT-002",
+          "roles": []
         }
       ],
       "mockups": [],
@@ -938,6 +987,29 @@
         }
       ],
       "entry_points": [],
+      "fields": [
+        {
+          "entity": "ENT-ARTICLE",
+          "attributes": [
+            "Article number",
+            "Name",
+            "Brand",
+            "Category",
+            "Unit of measure"
+          ],
+          "mode": "list",
+          "roles": []
+        },
+        {
+          "entity": "ENT-SALES-PRICE",
+          "attributes": [
+            "Amount",
+            "Valid from"
+          ],
+          "mode": "view",
+          "roles": []
+        }
+      ],
       "actions": [],
       "mockups": [],
       "file": "modules/glb/screens/SCR-GLB-01.md"
@@ -953,21 +1025,46 @@
         }
       ],
       "entry_points": [],
+      "fields": [
+        {
+          "entity": "ENT-PURCHASE-PRICE",
+          "attributes": [
+            "Supplier",
+            "Amount",
+            "Valid from"
+          ],
+          "mode": "list",
+          "roles": []
+        },
+        {
+          "entity": "ENT-SALES-PRICE",
+          "attributes": [
+            "Article",
+            "Amount",
+            "Valid from"
+          ],
+          "mode": "edit",
+          "roles": []
+        }
+      ],
       "actions": [
         {
           "id": "A01",
           "label": "Propose",
-          "capability": "CAP-PRC-001"
+          "capability": "CAP-PRC-001",
+          "roles": []
         },
         {
           "id": "A02",
           "label": "Approve",
-          "capability": "CAP-PRC-002"
+          "capability": "CAP-PRC-002",
+          "roles": []
         },
         {
           "id": "A03",
           "label": "Expire",
-          "capability": "CAP-PRC-003"
+          "capability": "CAP-PRC-003",
+          "roles": []
         }
       ],
       "mockups": [],
@@ -984,21 +1081,36 @@
         }
       ],
       "entry_points": [],
+      "fields": [
+        {
+          "entity": "ENT-SUPPLIER",
+          "attributes": [
+            "Name",
+            "Registration number",
+            "Contact person"
+          ],
+          "mode": "edit",
+          "roles": []
+        }
+      ],
       "actions": [
         {
           "id": "A01",
           "label": "Register",
-          "capability": "CAP-SUP-001"
+          "capability": "CAP-SUP-001",
+          "roles": []
         },
         {
           "id": "A02",
           "label": "Approve",
-          "capability": "CAP-SUP-002"
+          "capability": "CAP-SUP-002",
+          "roles": []
         },
         {
           "id": "A03",
           "label": "Block",
-          "capability": "CAP-SUP-003"
+          "capability": "CAP-SUP-003",
+          "roles": []
         }
       ],
       "mockups": [],
@@ -1017,21 +1129,37 @@
       "entry_points": [
         "SCR-SUP-01"
       ],
+      "fields": [
+        {
+          "entity": "ENT-PURCHASE-PRICE",
+          "attributes": [
+            "Article",
+            "Supplier",
+            "Amount",
+            "Valid from"
+          ],
+          "mode": "edit",
+          "roles": []
+        }
+      ],
       "actions": [
         {
           "id": "A01",
           "label": "Record",
-          "capability": "CAP-SUP-004"
+          "capability": "CAP-SUP-004",
+          "roles": []
         },
         {
           "id": "A02",
           "label": "Import",
-          "capability": "CAP-SUP-005"
+          "capability": "CAP-SUP-005",
+          "roles": []
         },
         {
           "id": "A03",
           "label": "Approve",
-          "capability": "CAP-SUP-006"
+          "capability": "CAP-SUP-006",
+          "roles": []
         }
       ],
       "mockups": [],
@@ -1058,18 +1186,21 @@
         {
           "name": "Brand",
           "kind": "reference",
-          "required": false
+          "required": false,
+          "references": "ENT-BRAND"
         },
         {
           "name": "Category",
           "kind": "reference",
-          "required": true
+          "required": true,
+          "references": "ENT-CATEGORY"
         },
         {
           "name": "Unit of measure",
           "kind": "reference",
           "required": true,
-          "description": "The unit it is sold in"
+          "description": "The unit it is sold in",
+          "references": "ENT-UNIT-OF-MEASURE"
         },
         {
           "name": "Description",
@@ -1152,7 +1283,8 @@
           "name": "Parent category",
           "kind": "reference",
           "required": false,
-          "description": "Categories can be nested"
+          "description": "Categories can be nested",
+          "references": "ENT-CATEGORY"
         }
       ],
       "relationships": [
@@ -1186,12 +1318,14 @@
         {
           "name": "Article",
           "kind": "reference",
-          "required": true
+          "required": true,
+          "references": "ENT-ARTICLE"
         },
         {
           "name": "Supplier",
           "kind": "reference",
-          "required": true
+          "required": true,
+          "references": "ENT-SUPPLIER"
         },
         {
           "name": "Amount",
@@ -1240,7 +1374,8 @@
         {
           "name": "Article",
           "kind": "reference",
-          "required": true
+          "required": true,
+          "references": "ENT-ARTICLE"
         },
         {
           "name": "Amount",

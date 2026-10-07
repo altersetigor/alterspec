@@ -6,9 +6,11 @@ attributes:
   - name: Article
     kind: reference
     required: true
+    references: ENT-ARTICLE
   - name: Supplier
     kind: reference
     required: true
+    references: ENT-SUPPLIER
   - name: Amount
     kind: amount
     required: true

@@ -12,7 +12,8 @@ Arguments: `<CHG>`.
    - conflicts with the current spec, if any, and what to do (re-read the object, then
      `npx @alterset/alterspec change edit <CHG> <ID> --rebase` and redo the edit)
    - who and what is affected: flows, screens, roles, acceptance criteria that must be re-checked
-   - generated views that will change (module capability lists, role matrices)
+   - generated views that will change (module capability lists, role matrices), including the prototype pages of
+     screens whose content changes; design-system variants in `prototype/` must be built again after the change
    - new lint findings, and findings the change resolves
    - the reviewer's critical and major findings
    - a recommendation: ready for approval, or what must be fixed first

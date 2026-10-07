@@ -1,0 +1,129 @@
+{
+  "hash": "28b4b1601e95",
+  "screens": {
+    "SCR-CAT-01": {
+      "file": "SCR-CAT-01.html",
+      "hash": "5b5c19d18f3b",
+      "elements": [
+        "SCR-CAT-01",
+        "SCR-CAT-01.A01",
+        "SCR-CAT-01.A02",
+        "SCR-CAT-01.A03",
+        "SCR-CAT-01.ENT-ARTICLE",
+        "SCR-CAT-01.ENT-ARTICLE.Article number",
+        "SCR-CAT-01.ENT-ARTICLE.Brand",
+        "SCR-CAT-01.ENT-ARTICLE.Category",
+        "SCR-CAT-01.ENT-ARTICLE.Description",
+        "SCR-CAT-01.ENT-ARTICLE.Name",
+        "SCR-CAT-01.ENT-ARTICLE.Unit of measure",
+        "SCR-CAT-01.entry.1",
+        "SCR-CAT-01.role.ROLE-CATALOG-MANAGER",
+        "SCR-CAT-01.state.empty",
+        "SCR-CAT-01.state.no-permission",
+        "SCR-CAT-01.state.validation"
+      ]
+    },
+    "SCR-CAT-02": {
+      "file": "SCR-CAT-02.html",
+      "hash": "a9aab59f1f59",
+      "elements": [
+        "SCR-CAT-02",
+        "SCR-CAT-02.A01",
+        "SCR-CAT-02.A02",
+        "SCR-CAT-02.A03",
+        "SCR-CAT-02.ENT-BRAND",
+        "SCR-CAT-02.ENT-BRAND.Name",
+        "SCR-CAT-02.ENT-CATEGORY",
+        "SCR-CAT-02.ENT-CATEGORY.Name",
+        "SCR-CAT-02.ENT-CATEGORY.Parent category",
+        "SCR-CAT-02.ENT-UNIT-OF-MEASURE",
+        "SCR-CAT-02.ENT-UNIT-OF-MEASURE.Code",
+        "SCR-CAT-02.ENT-UNIT-OF-MEASURE.Name",
+        "SCR-CAT-02.role.ROLE-CATALOG-MANAGER",
+        "SCR-CAT-02.state.empty",
+        "SCR-CAT-02.state.no-permission",
+        "SCR-CAT-02.state.validation"
+      ]
+    },
+    "SCR-GLB-01": {
+      "file": "SCR-GLB-01.html",
+      "hash": "bfbf8e810c79",
+      "elements": [
+        "SCR-GLB-01",
+        "SCR-GLB-01.ENT-ARTICLE",
+        "SCR-GLB-01.ENT-ARTICLE.Article number",
+        "SCR-GLB-01.ENT-ARTICLE.Brand",
+        "SCR-GLB-01.ENT-ARTICLE.Category",
+        "SCR-GLB-01.ENT-ARTICLE.Name",
+        "SCR-GLB-01.ENT-ARTICLE.Unit of measure",
+        "SCR-GLB-01.ENT-SALES-PRICE",
+        "SCR-GLB-01.ENT-SALES-PRICE.Amount",
+        "SCR-GLB-01.ENT-SALES-PRICE.Valid from",
+        "SCR-GLB-01.role.ROLE-SALES-STAFF",
+        "SCR-GLB-01.state.empty",
+        "SCR-GLB-01.state.no-permission",
+        "SCR-GLB-01.state.validation"
+      ]
+    },
+    "SCR-PRC-01": {
+      "file": "SCR-PRC-01.html",
+      "hash": "cc18c39c4810",
+      "elements": [
+        "SCR-PRC-01",
+        "SCR-PRC-01.A01",
+        "SCR-PRC-01.A02",
+        "SCR-PRC-01.A03",
+        "SCR-PRC-01.ENT-PURCHASE-PRICE",
+        "SCR-PRC-01.ENT-PURCHASE-PRICE.Amount",
+        "SCR-PRC-01.ENT-PURCHASE-PRICE.Supplier",
+        "SCR-PRC-01.ENT-PURCHASE-PRICE.Valid from",
+        "SCR-PRC-01.ENT-SALES-PRICE",
+        "SCR-PRC-01.ENT-SALES-PRICE.Amount",
+        "SCR-PRC-01.ENT-SALES-PRICE.Article",
+        "SCR-PRC-01.ENT-SALES-PRICE.Valid from",
+        "SCR-PRC-01.role.ROLE-PRICING-MANAGER",
+        "SCR-PRC-01.state.empty",
+        "SCR-PRC-01.state.no-permission",
+        "SCR-PRC-01.state.validation"
+      ]
+    },
+    "SCR-SUP-01": {
+      "file": "SCR-SUP-01.html",
+      "hash": "2c10aab5cab3",
+      "elements": [
+        "SCR-SUP-01",
+        "SCR-SUP-01.A01",
+        "SCR-SUP-01.A02",
+        "SCR-SUP-01.A03",
+        "SCR-SUP-01.ENT-SUPPLIER",
+        "SCR-SUP-01.ENT-SUPPLIER.Contact person",
+        "SCR-SUP-01.ENT-SUPPLIER.Name",
+        "SCR-SUP-01.ENT-SUPPLIER.Registration number",
+        "SCR-SUP-01.role.ROLE-PURCHASER",
+        "SCR-SUP-01.state.empty",
+        "SCR-SUP-01.state.no-permission",
+        "SCR-SUP-01.state.validation"
+      ]
+    },
+    "SCR-SUP-02": {
+      "file": "SCR-SUP-02.html",
+      "hash": "6d9bb7f0c13c",
+      "elements": [
+        "SCR-SUP-02",
+        "SCR-SUP-02.A01",
+        "SCR-SUP-02.A02",
+        "SCR-SUP-02.A03",
+        "SCR-SUP-02.ENT-PURCHASE-PRICE",
+        "SCR-SUP-02.ENT-PURCHASE-PRICE.Amount",
+        "SCR-SUP-02.ENT-PURCHASE-PRICE.Article",
+        "SCR-SUP-02.ENT-PURCHASE-PRICE.Supplier",
+        "SCR-SUP-02.ENT-PURCHASE-PRICE.Valid from",
+        "SCR-SUP-02.entry.1",
+        "SCR-SUP-02.role.ROLE-PURCHASER",
+        "SCR-SUP-02.state.empty",
+        "SCR-SUP-02.state.no-permission",
+        "SCR-SUP-02.state.validation"
+      ]
+    }
+  }
+}

@@ -5,6 +5,10 @@ module: MOD-SUP
 status: refined
 roles:
   - role: ROLE-PURCHASER
+fields:
+  - entity: ENT-SUPPLIER
+    attributes: [Name, Registration number, Contact person]
+    mode: edit
 entry_points: []
 actions:
   - id: A01

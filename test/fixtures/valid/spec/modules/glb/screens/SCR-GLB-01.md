@@ -5,6 +5,10 @@ module: MOD-GLB
 status: draft
 roles:
   - role: ROLE-EMPLOYEE
+fields:
+  - entity: ENT-PAYSLIP
+    attributes: [Period, Net amount]
+    mode: list
 actions: []
 ---
 

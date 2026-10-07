@@ -1,6 +1,6 @@
 # CAP-PRC-001 — Propose sales price
 
-<!-- Exported by alterspec 0.2.1 from CAP-PRC-001 (CAP-PRC-001 v1). Edit the source spec, not this file. -->
+<!-- Exported by alterspec 0.3.0 from CAP-PRC-001 (CAP-PRC-001 v1). Edit the source spec, not this file. -->
 
 Self-contained product specification exported from alterspec on 2026-10-07. It describes what the product does and why, in business terms; technical design decisions are made from here on.
 
@@ -167,9 +167,13 @@ Relationships: one ENT-ARTICLE.
 
 Work through articles that need a sales price, proposals that need approval, and discontinued articles whose prices must expire.
 
+- Shows ENT-PURCHASE-PRICE Purchase price (list): Supplier, Amount, Valid from
+- Shows ENT-SALES-PRICE Sales price (edit): Article, Amount, Valid from
 - A01 Propose → CAP-PRC-001
 - A02 Approve → CAP-PRC-002
 - A03 Expire → CAP-PRC-003
+
+A clickable prototype of these screens, with made-up data, is in `prototype/index.html`.
 
 ## Roles
 

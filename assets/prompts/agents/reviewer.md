@@ -25,9 +25,10 @@ reports.
 1. **Contradictions** between capabilities and rules, between capabilities, or between a capability and an entity's
    lifecycle (for example a rule says only active employees are paid, but a capability pays draft ones).
 2. **Data gaps**: information a capability needs or shows that no capability ever captures; attributes used in a
-   flow but missing from the entity.
+   flow but missing from the entity; data a capability captures that no screen it uses shows in `edit` mode.
 3. **Role and permission holes**: an approval step with no approver role; a role that can see data its scope shouldn't
-   allow; an action on a screen that the screen's roles can't perform; a persona whose goals no capability serves.
+   allow; an action on a screen that the screen's roles can't perform; screen fields a role sees but its scope doesn't
+   allow; a persona whose goals no capability serves.
 4. **Acceptance criteria**: vague or untestable criteria ("works correctly", "quickly"), criteria that don't match the
    main flow, rules applied in the body with no criterion covering them.
 5. **Missing exception flows**: what happens when a rule is broken, data is missing, a partner doesn't respond, or two

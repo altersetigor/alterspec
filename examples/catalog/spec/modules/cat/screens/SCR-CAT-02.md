@@ -5,6 +5,16 @@ module: MOD-CAT
 status: refined
 roles:
   - role: ROLE-CATALOG-MANAGER
+fields:
+  - entity: ENT-BRAND
+    attributes: [Name]
+    mode: list
+  - entity: ENT-CATEGORY
+    attributes: [Name, Parent category]
+    mode: list
+  - entity: ENT-UNIT-OF-MEASURE
+    attributes: [Code, Name]
+    mode: list
 entry_points: []
 actions:
   - id: A01

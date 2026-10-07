@@ -12,6 +12,14 @@ const PAY1 = 'modules/pay/capabilities/CAP-PAY-001.md';
 const PAY2 = 'modules/pay/capabilities/CAP-PAY-002.md';
 const GLB1 = 'modules/glb/capabilities/CAP-GLB-001.md';
 const EMP = 'application/entities/ENT-EMPLOYEE.md';
+const SLIP = 'application/entities/ENT-PAYSLIP.md';
+const GLB1S = 'modules/glb/screens/SCR-GLB-01.md';
+const HR1S = 'modules/hr/screens/SCR-HR-01.md';
+const PAY1S = 'modules/pay/screens/SCR-PAY-01.md';
+const both =
+  (...edits: ((s: string) => string)[]) =>
+  (s: string) =>
+    edits.reduce((acc, e) => e(acc), s);
 const append = (text: string) => (s: string) => s + text;
 const BASELINE = JSON.stringify(buildBaseline(fixtureFiles()));
 const original = (path: string) => readFileSync(join(FIXTURE, 'spec', path), 'utf8');
@@ -135,7 +143,7 @@ const CASES: Record<string, Case[]> = {
     {
       label: 'uncovered transition',
       edits: { [HR3]: replace('[active->left]', '[]') },
-      expect: { file: EMP, line: 17, message: /active->left/ },
+      expect: { file: EMP, line: 20, message: /active->left/ },
     },
   ],
   'lifecycle-coverage': [
@@ -200,6 +208,84 @@ const CASES: Record<string, Case[]> = {
       label: 'action capability does not list screen',
       edits: { [HR3]: replace('screens: [SCR-HR-01]', 'screens: []') },
       expect: { file: HR3, line: 10 },
+    },
+  ],
+  'screen-field-attribute': [
+    {
+      label: 'attribute the entity does not have',
+      edits: { [HR1S]: replace('Contract type]', 'Grade]') },
+      expect: { file: HR1S, line: 10, message: /no attribute "Grade"/ },
+    },
+  ],
+  'screen-field-op': [
+    {
+      label: 'edited data no action creates or updates',
+      edits: { [GLB1S]: replace('mode: list', 'mode: edit') },
+      expect: { file: GLB1S, line: 9, message: /no action's capability/ },
+    },
+    {
+      label: 'shown data no capability uses',
+      edits: {
+        [GLB1S]: both(
+          replace('entity: ENT-PAYSLIP', 'entity: ENT-EMPLOYEE'),
+          replace('[Period, Net amount]', '[Full name]'),
+        ),
+      },
+      expect: { file: GLB1S, line: 9, message: /no capability on this screen uses it/ },
+    },
+  ],
+  'screen-role-action': [
+    {
+      label: 'action nobody on the screen can perform',
+      edits: { [PAY1S]: replace('  - role: ROLE-ACCOUNTANT', '  - role: ROLE-HR-MANAGER') },
+      expect: { file: PAY1S, line: 13, message: /none of its roles/ },
+    },
+    {
+      label: 'action narrowed to a role not on the screen',
+      edits: {
+        [HR1S]: replace(
+          '    capability: CAP-HR-001',
+          '    capability: CAP-HR-001\n    roles: [ROLE-EMPLOYEE]',
+        ),
+      },
+      expect: { file: HR1S, line: 16, message: /not a role of this screen/ },
+    },
+  ],
+  'screen-fields-missing': [
+    {
+      label: 'refined screen without fields',
+      edits: {
+        [GLB1S]: both(
+          replace('status: draft', 'status: refined'),
+          replace(
+            'fields:\n  - entity: ENT-PAYSLIP\n    attributes: [Period, Net amount]\n    mode: list\n',
+            '',
+          ),
+        ),
+      },
+      expect: { file: GLB1S, line: 1, message: /lists no fields/ },
+    },
+  ],
+  'entity-attribute-detail': [
+    {
+      label: 'reference without target',
+      edits: {
+        [SLIP]: both(
+          replace('status: draft', 'status: refined'),
+          replace('    references: ENT-EMPLOYEE\n', ''),
+        ),
+      },
+      expect: { file: SLIP, line: 6, message: /which entity it references/ },
+    },
+    {
+      label: 'choice without options',
+      edits: {
+        [EMP]: both(
+          replace('status: draft', 'status: refined'),
+          replace('    options: [Permanent, Fixed term]\n', ''),
+        ),
+      },
+      expect: { file: EMP, line: 12, message: /its options/ },
     },
   ],
   'foreign-module-rule': [

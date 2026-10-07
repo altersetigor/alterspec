@@ -1,0 +1,63 @@
+{
+  "hash": "aa3cc949797c",
+  "screens": {
+    "SCR-GLB-01": {
+      "file": "SCR-GLB-01.html",
+      "hash": "5b645f871a8f",
+      "elements": [
+        "SCR-GLB-01",
+        "SCR-GLB-01.ENT-PAYSLIP",
+        "SCR-GLB-01.ENT-PAYSLIP.Net amount",
+        "SCR-GLB-01.ENT-PAYSLIP.Period",
+        "SCR-GLB-01.gap.state.empty",
+        "SCR-GLB-01.gap.state.no-permission",
+        "SCR-GLB-01.gap.state.validation",
+        "SCR-GLB-01.role.ROLE-EMPLOYEE",
+        "SCR-GLB-01.state.empty",
+        "SCR-GLB-01.state.no-permission",
+        "SCR-GLB-01.state.validation"
+      ]
+    },
+    "SCR-HR-01": {
+      "file": "SCR-HR-01.html",
+      "hash": "1c9a1ffd0af2",
+      "elements": [
+        "SCR-HR-01",
+        "SCR-HR-01.A01",
+        "SCR-HR-01.A02",
+        "SCR-HR-01.A03",
+        "SCR-HR-01.ENT-EMPLOYEE",
+        "SCR-HR-01.ENT-EMPLOYEE.Contract type",
+        "SCR-HR-01.ENT-EMPLOYEE.Full name",
+        "SCR-HR-01.ENT-EMPLOYEE.Start date",
+        "SCR-HR-01.gap.state.empty",
+        "SCR-HR-01.gap.state.no-permission",
+        "SCR-HR-01.gap.state.validation",
+        "SCR-HR-01.role.ROLE-HR-MANAGER",
+        "SCR-HR-01.state.empty",
+        "SCR-HR-01.state.no-permission",
+        "SCR-HR-01.state.validation"
+      ]
+    },
+    "SCR-PAY-01": {
+      "file": "SCR-PAY-01.html",
+      "hash": "8dbb34c79a9a",
+      "elements": [
+        "SCR-PAY-01",
+        "SCR-PAY-01.A01",
+        "SCR-PAY-01.A02",
+        "SCR-PAY-01.ENT-PAYSLIP",
+        "SCR-PAY-01.ENT-PAYSLIP.Employee",
+        "SCR-PAY-01.ENT-PAYSLIP.Net amount",
+        "SCR-PAY-01.ENT-PAYSLIP.Period",
+        "SCR-PAY-01.gap.state.empty",
+        "SCR-PAY-01.gap.state.no-permission",
+        "SCR-PAY-01.gap.state.validation",
+        "SCR-PAY-01.role.ROLE-ACCOUNTANT",
+        "SCR-PAY-01.state.empty",
+        "SCR-PAY-01.state.no-permission",
+        "SCR-PAY-01.state.validation"
+      ]
+    }
+  }
+}

@@ -3,6 +3,10 @@ id: ENT-PAYSLIP
 title: Payslip
 status: draft
 attributes:
+  - name: Employee
+    kind: reference
+    required: true
+    references: ENT-EMPLOYEE
   - name: Period
     kind: period
     required: true

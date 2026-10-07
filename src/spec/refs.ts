@@ -42,13 +42,26 @@ export function outgoingRefs(model: SpecModel): { owner: Located<unknown>; refs:
       refs: [
         { id: s.data.module, path: ['module'] },
         ...each(s.data.roles, ['roles'], (r) => r.role),
+        ...each(s.data.fields, ['fields'], (f) => f.entity),
+        ...s.data.fields.flatMap((f, i) => each(f.roles, ['fields', i, 'roles'])),
         ...each(s.data.actions, ['actions'], (a) => a.capability),
+        ...s.data.actions.flatMap((a, i) => each(a.roles, ['actions', i, 'roles'])),
         ...each(s.data.entry_points, ['entry_points'], (e) => (idKind(e) ? e : undefined)),
       ],
     });
   }
-  for (const e of model.entities.values())
-    out.push({ owner: e, refs: each(e.data.relationships, ['relationships'], (r) => r.entity) });
+  for (const e of model.entities.values()) {
+    out.push({
+      owner: e,
+      refs: [
+        ...each(e.data.attributes, ['attributes'], (a) => a.references).map((r) => ({
+          ...r,
+          path: [...r.path, 'references'],
+        })),
+        ...each(e.data.relationships, ['relationships'], (r) => r.entity),
+      ],
+    });
+  }
   for (const f of model.flows.values()) {
     out.push({
       owner: f,

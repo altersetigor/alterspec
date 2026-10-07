@@ -5,6 +5,10 @@ module: MOD-CAT
 status: refined
 roles:
   - role: ROLE-CATALOG-MANAGER
+fields:
+  - entity: ENT-ARTICLE
+    attributes: [Article number, Name, Brand, Category, Unit of measure, Description]
+    mode: edit
 entry_points: [SCR-GLB-01]
 actions:
   - id: A01

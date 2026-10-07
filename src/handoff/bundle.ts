@@ -41,7 +41,14 @@ export interface Bundle {
   }[];
   rules: { id: string; title: string; statement: string }[];
   events: { id: string; title: string; external: boolean; description: string }[];
-  screens: { id: string; title: string; purpose: string; actions: Screen['actions'] }[];
+  screens: {
+    id: string;
+    title: string;
+    purpose: string;
+    fields: { entity: string; entityTitle: string; attributes: string[]; mode: string }[];
+    actions: Screen['actions'];
+    mockups: Screen['mockups'];
+  }[];
   flows: {
     id: string;
     title: string;
@@ -247,7 +254,14 @@ export function buildBundle(model: SpecModel, files: SpecFile[], rawId: string):
           id: s,
           title: scr.data.title,
           purpose: firstParagraph(sectionText(scr.body, 'Purpose')),
+          fields: scr.data.fields.map((f) => ({
+            entity: f.entity,
+            entityTitle: model.entities.get(f.entity)?.data.title ?? f.entity,
+            attributes: f.attributes,
+            mode: f.mode,
+          })),
           actions: scr.data.actions,
+          mockups: scr.data.mockups,
         }
       );
     }),

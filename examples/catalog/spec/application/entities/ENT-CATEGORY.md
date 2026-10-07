@@ -10,6 +10,7 @@ attributes:
     kind: reference
     required: false
     description: Categories can be nested
+    references: ENT-CATEGORY
 relationships:
   - entity: ENT-CATEGORY
     cardinality: one

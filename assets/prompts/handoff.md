@@ -3,7 +3,8 @@
 Read `.alterspec/prompts/_shared.md` first and follow it.
 
 Arguments: `<CAP|MOD> [target]`. Targets:
-- `bundle` — one self-contained document (README.md + bundle.json) for a technical design or any other tool
+- `bundle` — one self-contained document (README.md + bundle.json) for a technical design or any other tool, with a
+  clickable prototype of the screens in scope (`prototype/index.html`, made-up data)
 - `speckit` — a GitHub Spec Kit feature spec (`spec.md`)
 - `openspec` — an OpenSpec change folder (`proposal.md`, `tasks.md`, `specs/<capability>/spec.md`)
 - `bmad` — a BMAD epic breakdown (`epics.md`)
@@ -39,7 +40,8 @@ changed. Re-running the export overwrites the polish, so suggest polishing as th
 - **openspec:** copy the folder inside `handoff/openspec/<ID>/` to `openspec/changes/` and run `openspec validate`.
 - **bmad:** give `handoff/bmad/<ID>/epics.md` to BMAD as the epics document (its planning artifacts folder). BMAD's
   formats are changing between versions; check the stories after import.
-- **bundle:** use `handoff/bundle/<ID>/README.md` as the input for the technical design.
+- **bundle:** use `handoff/bundle/<ID>/README.md` as the input for the technical design; `prototype/` shows the
+  screens. If the person has a design-system variant in `prototype/<variant>/`, point to it as the visual reference.
 
 Remind the person that the alterspec spec stays the source of truth: product changes go through `/alterspec-change`, then
 a new handoff. The manifest shows which version was handed over.

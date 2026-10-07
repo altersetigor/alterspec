@@ -5,6 +5,13 @@ module: MOD-PRC
 status: refined
 roles:
   - role: ROLE-PRICING-MANAGER
+fields:
+  - entity: ENT-PURCHASE-PRICE
+    attributes: [Supplier, Amount, Valid from]
+    mode: list
+  - entity: ENT-SALES-PRICE
+    attributes: [Article, Amount, Valid from]
+    mode: edit
 entry_points: []
 actions:
   - id: A01

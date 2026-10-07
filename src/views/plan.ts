@@ -1,4 +1,5 @@
 import type { SpecModel } from '../spec/model.js';
+import { PROTOTYPE_DIR, planPrototype } from '../prototype/index.js';
 import { renderGeneratedFile, replaceBlocks } from './blocks.js';
 import {
   appRoleMatrix,
@@ -19,10 +20,12 @@ export interface ViewsPlan {
   blocks: Map<string, Record<string, string>>;
   /** Expected blocks a file doesn't have. Views doesn't add them. */
   missing: { file: string; block: string }[];
+  /** Generated files on disk that views no longer writes (a removed screen's prototype page). */
+  remove: string[];
 }
 
 export function planViews(model: SpecModel): ViewsPlan {
-  const plan: ViewsPlan = { files: new Map(), blocks: new Map(), missing: [] };
+  const plan: ViewsPlan = { files: new Map(), blocks: new Map(), missing: [], remove: [] };
   const content = new Map(model.raw.map((f) => [f.path, f.content]));
 
   const fill = (file: string, desired: Record<string, string>) => {
@@ -49,14 +52,19 @@ export function planViews(model: SpecModel): ViewsPlan {
   plan.files.set('_generated/coverage.md', renderGeneratedFile(coverage(model)));
   plan.files.set('_generated/role-matrix.md', renderGeneratedFile(appRoleMatrix(model)));
   plan.files.set('_generated/index.json', index(model));
+  for (const [path, text] of planPrototype(model)) plan.files.set(path, text);
+  plan.remove = model.raw
+    .map((f) => f.path)
+    .filter((p) => p.startsWith(`${PROTOTYPE_DIR}/`) && !plan.files.has(p))
+    .sort();
   return plan;
 }
 
 /** Files whose desired content differs from what's on disk. */
 export function changedFiles(model: SpecModel, plan: ViewsPlan): string[] {
   const content = new Map(model.raw.map((f) => [f.path, f.content]));
-  return [...plan.files]
-    .filter(([path, text]) => content.get(path) !== text)
-    .map(([path]) => path)
-    .sort();
+  return [
+    ...[...plan.files].filter(([path, text]) => content.get(path) !== text).map(([path]) => path),
+    ...plan.remove,
+  ].sort();
 }

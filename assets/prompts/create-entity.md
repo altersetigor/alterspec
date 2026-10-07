@@ -8,7 +8,8 @@ Arguments: `<NAME> <title>` (NAME in upper case, words joined with `-`). Ask for
 2. Interview:
    - what the thing is in the business, and who cares about it
    - its business attributes: name, kind (text, number, amount, date, period, yes_no, choice, reference, document,
-     other), whether required, a short description. Never storage or technical types.
+     other), whether required, a short description. Never storage or technical types. For a `reference`, which
+     entity it points to (`references`); for a `choice`, the values a person can pick (`options`).
    - relationships to other entities (one or many)
    - its lifecycle: business states, the initial state, and which state changes are allowed
    - who creates it, views it, changes it, and archives or deletes it
