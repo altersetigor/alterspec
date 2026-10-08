@@ -27,8 +27,18 @@ Then the **developer questions**: anything a front-end developer building this s
 an action without its outcome, a validation without its message, a missing loading or error behaviour, an unclear
 narrow-screen layout, a focus or keyboard gap, an ambiguous label.
 
+## The real-app pass
+
+Open the page as each role would (read it with its `?as=<role>` and every `?state=<id>` from the experience screen in
+mind) and list anything a real user of the finished product wouldn't see or would find odd:
+- notes about the mockup, spec IDs, explanations of what a button would do, state or role switches on the page;
+- placeholder or implausible content ("Item 1", lorem ipsum, a seller called "Name 3", a photo that obviously doesn't
+  match the record);
+- actions offered where the person can't use them (someone else's record, the wrong state);
+- dead ends: a row or button that goes nowhere the app would go.
+
 ## Verdict
 
-**Clean** only when every row is MATCH and there are no developer questions. Otherwise list what must change, saying
+**Clean** only when every row is MATCH and there are no developer questions and no real-app findings. Otherwise list what must change, saying
 for each whether the business spec, the experience screen or the mockup changes. Don't say "aligned" without the full
 table.

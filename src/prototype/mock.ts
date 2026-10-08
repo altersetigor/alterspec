@@ -24,7 +24,14 @@ function hash(s: string): number {
 
 const BASE_DATE = Date.UTC(2026, 0, 5);
 const SUFFIX = ['Alpha', 'Beta', 'Gamma', 'Delta', 'Epsilon', 'Zeta', 'Eta', 'Theta'];
-const PEOPLE = ['Ana Horvat', 'Marko Novak', 'Ivana Kovač', 'Luka Babić', 'Petra Jurić', 'Tomislav Knežević'];
+const PEOPLE = [
+  'Emma Clarke',
+  'James Walker',
+  'Olivia Bennett',
+  'Liam Turner',
+  'Sophie Hughes',
+  'Noah Mitchell',
+];
 
 const initials = (title: string) =>
   title
@@ -37,7 +44,7 @@ function text(entity: Entity, name: string, i: number): string {
   const n = name.toLowerCase();
   const pick = <T>(list: T[]) => list[(i - 1) % list.length]!;
   if (/e-?mail/.test(n)) return `${pick(PEOPLE).split(' ')[0]!.toLowerCase()}@example.com`;
-  if (/phone|mobile/.test(n)) return `+385 1 555 ${String(100 + i * 7).padStart(4, '0')}`;
+  if (/phone|mobile/.test(n)) return `+1 555 01${String(i * 7).padStart(2, '0')}`;
   if (/(full |first |last |nick)name|person|owner|contact/.test(n)) return pick(PEOPLE);
   if (/number|code|reference/.test(n)) return `${initials(entity.title)}-${1000 + i}`;
   if (/name|title/.test(n)) return `${entity.title} ${pick(SUFFIX)}`;

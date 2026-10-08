@@ -1,8 +1,10 @@
-import { existsSync, readFileSync, writeFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { runBaseline } from '../src/commands/baseline.js';
-import { runChangeEdit, runChangeNew } from '../src/commands/change.js';
+import { runChangeEdit, runChangeNew, runChangeStatus } from '../src/commands/change.js';
+import { runApply } from '../src/changes/apply.js';
+import { runHandoff } from '../src/commands/handoff.js';
 import {
   runExperienceInit,
   runExperienceNew,
@@ -26,19 +28,22 @@ describe('experience commands', () => {
     const dir = copyFixture();
     const r = runExperienceInit(dir);
     expect(r.created).toEqual([]);
+    expect(r.skipped).toContain('experience/mockups/config.js');
     expect(r.skipped).toContain('experience/patterns.md');
   });
 
   it('new drafts a screen and mockup that pass every check', () => {
     const dir = copyFixture();
     const r = runExperienceNew(dir, 'SCR-PAY-01');
-    expect(r.files).toEqual([
-      'experience/screens/UX-SCR-PAY-01.md',
-      'experience/mockups/SCR-PAY-01.html',
-      'experience/mockups/nav.js',
-    ]);
+    expect(r.files).toEqual(['experience/screens/UX-SCR-PAY-01.md', 'experience/mockups/SCR-PAY-01.html']);
     expect(read(dir, 'experience/screens/UX-SCR-PAY-01.md')).toContain('archetype: list');
-    expect(read(dir, 'experience/mockups/nav.js')).toContain('"SCR-PAY-01"');
+    const page = read(dir, 'experience/mockups/SCR-PAY-01.html');
+    // An application page bound to the demo data: rows from a template, actions that change data.
+    expect(page).toContain('data-list');
+    expect(page).toContain('<template data-row>');
+    expect(page).toMatch(/data-effect="\{&quot;op&quot;:&quot;create&quot;/);
+    expect(page).toContain('<script src="kit/app.js"></script>');
+    expect(page).not.toMatch(/ux-review|Signed in as|data-states-bar/);
     expect(runValidate(dir).findings).toEqual([]);
     expect(() => runExperienceNew(dir, 'SCR-PAY-01')).toThrow(/already exists/);
     expect(() => runExperienceNew(dir, 'SCR-PAY-09')).toThrow(/not a screen/);
@@ -66,7 +71,7 @@ describe('experience commands', () => {
   it('reviewed refuses while there are findings, then records the review', () => {
     const dir = copyFixture();
     const mock = 'experience/mockups/SCR-HR-01.html';
-    write(dir, mock, 'Activate employee">Activate</button>', 'Activate employee">Enable</button>');
+    write(dir, mock, '>Activate</button>', '>Enable</button>');
     const bad = runExperienceReviewed(dir, 'SCR-HR-01');
     expect(bad.reviewed).toBeUndefined();
     expect(bad.findings.map((f) => f.rule)).toEqual(['experience-labels']);
@@ -131,6 +136,32 @@ describe('experience commands', () => {
     runExperienceNew(dir, 'SCR-PAY-01', { change: id });
     expect(read(dir, `changes/${id}/proposal.md`)).toContain('UX-SCR-PAY-01: null');
     expect(existsSync(join(dir, 'spec/experience/screens/UX-SCR-PAY-01.md'))).toBe(false);
+  });
+});
+
+describe('binary mockup assets', () => {
+  it('a photo survives a change proposal, apply and handoff byte for byte', () => {
+    const dir = copyFixture();
+    const bytes = Buffer.from(Array.from({ length: 256 }, (_, i) => i));
+    const photo = join(dir, 'spec/experience/mockups/assets/photo.png');
+    mkdirSync(dirname(photo), { recursive: true });
+    writeFileSync(photo, bytes);
+    runBaseline(dir);
+    const { id } = runChangeNew(dir, 'New photo');
+    runChangeEdit(dir, id, 'file:experience/mockups/assets/photo.png');
+    const overlay = join(dir, 'spec/changes', id, 'spec/experience/mockups/assets/photo.png');
+    expect(readFileSync(overlay)).toEqual(bytes);
+    const changed = Buffer.from(bytes).reverse();
+    writeFileSync(overlay, changed);
+    runChangeStatus(dir, id, 'in_review');
+    runChangeStatus(dir, id, 'approved');
+    runApply(dir, id);
+    expect(readFileSync(photo)).toEqual(changed);
+    expect(runValidate(dir).findings).toEqual([]);
+    const r = runHandoff(dir, 'CAP-HR-001', { date: '2026-10-07' });
+    expect(readFileSync(join(dir, r.outputs[0]!.folder, 'experience/mockups/assets/photo.png'))).toEqual(
+      changed,
+    );
   });
 });
 

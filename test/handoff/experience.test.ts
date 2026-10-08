@@ -26,7 +26,9 @@ describe('handoff experience gate', () => {
     expect(readFileSync(join(folder, 'README.md'), 'utf8')).toContain(
       '**Experience (ready):** editor layout',
     );
-    expect(readFileSync(join(folder, 'experience/mockups/nav.js'), 'utf8')).not.toContain('SCR-PAY-01');
+    expect(readFileSync(join(folder, 'experience/mockups/config.js'), 'utf8')).toContain(
+      '"nav": [\n    "SCR-HR-01"\n  ]',
+    );
     const bundle = JSON.parse(readFileSync(join(folder, 'bundle.json'), 'utf8')) as {
       screens: { experience?: { id: string } }[];
       sources: { id: string }[];
@@ -43,7 +45,7 @@ describe('handoff experience gate', () => {
 
   it('refuses when a label differs', () => {
     const dir = copyFixture();
-    edit(dir, MOCK, 'Activate employee">Activate</button>', 'Activate employee">Enable</button>');
+    edit(dir, MOCK, '>Activate</button>', '>Enable</button>');
     expect(() => runHandoff(dir, 'CAP-HR-001')).toThrow(/experience-labels/);
   });
 

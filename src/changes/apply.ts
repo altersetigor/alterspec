@@ -3,7 +3,7 @@ import { dirname, join, resolve } from 'node:path';
 import { parseDocument } from 'yaml';
 import { runViews } from '../commands/views.js';
 import { splitFrontMatter } from '../lib/frontmatter.js';
-import { readSpecDir } from '../spec/files.js';
+import { encodingOf, readSpecDir } from '../spec/files.js';
 import { readBaseline, today, writeBaseline } from './baseline.js';
 import { ChangeError, changeHash, updateProposal } from './change.js';
 import { fingerprint, specObjects } from './fingerprint.js';
@@ -80,7 +80,7 @@ export function runApply(dir: string, changeId: string, opts: { spec?: string } 
     if (!managed(path) || before.get(path) === content) continue;
     const full = join(specRoot, path);
     mkdirSync(dirname(full), { recursive: true });
-    writeFileSync(full, content);
+    writeFileSync(full, content, encodingOf(path));
     written.push(path);
   }
   for (const path of before.keys()) {

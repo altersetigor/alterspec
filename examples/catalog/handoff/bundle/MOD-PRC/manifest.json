@@ -1,5 +1,5 @@
 {
-  "alterspec": "0.4.1",
+  "alterspec": "0.5.0",
   "target": "bundle",
   "scope": {
     "id": "MOD-PRC",
@@ -105,7 +105,7 @@
     {
       "id": "UX-SCR-PRC-01",
       "status": "ready",
-      "fingerprint": "a39546a98eff97d8"
+      "fingerprint": "7a05ae39c8c9f945"
     },
     {
       "id": "term:Article",

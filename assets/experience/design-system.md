@@ -50,6 +50,12 @@ components:
   toast: A short confirmation after an action
 ```
 
+## Images
+
+Demo photos come from the image URL template in `mockups/config.js` (by default Picsum: real photos with random
+subjects) until they are replaced by photos that match each record. Note here where the photos come from and under
+which licence, so nobody mistakes them for the product's own content.
+
 ## Responsive behaviour
 
 - At 1024px and wider: navigation on the left, side regions beside the main content.

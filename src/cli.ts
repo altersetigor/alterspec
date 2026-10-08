@@ -17,6 +17,8 @@ import { runViews } from './commands/views.js';
 import {
   runExperienceInit,
   runExperienceNew,
+  runExperienceRebuild,
+  runExperienceSeed,
   runExperienceReviewed,
   runExperienceSync,
 } from './commands/experience.js';
@@ -294,14 +296,37 @@ type ExperienceCliOpts = { dir: string; spec: string; change?: string; json?: bo
 experienceOpts(
   experience
     .command('init')
-    .description('Add the starter design system, patterns and mockup kit. Never overwrites'),
-).action((opts: ExperienceCliOpts) => {
+    .description(
+      'Add the starter design system, patterns and the mockup app. Never overwrites, except with --kit',
+    )
+    .option('--kit', 'refresh the mockup kit, spec.js and the sign-in page to this version'),
+).action((opts: ExperienceCliOpts & { kit?: boolean }) => {
   const r = runExperienceInit(opts.dir, opts);
   if (opts.json) console.log(JSON.stringify(r, null, 2));
   else {
     for (const f of r.created) console.log(`created spec/${f}`);
-    for (const f of r.skipped) console.log(`kept spec/${f} (exists)`);
+    for (const f of r.updated) console.log(`updated spec/${f}`);
+    if (!opts.kit) for (const f of r.skipped) console.log(`kept spec/${f} (exists)`);
   }
+});
+
+experienceOpts(
+  experience.command('seed').description('Rewrite the demo data from the spec and add missing demo accounts'),
+).action((opts: ExperienceCliOpts) => {
+  const r = runExperienceSeed(opts.dir, opts);
+  if (opts.json) console.log(JSON.stringify(r, null, 2));
+  else console.log(`seeded ${r.records} records (${r.files.map((f) => `spec/${f}`).join(', ')})`);
+});
+
+experienceOpts(
+  experience
+    .command('rebuild')
+    .description("Render a screen's mockup again from its experience screen on the current kit")
+    .argument('<SCR>'),
+).action((id: string, opts: ExperienceCliOpts) => {
+  const r = runExperienceRebuild(opts.dir, id, opts);
+  if (opts.json) console.log(JSON.stringify(r));
+  else for (const f of r.files) console.log(`wrote spec/${f}`);
 });
 
 experienceOpts(

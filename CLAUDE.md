@@ -87,9 +87,10 @@ skill and agent with `alterspec-`.
   `flows/FLOW-*.md`, `events.md`, `integrations.md`, `nfr.md`, `decisions.md`
 - `modules/<mod>/`: `module.md`, `screens/SCR-*.md`, `capabilities/CAP-*.md`
 - `changes/CHG-*/`: `proposal.md` and delta files; moved to `changes/archive/` after merge
-- `experience/`: `design-system.md`, `patterns.md`, `screens/UX-SCR-*.md`, `mockups/` (kit, `nav.js`, one page per
-  screen); UI-technical by design, baselined and changed like the rest
-- `_generated/`: matrices, traceability, coverage, lint report and the generic `prototype/` (never hand-edited)
+- `experience/`: `design-system.md`, `patterns.md`, `screens/UX-SCR-*.md`, `mockups/` (the app: `index.html` sign-in,
+  one page per screen, `config.js`, `data.js`, `kit/`); UI-technical by design, baselined and changed like the rest
+- `_generated/`: matrices, traceability, coverage, lint report, the generic `prototype/` and `experience/spec.js`
+  (never hand-edited)
 
 **IDs** are stable and never reused: `APP`, `MOD-<CODE>`, `CAP-<MOD>-<NNN>`, `SCR-<MOD>-<NN>` / `SCR-GLB-<NN>`,
 `ROLE-<NAME>`, `PER-<NAME>`, `ENT-<NAME>`, `RULE-<NNN>`, `FLOW-<NNN>`, `EVT-<NAME>`, `DEC-<NNN>`, `CHG-<NNN>`,
@@ -132,10 +133,17 @@ Statuses: `draft → refined → ready → approved → implemented`.
   rules in `src/lint/rules/experience.ts` enforce zero deviation; handoff refuses screens whose experience isn't
   ready, reviewed and finding-free (no override). Mockup files are spec objects (`file:experience/mockups/…`) and
   `change edit UX-SCR-…` copies the mockup along. The starter kit lives in `assets/experience/` (plain CSS, no CDN).
+- Living mockups (Phase 8): mockups are the future app. `assets/experience/mockups/kit/` is a vanilla runtime
+  (`app.js` sign-in/shell/binding/actions, `store.js` demo data in localStorage, `ui.js`, `icons.js` = bundled Lucide
+  subset, ISC). `src/experience/app.ts` builds `spec.js` (written by `views` to `_generated/experience/`), the default
+  `config.js` (demo people from personas, neutral English defaults) and seeded `data.js`; `scaffold.ts` renders pages
+  bound to the store, with `data-effect` derived from the capability (create / transition / update / archive /
+  delete, `own` scope). No reviewer chrome on pages (`experience-chrome`); states by URL only. Binary assets go
+  through `encodingOf` (latin1) in `src/spec/files.ts`. Keep defaults neutral: nothing product- or locale-specific.
 - `examples/catalog/` is the reference example and a golden fixture: tests require 0 findings, current views, and that
   re-running its handoffs (`--date 2026-10-07`) reproduces `examples/catalog/handoff/` byte for byte. Its applied
-  CHG-003 adds the experience layer with SCR-PRC-01 designed and reviewed. After changing a renderer or
-  bumping the package version, regenerate it: `node dist/cli.js views examples/catalog`,
+  CHG-003 adds the experience layer with SCR-PRC-01 designed and reviewed; CHG-004 moves it onto the app runtime.
+  After changing a renderer or bumping the package version, regenerate it: `node dist/cli.js views examples/catalog`,
   `node dist/cli.js handoff CAP-PRC-001 --target all --date 2026-10-07 -C examples/catalog` and
   `node dist/cli.js handoff MOD-PRC --date 2026-10-07 -C examples/catalog`.
 - Decided: interview-then-draft; one capability = one goal, one acting role, one session; `refine` moves status to
@@ -150,3 +158,4 @@ Statuses: `draft → refined → ready → approved → implemented`.
 5. Handoff and a full example project (reference fixture)
 6. Screen fields and the generated (dry) prototype
 7. Experience layer: UX contracts and realistic mockups, zero-deviation checks and the handoff gate
+8. Living mockups: the experience mockups are a working app (sign-in as a role, demo data, real-app look)

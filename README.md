@@ -146,7 +146,7 @@ agents or settings.
 | `/alterspec-impact <CHG>` | Impact analysis of a change, for a business reader |
 | `/alterspec-apply <CHG>` | Approve, after your explicit word, and merge a change |
 | `/alterspec-handoff <ID> [target]` | Export to Spec Kit, OpenSpec, BMAD or a bundle |
-| `/alterspec-experience [init \| <SCR> \| review <SCR> \| sync <SCR>]` | Design system, UX contracts and mockups, kept fully aligned with the spec |
+| `/alterspec-experience [init \| <SCR> \| review <SCR> \| sync <SCR> \| rebuild <SCR>]` | The future app as working mockups, with a UX contract per screen kept fully aligned with the spec |
 
 Two agents work behind these commands:
 
@@ -199,7 +199,7 @@ alterspec show CAP-CAT-001        # references both ways, empty sections, open q
 
 | Command | Description |
 | --- | --- |
-| `alterspec validate [--json] [--report] [--change <CHG>]` | Run the 40 lint rules. Exits with 1 on errors. |
+| `alterspec validate [--json] [--report] [--change <CHG>]` | Run the 41 lint rules. Exits with 1 on errors. |
 | `alterspec validate --list-rules` | List every rule with its default severity. |
 | `alterspec views [--check]` | Regenerate the generated blocks and `spec/_generated/`. `--check` only reports. |
 
@@ -226,8 +226,10 @@ alterspec show CAP-CAT-001        # references both ways, empty sections, open q
 
 | Command | Description |
 | --- | --- |
-| `alterspec experience init` | Add the starter design system, patterns and mockup kit to `spec/experience/`. Never overwrites. |
-| `alterspec experience new <SCR>` | Draft a screen's experience contract and mockup; both pass every check. |
+| `alterspec experience init [--kit]` | Add the design system, patterns and the mockup app to `spec/experience/`. Never overwrites; `--kit` refreshes the kit. |
+| `alterspec experience seed` | Rewrite the demo data from the spec and add missing demo people. |
+| `alterspec experience new <SCR>` | Draft a screen's experience contract and working page; both pass every check. |
+| `alterspec experience rebuild <SCR>` | Render a page again from its experience contract on the current kit. |
 | `alterspec experience sync <SCR>` | Align them with a changed business screen. |
 | `alterspec experience reviewed <SCR>` | Record a clean parity review; refused while anything is out of line. |
 
@@ -360,7 +362,7 @@ instead.
 
 ## Validation
 
-`alterspec validate` runs 40 deterministic rules. Here is a selection:
+`alterspec validate` runs 41 deterministic rules. Here is a selection:
 
 | Area | Examples |
 | --- | --- |
@@ -448,11 +450,16 @@ spec/experience/             wet: the experience layer — design system, patter
     microcopy patterns.
   - `screens/UX-SCR-….md`: per screen, every business element with its region, component and exact label, the
     states (each a link: `?as=<role>&state=<id>`), and how it behaves.
-  - `mockups/SCR-….html`: a realistic, standalone page with the app shell, a demo-user switcher and a link per state.
+  - `mockups/`: **the future app, working.** A sign-in page with a card per demo person (name, persona, role) is the
+    only demo feature. After signing in you get the application shell (brand, user menu, navigation filtered to your
+    role), pages bound to demo data kept in the browser (lists open records, forms save, actions change data the way
+    their capability says, with confirmations and messages), realistic data and photos, and nothing a real user
+    wouldn't see. States are reached by link (`SCR-…html?as=<role>&state=empty`), never by controls on the page.
+    `config.js` (name, logo, currency, demo people) and `data.js` (demo data) are yours; the CLI seeds them.
 - **Zero deviation.** Every business element carries its spec ID in the mockup (`data-src="SCR-PRC-01.A01"`). The
   linter fails when an element is missing or added, a label differs, a role or state isn't covered, or a component
-  isn't in the catalogue; it warns when the business screen changed (`experience sync`) or the screen changed since
-  its parity review. A change to a business screen can't go to review until its experience screen follows, and
+  isn't in the catalogue; it warns when the business screen changed (`experience sync`), the screen changed since
+  its parity review, or a page shows something a real user wouldn't (spec IDs, notes about the mockup). A change to a business screen can't go to review until its experience screen follows, and
   **handoff refuses any screen whose experience isn't ready, reviewed and finding-free** — there is no override.
 
 ```text
@@ -460,6 +467,8 @@ spec/experience/             wet: the experience layer — design system, patter
 /alterspec-experience SCR-PRC-01            draft, then shape the screen with the UX designer agent
 /alterspec-experience review SCR-PRC-01     parity review; recorded only when everything matches
 ```
+
+Open `spec/experience/mockups/index.html` in a browser and sign in.
 
 ## Configuration and customisation
 
@@ -552,8 +561,8 @@ old ID is never reused.
 
 **Is my spec sent anywhere?**
 The CLI works only on local files and makes no network calls. Claude Code works with your files the way it does for
-any code. Prototype pages and mockups are plain local files and
-load nothing from the internet.
+any code. Prototype pages and mockups are plain local files; mockups
+load demo photos from the image URLs in their data (a stock photo service by default) when you open them.
 
 ## License
 

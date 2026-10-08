@@ -3,7 +3,7 @@ id: UX-SCR-HR-01
 screen: SCR-HR-01
 status: ready
 archetype: editor
-reviewed: 7cbd00d85c39
+reviewed: 7f499a75986c
 dry: 1982ba86d066
 elements:
   - src: SCR-HR-01

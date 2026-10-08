@@ -9,7 +9,7 @@ import { fingerprint, specObjects } from '../changes/fingerprint.js';
 import { overlayObjects, removeItem, upsertItem } from '../changes/merge.js';
 import { renderTemplate } from '../lib/template.js';
 import { ChangeStatus } from '../schemas/change.js';
-import { readSpecDir } from '../spec/files.js';
+import { encodingOf, readSpecDir } from '../spec/files.js';
 import { classify } from '../spec/load.js';
 import { computeImpact } from '../changes/impact.js';
 
@@ -56,7 +56,7 @@ function requireOpen(change: LoadedChange) {
 const writeOverlay = (change: LoadedChange, path: string, content: string) => {
   const full = join(change.overlayRoot, path);
   mkdirSync(dirname(full), { recursive: true });
-  writeFileSync(full, content);
+  writeFileSync(full, content, encodingOf(path));
 };
 
 /** Copy an object into the change overlay and record its base fingerprint. */

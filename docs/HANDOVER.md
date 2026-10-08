@@ -194,6 +194,9 @@ Suggested stack: TypeScript, Node 20+, `commander`, `gray-matter`, `zod` (+ zod-
 7. **Experience layer** — `spec/experience/`: design system, patterns, a UX contract and a realistic mockup per screen;
    `experience init|new|sync|reviewed`, `/alterspec-experience`, the UX designer and experience reviewer agents,
    eight `experience-*` lint rules, change management for mockups, and a handoff gate with no override.
+8. **Living mockups** — the mockups become the future app: sign-in page with demo people per role, application
+   shell, pages bound to seeded demo data, actions that change data per their capability, realistic photos, no
+   reviewer chrome (`experience-chrome`); `experience seed|rebuild`, `init --kit`; binary-safe mockup assets.
 
 ## 10. Rules for working on this repo
 

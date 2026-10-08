@@ -343,9 +343,9 @@ const CASES: Record<string, Case[]> = {
     {
       label: 'text differs from the declared label',
       edits: {
-        [MOCK]: replace('Activate employee">Activate</button>', 'Activate employee">Enable</button>'),
+        [MOCK]: replace('>Activate</button>', '>Enable</button>'),
       },
-      expect: { file: MOCK, line: 18, message: /SCR-HR-01.A02 should read "Activate"/ },
+      expect: { file: MOCK, message: /SCR-HR-01.A02 should read "Activate"/ },
     },
   ],
   'experience-states': [
@@ -370,6 +370,20 @@ const CASES: Record<string, Case[]> = {
       label: 'unknown component',
       edits: { [UX]: replace('component: field-date', 'component: date-wheel') },
       expect: { file: UX, line: 23, message: /component "date-wheel"/ },
+    },
+  ],
+  'experience-chrome': [
+    {
+      label: 'note about the mockup on the page',
+      edits: {
+        [MOCK]: replace('</main>', '<p class="ux-mock-note">Not shown here.</p>\n</main>'),
+      },
+      expect: { file: MOCK, message: /reviewer element "ux-mock-note"/ },
+    },
+    {
+      label: 'spec ID in the visible text',
+      edits: { [MOCK]: replace('</main>', '<p>See CAP-HR-002</p>\n</main>') },
+      expect: { file: MOCK, message: /spec ID CAP-HR-002/ },
     },
   ],
   'experience-stale': [

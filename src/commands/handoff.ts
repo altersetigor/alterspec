@@ -12,10 +12,10 @@ import { renderSpeckit } from '../handoff/targets/speckit.js';
 import { lint } from '../lint/lint.js';
 import type { Finding } from '../lint/types.js';
 import { EXPERIENCE_DIR, hasExperience, mockupPath } from '../experience/index.js';
-import { navJs } from '../experience/scaffold.js';
+import { SPEC_JS, buildSpecJs, configJs, parseConfig, specJs } from '../experience/app.js';
 import type { SpecModel } from '../spec/model.js';
 import { scopedPrototype } from '../prototype/index.js';
-import { readSpecDir } from '../spec/files.js';
+import { encodingOf, readSpecDir } from '../spec/files.js';
 import { loadSpec } from '../spec/load.js';
 
 export const TARGETS = ['bundle', 'speckit', 'openspec', 'bmad'] as const;
@@ -74,22 +74,28 @@ function experienceGate(model: SpecModel, bundle: Bundle, findings: Finding[]): 
   return [...new Set(out)];
 }
 
-const TEXT_ASSET = /\.(html|css|js|json|svg|md|txt)$/;
-
 /** The experience layer of the screens in scope, for the bundle: contracts, their mockups and the shared kit. */
 function experienceFiles(model: SpecModel, bundle: Bundle): Map<string, string> {
   const scope = new Set(bundle.screens.filter((s) => s.experience).map((s) => s.id));
   const out = new Map<string, string>();
   if (!scope.size) return out;
   for (const f of model.raw) {
-    if (!f.path.startsWith(`${EXPERIENCE_DIR}/`) || !TEXT_ASSET.test(f.path)) continue;
+    if (!f.path.startsWith(`${EXPERIENCE_DIR}/`)) continue;
     const page = /^experience\/mockups\/(SCR-[^/]+)\.html$/.exec(f.path)?.[1];
     const doc = /^experience\/screens\/UX-(SCR-[^/]+)\.md$/.exec(f.path)?.[1];
     if ((page && !scope.has(page)) || (doc && !scope.has(doc))) continue;
-    if (f.path === `${EXPERIENCE_DIR}/mockups/nav.js`) continue;
     out.set(f.path, f.content);
   }
-  out.set(`${EXPERIENCE_DIR}/mockups/nav.js`, navJs(model, scope));
+  // The spec data the pages read, at the same relative place as in spec/.
+  out.set(SPEC_JS, specJs(model));
+  // Navigation of the handed-off app: only the screens in scope.
+  const configPath = `${EXPERIENCE_DIR}/mockups/config.js`;
+  const config = parseConfig(out.get(configPath) ?? '');
+  if (config) {
+    const screens = buildSpecJs(model).screens;
+    const top = [...scope].filter((s) => screens[s]?.top);
+    out.set(configPath, configJs({ ...config, nav: top.length ? top : [...scope] }));
+  }
   return new Map([...out].sort(([a], [b]) => (a < b ? -1 : 1)));
 }
 
@@ -167,7 +173,7 @@ export function runHandoff(dir: string, rawId: string, opts: HandoffOptions = {}
     for (const [path, content] of out) {
       const full = join(folder, path);
       mkdirSync(dirname(full), { recursive: true });
-      writeFileSync(full, content);
+      writeFileSync(full, content, encodingOf(path));
     }
     outputs.push({ target, folder: `handoff/${target}/${bundle.scope.id}`, files: [...out.keys()].sort() });
   }

@@ -1,5 +1,5 @@
 import { readCatalog } from '../../experience/catalog.js';
-import { elementText, normalize, tags, type Tag } from '../../experience/html.js';
+import { elementText, normalize, tags, visibleText, type Tag } from '../../experience/html.js';
 import {
   contentOf,
   dryHash,
@@ -219,6 +219,48 @@ export const experienceVocabulary: LintRule = {
             message: `component "${e.component}" is not in experience/design-system.md`,
           });
       });
+    }
+    return out;
+  },
+};
+
+const CHROME_CLASSES = /\bclass="[^"]*\b(ux-review|ux-mock-note|ux-dialog-preview|ux-annotation)\b/;
+const SPEC_ID = /\b(?:APP|MOD|CAP|SCR|ROLE|PER|ENT|RULE|FLOW|EVT|DEC|CHG|UX)-[A-Z0-9][A-Z0-9-]*\b/;
+const SPEC_WORDS = /\b(mockup|prototype|data-src|alterspec|capability|acceptance criteri)/i;
+
+export const experienceChrome: LintRule = {
+  name: 'experience-chrome',
+  severity: 'warn',
+  description:
+    'Mockups show only what real users of the future app would see: no spec IDs, notes about the mockup or reviewer controls.',
+  check: ({ model }) => {
+    const out: RawFinding[] = [];
+    for (const { x, html, mockup } of each(model)) {
+      if (html === undefined) continue;
+      const cls = CHROME_CLASSES.exec(html);
+      if (cls)
+        out.push({
+          file: mockup,
+          line: lineAt(html, cls.index),
+          id: x.id,
+          message: `reviewer element "${cls[1]}" on the page`,
+        });
+      const text = visibleText(html);
+      const at = (needle: string) => {
+        const i = html.indexOf(needle);
+        return i < 0 ? {} : { line: lineAt(html, i) };
+      };
+      const id = SPEC_ID.exec(text);
+      if (id)
+        out.push({ file: mockup, ...at(id[0]), id: x.id, message: `the page shows the spec ID ${id[0]}` });
+      const word = SPEC_WORDS.exec(text);
+      if (word)
+        out.push({
+          file: mockup,
+          ...at(word[1]!),
+          id: x.id,
+          message: `the page talks about "${word[1]}"; say it as the app would`,
+        });
     }
     return out;
   },

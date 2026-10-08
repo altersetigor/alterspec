@@ -53,6 +53,10 @@ its [experience contract](spec/experience/screens/UX-SCR-PRC-01.md) and its
 [SCR-PRC-01](spec/modules/prc/screens/SCR-PRC-01.md) and reviewed. That is why the Pricing handoffs pass the
 experience gate, while handing off the Catalog module is refused until its screens are designed too.
 
+The applied **[CHG-004 Sales price review as a working app](spec/changes/archive/CHG-004/proposal.md)** moved the
+mockups onto the application runtime: open [the sign-in page](spec/experience/mockups/index.html), sign in as the
+pricing analyst and propose or approve a sales price.
+
 ## Handoff
 
 [CAP-PRC-001 Propose sales price](spec/modules/prc/capabilities/CAP-PRC-001.md) is handed off to every target:

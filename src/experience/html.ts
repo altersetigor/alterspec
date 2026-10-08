@@ -92,4 +92,15 @@ export function elementText(html: string, tag: Tag): string | undefined {
   return decode(text).replace(/\s+/g, ' ').trim();
 }
 
+/** The text a person sees on the page: no comments, scripts, styles, templates' markup or attributes. */
+export function visibleText(html: string): string {
+  return decode(
+    blank(html)
+      .replace(/<head\b[\s\S]*?<\/head>/i, ' ')
+      .replace(/<[^>]+>/g, ' '),
+  )
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
 export const normalize = (s: string) => s.replace(/\s+/g, ' ').trim().toLowerCase();

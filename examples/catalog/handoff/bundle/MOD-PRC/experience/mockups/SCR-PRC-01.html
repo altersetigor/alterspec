@@ -1,5 +1,5 @@
 <!doctype html>
-<!-- Experience mockup of SCR-PRC-01. Shape it freely, but keep every data-src, data-roles and data-show-in: the alignment checks read them. -->
+<!-- SCR-PRC-01: keep every data-src, data-roles and data-show-in; the alignment checks read them. -->
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -7,50 +7,50 @@
 <title>Sales price review · Product Catalog</title>
 <link rel="stylesheet" href="kit/tokens.css">
 <link rel="stylesheet" href="kit/components.css">
-<script src="nav.js"></script>
 </head>
 <body data-screen="SCR-PRC-01" data-roles="ROLE-PRICING-MANAGER" data-states="default empty no-permission validation">
 <main class="ux-page" data-src="SCR-PRC-01">
 <header class="ux-page-header">
-<div><p class="ux-breadcrumb">Pricing</p><h1 class="ux-page-title">Sales price review</h1></div>
+<div><nav class="ux-breadcrumb" aria-label="Breadcrumb"><span>Pricing</span><i data-icon="chevron-right"></i><span>Sales price review</span><i data-icon="chevron-right" data-crumb-record hidden></i><span data-crumb-record hidden></span></nav>
+<h1 class="ux-page-title">Sales price review</h1></div>
 <div class="ux-toolbar">
-<button type="button" class="ux-button ux-button-primary" data-src="SCR-PRC-01.A01" data-action="Propose: performs CAP-PRC-001 Propose sales price">Propose</button>
-<button type="button" class="ux-button" data-src="SCR-PRC-01.A02" data-action="Approve: performs CAP-PRC-002 Approve sales price">Approve</button>
-<button type="button" class="ux-button" data-src="SCR-PRC-01.A03" data-action="Expire: performs CAP-PRC-003 Expire sales prices of a discontinued article">Expire</button>
+<button type="button" class="ux-button ux-button-primary" data-src="SCR-PRC-01.A01" data-effect="{&quot;op&quot;:&quot;create&quot;,&quot;entity&quot;:&quot;ENT-SALES-PRICE&quot;,&quot;toast&quot;:&quot;Sales price created&quot;,&quot;show&quot;:&quot;SCR-PRC-01&quot;}">Propose</button>
+<button type="button" class="ux-button" data-src="SCR-PRC-01.A02" data-effect="{&quot;op&quot;:&quot;transition&quot;,&quot;entity&quot;:&quot;ENT-SALES-PRICE&quot;,&quot;from&quot;:&quot;proposed&quot;,&quot;to&quot;:&quot;valid&quot;,&quot;toast&quot;:&quot;Sales price valid&quot;}">Approve</button>
+<button type="button" class="ux-button" data-src="SCR-PRC-01.A03" data-effect="{&quot;op&quot;:&quot;transition&quot;,&quot;entity&quot;:&quot;ENT-SALES-PRICE&quot;,&quot;from&quot;:&quot;valid&quot;,&quot;to&quot;:&quot;expired&quot;,&quot;toast&quot;:&quot;Sales price expired&quot;,&quot;confirm&quot;:&quot;Expire sales prices of a discontinued article?&quot;}">Expire</button>
 </div>
 </header>
-<div class="ux-state" data-src="SCR-PRC-01.state.empty" data-show-in="empty">Nothing waiting; the screen says so.</div>
-<div class="ux-state" data-src="SCR-PRC-01.state.no-permission" data-show-in="no-permission">Other roles cannot open it.</div>
-<div class="ux-state ux-state-danger" data-src="SCR-PRC-01.state.validation" data-show-in="validation">Amount not above the purchase price; article no longer active.</div>
+<div class="ux-state" data-src="SCR-PRC-01.state.empty" data-show-in="empty"><i data-icon="inbox"></i>Nothing waiting; the screen says so.</div>
+<div class="ux-state" data-src="SCR-PRC-01.state.no-permission" data-show-in="no-permission"><i data-icon="lock"></i>Other roles cannot open it.</div>
+<div class="ux-state ux-state-danger" data-src="SCR-PRC-01.state.validation" data-show-in="validation"><i data-icon="alert-circle"></i>Amount not above the purchase price; article no longer active.</div>
 <div class="ux-layout">
 <div class="ux-region" data-region="results">
-<section class="ux-card ux-data" data-src="SCR-PRC-01.ENT-PURCHASE-PRICE">
-<h2 class="ux-card-title">Purchase price</h2>
+<section class="ux-card ux-data" data-src="SCR-PRC-01.ENT-PURCHASE-PRICE" data-entity="ENT-PURCHASE-PRICE" data-list>
+<div class="ux-card-head"><h2 class="ux-card-title">Purchase price<span class="ux-count" data-count></span></h2></div>
 <table class="ux-table">
 <thead><tr><th data-src="SCR-PRC-01.ENT-PURCHASE-PRICE.Supplier">Supplier</th><th data-src="SCR-PRC-01.ENT-PURCHASE-PRICE.Amount">Amount</th><th data-src="SCR-PRC-01.ENT-PURCHASE-PRICE.Valid from">Valid from</th><th>Status</th></tr></thead>
-<tbody>
-<tr><td>Supplier Alpha</td><td>684.37</td><td>2026-02-04</td><td><span class="ux-badge ux-badge-info">proposed</span></td></tr>
-<tr><td>Supplier Beta</td><td>851.80</td><td>2026-02-26</td><td><span class="ux-badge ux-badge-success">valid</span></td></tr>
-<tr><td>Supplier Gamma</td><td>795.99</td><td>2026-03-20</td><td><span class="ux-badge ux-badge-muted">expired</span></td></tr>
-<tr><td>Supplier Delta</td><td>963.42</td><td>2026-04-11</td><td><span class="ux-badge ux-badge-info">proposed</span></td></tr>
-<tr><td>Supplier Epsilon</td><td>907.61</td><td>2026-05-03</td><td><span class="ux-badge ux-badge-success">valid</span></td></tr>
-</tbody>
+<tbody data-rows></tbody>
 </table>
+<template data-row><tr><td class="ux-cell-main" data-field="Supplier"></td><td data-field="Amount"></td><td data-field="Valid from"></td><td><span data-field-state></span></td></tr></template>
 </section>
 </div>
 <aside class="ux-region" data-region="detail">
-<section class="ux-card ux-data" data-src="SCR-PRC-01.ENT-SALES-PRICE">
-<h2 class="ux-card-title">Sales price</h2>
-<p class="ux-breadcrumb">The sales price must be above the purchase price.</p>
-<form class="ux-form">
-<div class="ux-field" data-src="SCR-PRC-01.ENT-SALES-PRICE.Article"><label class="ux-label" for="ent-sales-price-1">Article <span class="ux-required">*</span></label><select id="ent-sales-price-1" class="ux-input"><option selected>Article Alpha</option><option>Article Beta</option><option>Article Gamma</option><option>Article Delta</option><option>Article Epsilon</option></select></div>
-<div class="ux-field" data-src="SCR-PRC-01.ENT-SALES-PRICE.Amount"><label class="ux-label" for="ent-sales-price-2">Amount <span class="ux-required">*</span></label><input id="ent-sales-price-2" class="ux-input" type="number" value="844.02"></div>
-<div class="ux-field" data-src="SCR-PRC-01.ENT-SALES-PRICE.Valid from"><label class="ux-label" for="ent-sales-price-3">Valid from <span class="ux-required">*</span></label><input id="ent-sales-price-3" class="ux-input" type="date" value="2026-02-09"></div>
+<section class="ux-card ux-data" data-src="SCR-PRC-01.ENT-SALES-PRICE" data-entity="ENT-SALES-PRICE" data-record>
+<div class="ux-card-head"><h2 class="ux-card-title">Sales price</h2></div>
+<form class="ux-form" novalidate>
+<div class="ux-field" data-src="SCR-PRC-01.ENT-SALES-PRICE.Article"><label class="ux-label" for="ent-sales-price-1">Article <span class="ux-required">*</span></label><select id="ent-sales-price-1" class="ux-input" name="Article" data-references="ENT-ARTICLE" required></select><p class="ux-field-error">Choose article.</p></div>
+<div class="ux-field" data-src="SCR-PRC-01.ENT-SALES-PRICE.Amount"><label class="ux-label" for="ent-sales-price-2">Amount <span class="ux-required">*</span></label><input id="ent-sales-price-2" class="ux-input" name="Amount" type="number" step="0.01" required><p class="ux-field-error">Enter amount.</p></div>
+<div class="ux-field" data-src="SCR-PRC-01.ENT-SALES-PRICE.Valid from"><label class="ux-label" for="ent-sales-price-3">Valid from <span class="ux-required">*</span></label><input id="ent-sales-price-3" class="ux-input" name="Valid from" type="date" required><p class="ux-field-error">Enter valid from.</p></div>
 </form>
 </section>
 </aside>
 </div>
 </main>
-<script src="kit/shell.js"></script>
+<script src="config.js"></script>
+<script src="../../_generated/experience/spec.js"></script>
+<script src="data.js"></script>
+<script src="kit/icons.js"></script>
+<script src="kit/store.js"></script>
+<script src="kit/ui.js"></script>
+<script src="kit/app.js"></script>
 </body>
 </html>

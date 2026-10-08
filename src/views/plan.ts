@@ -1,4 +1,6 @@
 import type { SpecModel } from '../spec/model.js';
+import { SPEC_JS, specJs } from '../experience/app.js';
+import { hasExperience } from '../experience/index.js';
 import { PROTOTYPE_DIR, planPrototype } from '../prototype/index.js';
 import { renderGeneratedFile, replaceBlocks } from './blocks.js';
 import {
@@ -53,6 +55,7 @@ export function planViews(model: SpecModel): ViewsPlan {
   plan.files.set('_generated/role-matrix.md', renderGeneratedFile(appRoleMatrix(model)));
   plan.files.set('_generated/index.json', index(model));
   for (const [path, text] of planPrototype(model)) plan.files.set(path, text);
+  if (hasExperience(model)) plan.files.set(SPEC_JS, specJs(model));
   plan.remove = model.raw
     .map((f) => f.path)
     .filter((p) => p.startsWith(`${PROTOTYPE_DIR}/`) && !plan.files.has(p))

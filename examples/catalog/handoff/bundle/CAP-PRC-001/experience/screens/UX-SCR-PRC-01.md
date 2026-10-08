@@ -3,7 +3,7 @@ id: UX-SCR-PRC-01
 screen: SCR-PRC-01
 status: ready
 archetype: list
-reviewed: 5d2eea23c368
+reviewed: 7ec761b2cca7
 dry: 3e68ec77afe9
 elements:
   - src: SCR-PRC-01

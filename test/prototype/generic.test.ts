@@ -42,7 +42,7 @@ describe('generic prototype', () => {
   it('shows list data with lifecycle states and resolved references', () => {
     const html = page('SCR-PAY-01');
     expect(html).toContain('<th data-src="SCR-PAY-01.ENT-PAYSLIP.Employee">Employee</th>');
-    expect(html).toContain('<td>Ana Horvat</td>');
+    expect(html).toContain('<td>Emma Clarke</td>');
     expect(html).toContain('<th>State</th>');
     expect(html).toContain('<td>issued</td>');
   });

@@ -13,21 +13,22 @@ import {
   EXPERIENCE_DIR,
   contentOf,
   dryHash,
-  dryModel,
   dryPage,
   experiencePath,
   mockupPath,
   reviewHash,
   uxElements,
 } from '../experience/index.js';
+import { draftDoc, draftElements, draftMockup, draftStates } from '../experience/scaffold.js';
 import {
-  draftDoc,
-  draftElements,
-  draftMockup,
-  draftStates,
-  indexHtml,
-  navJs,
-} from '../experience/scaffold.js';
+  configJs,
+  dataJs,
+  defaultConfig,
+  loginHtml,
+  mergeConfig,
+  parseConfig,
+  seedData,
+} from '../experience/app.js';
 import { lint } from '../lint/lint.js';
 import { esc } from '../prototype/render.js';
 import type { ExperienceScreen } from '../schemas/experience.js';
@@ -44,13 +45,9 @@ export interface ExperienceOptions {
   change?: string;
 }
 
-const STARTER = [
-  'design-system.md',
-  'patterns.md',
-  'mockups/kit/tokens.css',
-  'mockups/kit/components.css',
-  'mockups/kit/shell.js',
-];
+const STARTER = ['design-system.md', 'patterns.md'];
+const KIT = ['tokens.css', 'components.css', 'icons.js', 'store.js', 'ui.js', 'app.js'];
+const MOCKUPS = `${EXPERIENCE_DIR}/mockups`;
 
 /** Where the command reads the spec from and writes to: spec/ directly, or a change's overlay. */
 function workspace(dir: string, opts: ExperienceOptions) {
@@ -89,32 +86,81 @@ function workspace(dir: string, opts: ExperienceOptions) {
   return { root, specRoot, model: load.model, load, change, put };
 }
 
-const designed = (model: SpecModel, plus?: string) =>
-  new Set([...[...model.experiences.values()].map((x) => x.data.screen), ...(plus ? [plus] : [])]);
+const kitFiles = (): [string, string][] =>
+  KIT.map((f): [string, string] => [
+    `mockups/kit/${f}`,
+    readFileSync(join(ASSETS_DIR, 'experience/mockups/kit', f), 'utf8'),
+  ]);
+
+/** The app config of the layer (or a fresh one), merged with what the spec now needs. */
+function configOf(model: SpecModel) {
+  const text = contentOf(model, `${MOCKUPS}/config.js`);
+  const current = text === undefined ? undefined : parseConfig(text);
+  if (text !== undefined && !current)
+    throw new ExperienceError(`${MOCKUPS}/config.js is not valid JSON after \`window.UX_APP =\``);
+  return current ? mergeConfig(current, model) : defaultConfig(model);
+}
 
 export interface ExperienceInitResult {
   created: string[];
   skipped: string[];
+  updated: string[];
 }
 
-/** Copy the starter design system, patterns and mockup kit into spec/experience/. Never overwrites. */
-export function runExperienceInit(dir: string, opts: ExperienceOptions = {}): ExperienceInitResult {
+/**
+ * Add the starter design system, patterns and the mockup app (kit, config, spec, demo data, sign-in page) to
+ * spec/experience/. Never overwrites, except with `kit`: then the kit and the sign-in page are refreshed to this version.
+ */
+export function runExperienceInit(
+  dir: string,
+  opts: ExperienceOptions & { kit?: boolean } = {},
+): ExperienceInitResult {
   const ws = workspace(dir, opts);
-  const result: ExperienceInitResult = { created: [], skipped: [] };
-  const files: [string, string][] = [
-    ...STARTER.map((f): [string, string] => [f, readFileSync(join(ASSETS_DIR, 'experience', f), 'utf8')]),
-    ['mockups/index.html', indexHtml(dryModel(ws.model).title)],
-    ['mockups/nav.js', navJs(ws.model, designed(ws.model))],
+  const result: ExperienceInitResult = { created: [], skipped: [], updated: [] };
+  const config = configOf(ws.model);
+  const files: [string, string, boolean][] = [
+    ...STARTER.map((f): [string, string, boolean] => [
+      f,
+      readFileSync(join(ASSETS_DIR, 'experience', f), 'utf8'),
+      false,
+    ]),
+    ...kitFiles().map(([f, c]): [string, string, boolean] => [f, c, true]),
+    ['mockups/config.js', configJs(config), false],
+    ['mockups/data.js', dataJs(seedData(ws.model, config)), false],
+    ['mockups/index.html', loginHtml(config.name), true],
   ];
-  for (const [name, content] of files) {
+  for (const [name, content, refresh] of files) {
     const path = `${EXPERIENCE_DIR}/${name}`;
-    if (contentOf(ws.model, path) !== undefined) result.skipped.push(path);
-    else {
+    const have = contentOf(ws.model, path);
+    if (have === undefined) {
       ws.put(path, content);
       result.created.push(path);
-    }
+    } else if (opts.kit && refresh && have !== content) {
+      ws.put(path, content);
+      result.updated.push(path);
+    } else result.skipped.push(path);
   }
   return result;
+}
+
+export interface ExperienceSeedResult {
+  files: string[];
+  records: number;
+}
+
+/** Rewrite the demo data from the spec (and add demo users the config is missing). Replaces data.js. */
+export function runExperienceSeed(dir: string, opts: ExperienceOptions = {}): ExperienceSeedResult {
+  const ws = workspace(dir, opts);
+  if (contentOf(ws.model, PATTERNS_FILE) === undefined)
+    throw new ExperienceError('no experience layer yet; run `alterspec experience init` first');
+  const config = configOf(ws.model);
+  const data = seedData(ws.model, config);
+  ws.put(`${MOCKUPS}/config.js`, configJs(config));
+  ws.put(`${MOCKUPS}/data.js`, dataJs(data));
+  return {
+    files: [`${MOCKUPS}/config.js`, `${MOCKUPS}/data.js`],
+    records: Object.values(data.entities).reduce((n, r) => n + r.length, 0),
+  };
 }
 
 export interface ExperienceNewResult {
@@ -138,9 +184,26 @@ export function runExperienceNew(
   if (contentOf(ws.model, doc) !== undefined) throw new ExperienceError(`${doc} already exists`);
   const template = readFileSync(join(ASSETS_DIR, 'templates/experience-screen.md'), 'utf8');
   ws.put(doc, draftDoc(template, page));
-  ws.put(mockupPath(id), draftMockup(page, dryModel(ws.model).title));
-  ws.put(`${EXPERIENCE_DIR}/mockups/nav.js`, navJs(ws.model, designed(ws.model, id)));
-  return { screen: id, files: [doc, mockupPath(id), `${EXPERIENCE_DIR}/mockups/nav.js`] };
+  ws.put(mockupPath(id), draftMockup(ws.model, page));
+  return { screen: id, files: [doc, mockupPath(id)] };
+}
+
+/**
+ * Render a screen's mockup again from its experience screen (archetype, regions, components, labels, states) on
+ * the current kit. Hand edits to the page are replaced; the contract is kept.
+ */
+export function runExperienceRebuild(
+  dir: string,
+  screenId: string,
+  opts: ExperienceOptions = {},
+): ExperienceNewResult {
+  const ws = workspace(dir, opts);
+  const id = screenId.trim().toUpperCase();
+  const x = experienceOf(ws.model, id);
+  const page = dryPage(ws.model, id);
+  if (!page) throw new ExperienceError(`${id} is not a screen in the spec`);
+  ws.put(mockupPath(id), draftMockup(ws.model, page, x.data));
+  return { screen: id, files: [mockupPath(id)] };
 }
 
 function experienceOf(model: SpecModel, id: string) {

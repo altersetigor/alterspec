@@ -238,7 +238,7 @@
       "file": "modules/sup/screens/SCR-SUP-02.md"
     },
     "UX-SCR-PRC-01": {
-      "hash": "a39546a98eff97d8",
+      "hash": "7a05ae39c8c9f945",
       "file": "experience/screens/UX-SCR-PRC-01.md"
     },
     "file:application/integrations.md": {
@@ -254,28 +254,44 @@
       "file": "experience/design-system.md"
     },
     "file:experience/mockups/SCR-PRC-01.html": {
-      "hash": "4b8fd80b30db7c42",
+      "hash": "c97f13a1ae71d012",
       "file": "experience/mockups/SCR-PRC-01.html"
     },
+    "file:experience/mockups/config.js": {
+      "hash": "aea41c68f9e8d904",
+      "file": "experience/mockups/config.js"
+    },
+    "file:experience/mockups/data.js": {
+      "hash": "9aa9f4359ab03d6c",
+      "file": "experience/mockups/data.js"
+    },
     "file:experience/mockups/index.html": {
-      "hash": "c9eb41c141f4377d",
+      "hash": "511cf19014aa5456",
       "file": "experience/mockups/index.html"
     },
+    "file:experience/mockups/kit/app.js": {
+      "hash": "49e7afcb2e13a8b3",
+      "file": "experience/mockups/kit/app.js"
+    },
     "file:experience/mockups/kit/components.css": {
-      "hash": "494e48cad4c3ca83",
+      "hash": "c2c672e158bfd16c",
       "file": "experience/mockups/kit/components.css"
     },
-    "file:experience/mockups/kit/shell.js": {
-      "hash": "0d880c2e70994862",
-      "file": "experience/mockups/kit/shell.js"
+    "file:experience/mockups/kit/icons.js": {
+      "hash": "d947df81f08f6c49",
+      "file": "experience/mockups/kit/icons.js"
+    },
+    "file:experience/mockups/kit/store.js": {
+      "hash": "d65dde652cf17623",
+      "file": "experience/mockups/kit/store.js"
     },
     "file:experience/mockups/kit/tokens.css": {
-      "hash": "a54e14849b764412",
+      "hash": "9763f9773ccf41f3",
       "file": "experience/mockups/kit/tokens.css"
     },
-    "file:experience/mockups/nav.js": {
-      "hash": "e43ac7329202a777",
-      "file": "experience/mockups/nav.js"
+    "file:experience/mockups/kit/ui.js": {
+      "hash": "3f77ff1cf0bc39c5",
+      "file": "experience/mockups/kit/ui.js"
     },
     "file:experience/patterns.md": {
       "hash": "0d6b31537352db19",

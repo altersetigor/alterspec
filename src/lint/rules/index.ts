@@ -25,6 +25,7 @@ import {
   screenRoleAction,
 } from './screens.js';
 import {
+  experienceChrome,
   experienceElements,
   experienceLabels,
   experienceMissing,
@@ -72,6 +73,7 @@ export const RULES: LintRule[] = [
   experienceLabels,
   experienceStates,
   experienceVocabulary,
+  experienceChrome,
   experienceStale,
   experienceMissing,
   experienceUnreviewed,
