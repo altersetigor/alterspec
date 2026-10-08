@@ -41,9 +41,6 @@
 <div class="as-meta">
 <div>Roles: <ul><li data-src="SCR-HR-01.role.ROLE-HR-MANAGER">HR manager</li></ul></div>
 </div>
-<p class="as-gap" data-src="SCR-HR-01.gap.state.empty">Not specified: what people see when the state is &quot;Empty&quot;</p>
-<p class="as-gap" data-src="SCR-HR-01.gap.state.no-permission">Not specified: what people see when the state is &quot;No permission&quot;</p>
-<p class="as-gap" data-src="SCR-HR-01.gap.state.validation">Not specified: what people see when the state is &quot;Validation errors&quot;</p>
 <div class="as-bar" role="group" aria-label="Business state">
 Show: <button type="button" class="as-state-button" data-state-set="normal" aria-pressed="true">Normal</button>
 <button type="button" class="as-state-button" data-state-set="empty" aria-pressed="false">Empty</button>
@@ -55,14 +52,14 @@ Show: <button type="button" class="as-state-button" data-state-set="normal" aria
 <button type="button" class="as-action" data-src="SCR-HR-01.A02" data-roles="ROLE-HR-MANAGER" data-action="A02" data-action-label="A02 Activate" data-action-capability="Performs CAP-HR-002 Activate employee" data-action-summary="Activate employee.">Activate</button>
 <button type="button" class="as-action" data-src="SCR-HR-01.A03" data-roles="ROLE-HR-MANAGER" data-action="A03" data-action-label="A03 Record leaving" data-action-capability="Performs CAP-HR-003 Record employee leaving" data-action-summary="Record employee leaving.">Record leaving</button>
 </div>
-<div class="as-state" data-src="SCR-HR-01.state.empty" data-for="empty"><strong>Empty</strong><p class="as-gap">Not specified</p></div>
-<div class="as-state" data-src="SCR-HR-01.state.no-permission" data-for="no-permission"><strong>No permission</strong><p class="as-gap">Not specified</p></div>
-<div class="as-state" data-src="SCR-HR-01.state.validation" data-for="validation"><strong>Validation errors</strong><p class="as-gap">Not specified</p></div>
+<div class="as-state" data-src="SCR-HR-01.state.empty" data-for="empty"><strong>Empty</strong><p>a new employee with nothing filled in.</p></div>
+<div class="as-state" data-src="SCR-HR-01.state.no-permission" data-for="no-permission"><strong>No permission</strong><p>other roles are told the record is for HR only.</p></div>
+<div class="as-state" data-src="SCR-HR-01.state.validation" data-for="validation"><strong>Validation errors</strong><p>a missing full name or start date is named.</p></div>
 <section class="as-group" data-src="SCR-HR-01.ENT-EMPLOYEE" data-roles="ROLE-HR-MANAGER">
 <h2 class="as-group-title">Employee <span class="as-mode">enter or change</span></h2>
 <div class="as-data">
 <form class="as-form">
-<div class="as-field" data-src="SCR-HR-01.ENT-EMPLOYEE.Full name"><label for="ENT-EMPLOYEE-1" class="as-label">Full name <span class="as-req">*</span></label><input id="ENT-EMPLOYEE-1" type="text" value="Full name 1" class="as-input"></div>
+<div class="as-field" data-src="SCR-HR-01.ENT-EMPLOYEE.Full name"><label for="ENT-EMPLOYEE-1" class="as-label">Full name <span class="as-req">*</span></label><input id="ENT-EMPLOYEE-1" type="text" value="Ana Horvat" class="as-input"></div>
 <div class="as-field" data-src="SCR-HR-01.ENT-EMPLOYEE.Start date"><label for="ENT-EMPLOYEE-2" class="as-label">Start date <span class="as-req">*</span></label><input id="ENT-EMPLOYEE-2" type="date" value="2026-02-05" class="as-input"></div>
 <div class="as-field" data-src="SCR-HR-01.ENT-EMPLOYEE.Contract type"><label for="ENT-EMPLOYEE-3" class="as-label">Contract type</label><select id="ENT-EMPLOYEE-3" class="as-select"><option selected>Permanent</option><option>Fixed term</option></select></div>
 <p class="as-crumb">State: draft</p>

@@ -36,6 +36,7 @@ export const idLocation: LintRule = {
       ...model.screens.values(),
       ...model.entities.values(),
       ...model.flows.values(),
+      ...model.experiences.values(),
     ];
     for (const o of named) {
       if (stem(o.file) !== o.id) bad(o, `file name should be ${o.id}.md`);

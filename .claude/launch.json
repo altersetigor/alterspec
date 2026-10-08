@@ -6,9 +6,22 @@
       "runtimeExecutable": "node",
       "runtimeArgs": [
         "-e",
-        "const h=require('http'),f=require('fs'),p=require('path');const r=p.resolve('examples/catalog');const t={'.html':'text/html','.css':'text/css','.js':'text/javascript','.json':'application/json'};h.createServer((q,s)=>{const x=p.join(r,decodeURIComponent(q.url.split('?')[0]));if(!x.startsWith(r)||!f.existsSync(x)||f.statSync(x).isDirectory()){s.writeHead(404);return s.end('not found')}s.writeHead(200,{'content-type':t[p.extname(x)]||'text/plain'});f.createReadStream(x).pipe(s)}).listen(8765)"
+        "const h=require('http'),f=require('fs'),p=require('path');const r=p.resolve(process.env.ROOT||'examples/catalog');const t={'.html':'text/html','.css':'text/css','.js':'text/javascript','.json':'application/json'};h.createServer((q,s)=>{const x=p.join(r,decodeURIComponent(q.url.split('?')[0]));if(!x.startsWith(r)||!f.existsSync(x)||f.statSync(x).isDirectory()){s.writeHead(404);return s.end('not found')}s.writeHead(200,{'content-type':t[p.extname(x)]||'text/plain'});f.createReadStream(x).pipe(s)}).listen(+process.env.PORT||8765)"
       ],
       "port": 8765
+    },
+    {
+      "name": "experience-dev",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "-e",
+        "const h=require('http'),f=require('fs'),p=require('path');const r=p.resolve(process.env.ROOT||'examples/catalog');const t={'.html':'text/html','.css':'text/css','.js':'text/javascript','.json':'application/json'};h.createServer((q,s)=>{const x=p.join(r,decodeURIComponent(q.url.split('?')[0]));if(!x.startsWith(r)||!f.existsSync(x)||f.statSync(x).isDirectory()){s.writeHead(404);return s.end('not found')}s.writeHead(200,{'content-type':t[p.extname(x)]||'text/plain'});f.createReadStream(x).pipe(s)}).listen(+process.env.PORT||8765)"
+      ],
+      "env": {
+        "ROOT": "/private/tmp/claude-501/-Users-igorkovacevic-Documents-Projects-alterspec/572c7882-8fad-4d07-aebf-3c86f730f738/scratchpad/cat",
+        "PORT": "8766"
+      },
+      "port": 8766
     }
   ]
 }

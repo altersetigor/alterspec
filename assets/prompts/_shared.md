@@ -8,6 +8,8 @@ The CLI is `npx @alterset/alterspec`. Below it is written as `alterspec`; always
 - **No technology.** Never write databases, tables, column types, endpoints, protocols, frameworks, libraries,
   programming languages or vendor products. Describe what the product does and why, in business terms. If the person
   gives technical detail, translate it into business language, or record it as an open question.
+  The one exception is `spec/experience/` (the experience layer): it may name components, layout and interaction
+  details, but it never adds or changes business content. Only `/alterspec-experience` works there.
 - **Use canonical glossary terms** from `spec/application/glossary.md`, never their forbidden synonyms.
 - **Front-matter is authoritative.** It decides roles, screens, entities, rules, events and flows. The body explains.
   Never edit text between `<!-- GENERATED:start ... -->` and `<!-- GENERATED:end -->`, or files in `spec/_generated/`.

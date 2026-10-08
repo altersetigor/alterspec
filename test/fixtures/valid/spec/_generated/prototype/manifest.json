@@ -1,5 +1,5 @@
 {
-  "hash": "aa3cc949797c",
+  "hash": "4d812cff5ec9",
   "screens": {
     "SCR-GLB-01": {
       "file": "SCR-GLB-01.html",
@@ -16,11 +16,43 @@
         "SCR-GLB-01.state.empty",
         "SCR-GLB-01.state.no-permission",
         "SCR-GLB-01.state.validation"
-      ]
+      ],
+      "roles": {
+        "SCR-GLB-01": [
+          "ROLE-EMPLOYEE"
+        ],
+        "SCR-GLB-01.ENT-PAYSLIP": [
+          "ROLE-EMPLOYEE"
+        ],
+        "SCR-GLB-01.ENT-PAYSLIP.Net amount": [
+          "ROLE-EMPLOYEE"
+        ],
+        "SCR-GLB-01.ENT-PAYSLIP.Period": [
+          "ROLE-EMPLOYEE"
+        ],
+        "SCR-GLB-01.gap.state.empty": [
+          "ROLE-EMPLOYEE"
+        ],
+        "SCR-GLB-01.gap.state.no-permission": [
+          "ROLE-EMPLOYEE"
+        ],
+        "SCR-GLB-01.gap.state.validation": [
+          "ROLE-EMPLOYEE"
+        ],
+        "SCR-GLB-01.state.empty": [
+          "ROLE-EMPLOYEE"
+        ],
+        "SCR-GLB-01.state.no-permission": [
+          "ROLE-EMPLOYEE"
+        ],
+        "SCR-GLB-01.state.validation": [
+          "ROLE-EMPLOYEE"
+        ]
+      }
     },
     "SCR-HR-01": {
       "file": "SCR-HR-01.html",
-      "hash": "1c9a1ffd0af2",
+      "hash": "9c7badfc8493",
       "elements": [
         "SCR-HR-01",
         "SCR-HR-01.A01",
@@ -30,18 +62,50 @@
         "SCR-HR-01.ENT-EMPLOYEE.Contract type",
         "SCR-HR-01.ENT-EMPLOYEE.Full name",
         "SCR-HR-01.ENT-EMPLOYEE.Start date",
-        "SCR-HR-01.gap.state.empty",
-        "SCR-HR-01.gap.state.no-permission",
-        "SCR-HR-01.gap.state.validation",
         "SCR-HR-01.role.ROLE-HR-MANAGER",
         "SCR-HR-01.state.empty",
         "SCR-HR-01.state.no-permission",
         "SCR-HR-01.state.validation"
-      ]
+      ],
+      "roles": {
+        "SCR-HR-01": [
+          "ROLE-HR-MANAGER"
+        ],
+        "SCR-HR-01.A01": [
+          "ROLE-HR-MANAGER"
+        ],
+        "SCR-HR-01.A02": [
+          "ROLE-HR-MANAGER"
+        ],
+        "SCR-HR-01.A03": [
+          "ROLE-HR-MANAGER"
+        ],
+        "SCR-HR-01.ENT-EMPLOYEE": [
+          "ROLE-HR-MANAGER"
+        ],
+        "SCR-HR-01.ENT-EMPLOYEE.Contract type": [
+          "ROLE-HR-MANAGER"
+        ],
+        "SCR-HR-01.ENT-EMPLOYEE.Full name": [
+          "ROLE-HR-MANAGER"
+        ],
+        "SCR-HR-01.ENT-EMPLOYEE.Start date": [
+          "ROLE-HR-MANAGER"
+        ],
+        "SCR-HR-01.state.empty": [
+          "ROLE-HR-MANAGER"
+        ],
+        "SCR-HR-01.state.no-permission": [
+          "ROLE-HR-MANAGER"
+        ],
+        "SCR-HR-01.state.validation": [
+          "ROLE-HR-MANAGER"
+        ]
+      }
     },
     "SCR-PAY-01": {
       "file": "SCR-PAY-01.html",
-      "hash": "8dbb34c79a9a",
+      "hash": "ba9d333825cf",
       "elements": [
         "SCR-PAY-01",
         "SCR-PAY-01.A01",
@@ -57,7 +121,48 @@
         "SCR-PAY-01.state.empty",
         "SCR-PAY-01.state.no-permission",
         "SCR-PAY-01.state.validation"
-      ]
+      ],
+      "roles": {
+        "SCR-PAY-01": [
+          "ROLE-ACCOUNTANT"
+        ],
+        "SCR-PAY-01.A01": [
+          "ROLE-ACCOUNTANT"
+        ],
+        "SCR-PAY-01.A02": [
+          "ROLE-ACCOUNTANT"
+        ],
+        "SCR-PAY-01.ENT-PAYSLIP": [
+          "ROLE-ACCOUNTANT"
+        ],
+        "SCR-PAY-01.ENT-PAYSLIP.Employee": [
+          "ROLE-ACCOUNTANT"
+        ],
+        "SCR-PAY-01.ENT-PAYSLIP.Net amount": [
+          "ROLE-ACCOUNTANT"
+        ],
+        "SCR-PAY-01.ENT-PAYSLIP.Period": [
+          "ROLE-ACCOUNTANT"
+        ],
+        "SCR-PAY-01.gap.state.empty": [
+          "ROLE-ACCOUNTANT"
+        ],
+        "SCR-PAY-01.gap.state.no-permission": [
+          "ROLE-ACCOUNTANT"
+        ],
+        "SCR-PAY-01.gap.state.validation": [
+          "ROLE-ACCOUNTANT"
+        ],
+        "SCR-PAY-01.state.empty": [
+          "ROLE-ACCOUNTANT"
+        ],
+        "SCR-PAY-01.state.no-permission": [
+          "ROLE-ACCOUNTANT"
+        ],
+        "SCR-PAY-01.state.validation": [
+          "ROLE-ACCOUNTANT"
+        ]
+      }
     }
   }
 }

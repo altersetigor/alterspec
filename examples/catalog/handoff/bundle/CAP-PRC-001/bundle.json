@@ -423,7 +423,121 @@
           "roles": []
         }
       ],
-      "mockups": []
+      "mockups": [],
+      "experience": {
+        "id": "UX-SCR-PRC-01",
+        "status": "ready",
+        "archetype": "list",
+        "elements": [
+          {
+            "src": "SCR-PRC-01",
+            "region": "header",
+            "component": "page-title",
+            "label": "Sales price review"
+          },
+          {
+            "src": "SCR-PRC-01.ENT-PURCHASE-PRICE",
+            "region": "results",
+            "component": "data-table",
+            "label": "Purchase price"
+          },
+          {
+            "src": "SCR-PRC-01.ENT-PURCHASE-PRICE.Supplier",
+            "region": "results",
+            "component": "table-column",
+            "label": "Supplier"
+          },
+          {
+            "src": "SCR-PRC-01.ENT-PURCHASE-PRICE.Amount",
+            "region": "results",
+            "component": "table-column",
+            "label": "Amount"
+          },
+          {
+            "src": "SCR-PRC-01.ENT-PURCHASE-PRICE.Valid from",
+            "region": "results",
+            "component": "table-column",
+            "label": "Valid from"
+          },
+          {
+            "src": "SCR-PRC-01.ENT-SALES-PRICE",
+            "region": "detail",
+            "component": "section",
+            "label": "Sales price"
+          },
+          {
+            "src": "SCR-PRC-01.ENT-SALES-PRICE.Article",
+            "region": "detail",
+            "component": "field-reference",
+            "label": "Article"
+          },
+          {
+            "src": "SCR-PRC-01.ENT-SALES-PRICE.Amount",
+            "region": "detail",
+            "component": "field-amount",
+            "label": "Amount"
+          },
+          {
+            "src": "SCR-PRC-01.ENT-SALES-PRICE.Valid from",
+            "region": "detail",
+            "component": "field-date",
+            "label": "Valid from"
+          },
+          {
+            "src": "SCR-PRC-01.A01",
+            "region": "toolbar",
+            "component": "button-primary",
+            "label": "Propose"
+          },
+          {
+            "src": "SCR-PRC-01.A02",
+            "region": "toolbar",
+            "component": "button-secondary",
+            "label": "Approve"
+          },
+          {
+            "src": "SCR-PRC-01.A03",
+            "region": "toolbar",
+            "component": "button-secondary",
+            "label": "Expire"
+          },
+          {
+            "src": "SCR-PRC-01.state.empty",
+            "region": "messages",
+            "component": "empty-state",
+            "label": "Nothing waiting; the screen says so."
+          },
+          {
+            "src": "SCR-PRC-01.state.no-permission",
+            "region": "messages",
+            "component": "permission-state",
+            "label": "Other roles cannot open it."
+          },
+          {
+            "src": "SCR-PRC-01.state.validation",
+            "region": "messages",
+            "component": "validation-summary",
+            "label": "Amount not above the purchase price; article no longer active."
+          }
+        ],
+        "states": [
+          {
+            "id": "default",
+            "as": "ROLE-PRICING-MANAGER"
+          },
+          {
+            "id": "empty",
+            "as": "ROLE-PRICING-MANAGER"
+          },
+          {
+            "id": "no-permission"
+          },
+          {
+            "id": "validation",
+            "as": "ROLE-PRICING-MANAGER"
+          }
+        ]
+      }
     }
   ],
   "flows": [
@@ -609,6 +723,11 @@
       "id": "SCR-PRC-01",
       "status": "refined",
       "fingerprint": "2cd7044b9b98f209"
+    },
+    {
+      "id": "UX-SCR-PRC-01",
+      "status": "ready",
+      "fingerprint": "a39546a98eff97d8"
     },
     {
       "id": "term:Article",

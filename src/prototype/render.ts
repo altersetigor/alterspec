@@ -1,21 +1,10 @@
 import type { FieldGroup, PrototypeModel, ScreenPage } from './model.js';
 
 /**
- * One renderer for the generic prototype and every design-system variant. A skin only adds classes, head tags and
- * styling; the structure and every `data-src` marker come from here, so variants can't drift from the spec.
- * Every element also keeps its `as-*` hook class, which state.css and app.js rely on.
+ * Renders the generic (dry) prototype. Every business element carries a `data-src` marker with its spec ID; the
+ * experience layer's mockups must carry the same markers. Elements keep `as-*` classes for state.css and app.js.
  */
-export interface Skin {
-  /** `<html>` attributes, e.g. a dark theme switch. */
-  html?: string;
-  /** Tags for `<head>` after the charset and viewport: stylesheets, scripts. */
-  head: string[];
-  shell: 'sidebar' | 'topbar';
-  /** Extra classes per hook. */
-  cls: Partial<Record<Hook, string>>;
-}
-
-export type Hook =
+type Hook =
   | 'body'
   | 'top'
   | 'app'
@@ -83,12 +72,8 @@ export interface RenderOptions {
   logo?: string;
 }
 
-export function renderPages(m: PrototypeModel, skin: Skin, opts: RenderOptions): Map<string, string> {
-  const c = (...hooks: Hook[]) =>
-    `class="${hooks
-      .flatMap((h) => ['as-' + h, skin.cls[h]])
-      .filter(Boolean)
-      .join(' ')}"`;
+export function renderPages(m: PrototypeModel, opts: RenderOptions): Map<string, string> {
+  const c = (...hooks: Hook[]) => `class="${hooks.map((h) => 'as-' + h).join(' ')}"`;
   const appName = opts.appName ?? m.title;
   const pages = new Set(m.screens.map((s) => s.id));
 
@@ -96,12 +81,12 @@ export function renderPages(m: PrototypeModel, skin: Skin, opts: RenderOptions):
     [
       '<!doctype html>',
       opts.banner,
-      `<html lang="en"${skin.html ? ' ' + skin.html : ''}>`,
+      '<html lang="en">',
       '<head>',
       '<meta charset="utf-8">',
       '<meta name="viewport" content="width=device-width, initial-scale=1">',
       `<title>${esc(title)} · ${esc(appName)}</title>`,
-      ...skin.head,
+      '<link rel="stylesheet" href="base.css">',
       '<link rel="stylesheet" href="state.css">',
       '</head>',
     ].join('\n');
@@ -135,9 +120,7 @@ export function renderPages(m: PrototypeModel, skin: Skin, opts: RenderOptions):
 
   /** Header, navigation and the open main element; `close` ends them. */
   const frame = (current: string | undefined, main: string) =>
-    skin.shell === 'topbar'
-      ? [top(), nav(current), `<div ${c('layout')}>`, main].join('\n')
-      : [top(), `<div ${c('layout')}>`, nav(current), main].join('\n');
+    [top(), `<div ${c('layout')}>`, nav(current), main].join('\n');
   const close = ['</main>', '</div>'];
 
   const group = (g: FieldGroup) => {

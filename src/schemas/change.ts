@@ -15,6 +15,7 @@ export const ObjectKey = z
     (v) =>
       /^term:\S.*$/.test(v) ||
       /^file:[\w./-]+\.md$/.test(v) ||
+      /^file:experience\/mockups\/[\w./-]+$/.test(v) ||
       (Object.keys(ID_REGEX) as IdKind[]).some(
         (k) => k !== 'screenAction' && k !== 'acceptance' && ID_REGEX[k].test(v),
       ),

@@ -6,15 +6,17 @@ export const techLeak: LintRule = {
   severity: 'warn',
   description: 'Spec prose contains no technology words (config: lint.tech_terms).',
   check: ({ model, config }) =>
-    model.files.flatMap((f) =>
-      config.lint.tech_terms.flatMap((term) =>
-        findTerms(f.content, term).map((h) => ({
-          file: f.path,
-          line: h.line,
-          message: `technology word "${h.match}" in the spec; describe the business need instead`,
-        })),
+    model.files
+      .filter((f) => !f.path.startsWith('experience/'))
+      .flatMap((f) =>
+        config.lint.tech_terms.flatMap((term) =>
+          findTerms(f.content, term).map((h) => ({
+            file: f.path,
+            line: h.line,
+            message: `technology word "${h.match}" in the spec; describe the business need instead`,
+          })),
+        ),
       ),
-    ),
 };
 
 export const glossaryForbidden: LintRule = {

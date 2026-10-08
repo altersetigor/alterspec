@@ -20,6 +20,10 @@ alterspec stays a product spec: it never makes technology decisions. Handoff is 
    - If capabilities are still `draft` or `refined`, suggest `/alterspec-refine` first. Only use `--allow-draft` when the
      person explicitly wants a draft export.
    - Open questions in scope are exported as clarification points; mention them.
+   - With an experience layer (`spec/experience/`), handoff also refuses until every screen in scope has an
+     experience screen that is `ready` or later, has no findings, and passed its parity review since its last edit.
+     `--allow-draft` doesn't lift this. Point the person to `/alterspec-experience <SCR>` and
+     `/alterspec-experience review <SCR>`.
 
 ## 2. Export
 
@@ -41,7 +45,7 @@ changed. Re-running the export overwrites the polish, so suggest polishing as th
 - **bmad:** give `handoff/bmad/<ID>/epics.md` to BMAD as the epics document (its planning artifacts folder). BMAD's
   formats are changing between versions; check the stories after import.
 - **bundle:** use `handoff/bundle/<ID>/README.md` as the input for the technical design; `prototype/` shows the
-  screens. If the person has a design-system variant in `prototype/<variant>/`, point to it as the visual reference.
+  screens.
 
 Remind the person that the alterspec spec stays the source of truth: product changes go through `/alterspec-change`, then
 a new handoff. The manifest shows which version was handed over.

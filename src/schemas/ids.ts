@@ -22,6 +22,7 @@ export const ID_PATTERNS = {
   change: '^CHG-\\d{3}$',
   acceptance: `^CAP-${CODE}-\\d{3}-AC-\\d{2}$`,
   screenAction: '^A\\d{2}$',
+  experience: `^UX-SCR-${CODE}-\\d{2}$`,
 } as const;
 
 export type IdKind = keyof typeof ID_PATTERNS;
@@ -37,6 +38,7 @@ export const AppId = idOf('app', 'application');
 export const ModuleId = idOf('module', 'module');
 export const CapabilityId = idOf('capability', 'capability');
 export const ScreenId = idOf('screen', 'screen');
+export const ExperienceId = idOf('experience', 'experience screen');
 export const RoleId = idOf('role', 'role');
 export const PersonaId = idOf('persona', 'persona');
 export const EntityId = idOf('entity', 'entity');

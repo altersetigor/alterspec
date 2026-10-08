@@ -1,3 +1,4 @@
+import { idKind } from '../schemas/ids.js';
 import { mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { ASSETS_DIR } from '../assets.js';
@@ -97,12 +98,17 @@ export function changeEdit(
     writeOverlay(change, current.file, current.text);
   }
   updateProposal(change, (doc) => doc.setIn(['base', key], fingerprint(current)));
+  // An experience screen and its mockup page are edited together.
+  const mockup = `file:experience/mockups/${key.replace(/^UX-/, '')}.html`;
+  if (idKind(key) === 'experience' && specObjects(readSpecDir(specRoot)).has(mockup))
+    changeEdit(specRoot, changeId, mockup, opts);
   return { key, file: `changes/${change.id}/spec/${current.file}`, copied: true };
 }
 
 /** Record a new object created inside a change. */
 export function recordNew(specRoot: string, changeId: string, key: string) {
-  updateProposal(loadChange(specRoot, changeId), (doc) => doc.setIn(['base', key], null));
+  // A null scalar node prints as `key: null`; a bare null would print as `? key`.
+  updateProposal(loadChange(specRoot, changeId), (doc) => doc.setIn(['base', key], doc.createNode(null)));
 }
 
 export function runChangeEdit(

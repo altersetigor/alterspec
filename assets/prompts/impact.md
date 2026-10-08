@@ -13,7 +13,9 @@ Arguments: `<CHG>`.
      `npx @alterset/alterspec change edit <CHG> <ID> --rebase` and redo the edit)
    - who and what is affected: flows, screens, roles, acceptance criteria that must be re-checked
    - generated views that will change (module capability lists, role matrices), including the prototype pages of
-     screens whose content changes; design-system variants in `prototype/` must be built again after the change
+     screens whose content changes
+   - experience screens and mockups affected (`UX-SCR-…` in the affected list): each must be synced and reviewed in
+     this change before it can be approved
    - new lint findings, and findings the change resolves
    - the reviewer's critical and major findings
    - a recommendation: ready for approval, or what must be fixed first

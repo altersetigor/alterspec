@@ -5,6 +5,7 @@ import { sha256 } from '../install/hash.js';
 import { splitFrontMatter } from '../lib/frontmatter.js';
 import { ChangeSchema, type Change } from '../schemas/change.js';
 import { readSpecDir, type SpecFile } from '../spec/files.js';
+import { isExperienceAsset } from './fingerprint.js';
 
 export interface LoadedChange {
   id: string;
@@ -39,7 +40,7 @@ export function loadChange(specRoot: string, rawId: string): LoadedChange {
   }
   const overlayRoot = join(dir, 'spec');
   const overlay = existsSync(overlayRoot)
-    ? readSpecDir(overlayRoot).filter((f) => f.path.endsWith('.md'))
+    ? readSpecDir(overlayRoot).filter((f) => f.path.endsWith('.md') || isExperienceAsset(f.path))
     : [];
   return { id, dir, overlayRoot, proposalPath, proposal: parsed.data, overlay };
 }

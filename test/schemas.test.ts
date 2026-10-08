@@ -37,6 +37,7 @@ describe('ID formats', () => {
     change: ['CHG-010'],
     acceptance: ['CAP-HR-004-AC-01'],
     screenAction: ['A01'],
+    experience: ['UX-SCR-HR-02', 'UX-SCR-GLB-01'],
   };
   const invalid: Record<IdKind, string[]> = {
     app: ['APP-1', 'app'],
@@ -53,6 +54,7 @@ describe('ID formats', () => {
     change: ['CHG-1'],
     acceptance: ['CAP-HR-004-AC-1'],
     screenAction: ['A1', 'B01'],
+    experience: ['UX-SCR-HR-2', 'SCR-HR-02', 'UX-HR-02'],
   };
   for (const kind of Object.keys(valid) as IdKind[]) {
     it(`${kind}`, () => {

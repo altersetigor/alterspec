@@ -4,7 +4,6 @@ import { ASSETS_DIR } from '../assets.js';
 import type { SpecModel } from '../spec/model.js';
 import { blockHash } from '../views/blocks.js';
 import { pageFile, renderPages } from './render.js';
-import { GENERIC } from './skins/generic.js';
 import { buildPrototype, type PrototypeModel, type ScreenPage } from './model.js';
 
 /** Where `alterspec views` writes the generic prototype, relative to spec/. */
@@ -14,7 +13,10 @@ export const MANIFEST_FILE = 'manifest.json';
 export interface PrototypeManifest {
   /** Fingerprint of the whole page model; variants record it to detect that they are stale. */
   hash: string;
-  screens: Record<string, { file: string; hash: string; elements: string[] }>;
+  screens: Record<
+    string,
+    { file: string; hash: string; elements: string[]; roles: Record<string, string[]> }
+  >;
 }
 
 /** Every `data-src` marker a page for this screen must carry, sorted. */
@@ -30,6 +32,17 @@ export function expectedElements(s: ScreenPage): string[] {
       ...s.groups.flatMap((g) => [g.src, ...g.fields.map((f) => f.src)]),
     ]),
   ].sort();
+}
+
+/** Who sees each element: groups, fields and actions their own roles, everything else the screen's roles. */
+export function elementRoles(s: ScreenPage): Record<string, string[]> {
+  const screen = [...s.roles.map((r) => r.id)].sort();
+  const out: Record<string, string[]> = {};
+  for (const e of expectedElements(s)) out[e] = screen;
+  for (const r of s.roles) delete out[r.src];
+  for (const g of s.groups) for (const e of [g.src, ...g.fields.map((f) => f.src)]) out[e] = g.roles;
+  for (const a of s.actions) out[a.src] = a.roles;
+  return Object.fromEntries(Object.entries(out).sort(([a], [b]) => (a < b ? -1 : 1)));
 }
 
 const unescape = (s: string) =>
@@ -50,7 +63,12 @@ export function buildManifest(m: PrototypeModel): PrototypeManifest {
     screens: Object.fromEntries(
       m.screens.map((s) => [
         s.id,
-        { file: pageFile(s.id), hash: blockHash(JSON.stringify(s)), elements: expectedElements(s) },
+        {
+          file: pageFile(s.id),
+          hash: blockHash(JSON.stringify(s)),
+          elements: expectedElements(s),
+          roles: elementRoles(s),
+        },
       ]),
     ),
   };
@@ -73,7 +91,7 @@ export function scopedPrototype(model: SpecModel, screenIds: string[], banner: s
       .filter((mod) => mod.screens.length > 0),
   };
   m.roles = full.roles.filter((r) => m.screens.some((s) => s.roles.some((x) => x.id === r.id)));
-  const out = renderPages(m, GENERIC, { banner });
+  const out = renderPages(m, { banner });
   out.set('base.css', asset('generic/base.css'));
   out.set('state.css', asset('state.css'));
   out.set('app.js', asset('app.js'));
@@ -85,7 +103,7 @@ export function planPrototype(model: SpecModel): Map<string, string> {
   const m = buildPrototype(model);
   const out = new Map<string, string>();
   const put = (name: string, content: string) => out.set(`${PROTOTYPE_DIR}/${name}`, content);
-  for (const [name, html] of renderPages(m, GENERIC, { banner: GENERATED_HTML })) put(name, html);
+  for (const [name, html] of renderPages(m, { banner: GENERATED_HTML })) put(name, html);
   put('base.css', asset('generic/base.css'));
   put('state.css', asset('state.css'));
   put('app.js', asset('app.js'));

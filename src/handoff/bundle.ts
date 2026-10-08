@@ -48,6 +48,21 @@ export interface Bundle {
     fields: { entity: string; entityTitle: string; attributes: string[]; mode: string }[];
     actions: Screen['actions'];
     mockups: Screen['mockups'];
+    /** The screen's experience contract, when the project has an experience layer. */
+    experience?: {
+      id: string;
+      status: string;
+      archetype: string;
+      elements: {
+        src: string;
+        region: string;
+        component: string;
+        label: string;
+        unavailable?: string;
+        reason?: string;
+      }[];
+      states: { id: string; as?: string }[];
+    };
   }[];
   flows: {
     id: string;
@@ -178,6 +193,7 @@ export function buildBundle(model: SpecModel, files: SpecFile[], rawId: string):
     ...ruleIds,
     ...eventIds,
     ...screenIds,
+    ...[...screenIds].map((s) => `UX-${s}`),
     ...flowIds,
     ...personas.map((p) => p.id),
     ...glossary.map((g) => `term:${g.term}`),
@@ -191,6 +207,7 @@ export function buildBundle(model: SpecModel, files: SpecFile[], rawId: string):
       model.screens.get(key) ??
       model.entities.get(key) ??
       model.flows.get(key) ??
+      model.experiences.get(key) ??
       model.modules.get(key);
     const data = doc?.data as { status?: string; version?: number } | undefined;
     return [{ id: key, status: data?.status, version: data?.version, fingerprint: fingerprint(o) }];
@@ -262,6 +279,7 @@ export function buildBundle(model: SpecModel, files: SpecFile[], rawId: string):
           })),
           actions: scr.data.actions,
           mockups: scr.data.mockups,
+          ...experienceOf(model, s),
         }
       );
     }),
@@ -284,6 +302,21 @@ export function buildBundle(model: SpecModel, files: SpecFile[], rawId: string):
     glossary,
     openQuestions,
     sources,
+  };
+}
+
+function experienceOf(model: SpecModel, screen: string) {
+  const x = model.experiences.get(`UX-${screen}`);
+  if (!x) return {};
+  const d = x.data;
+  return {
+    experience: {
+      id: x.id,
+      status: d.status,
+      archetype: d.archetype,
+      elements: d.elements.map((e) => ({ ...e })),
+      states: d.states.map((s) => ({ id: s.id, ...(s.as ? { as: s.as } : {}) })),
+    },
   };
 }
 

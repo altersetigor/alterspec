@@ -1,4 +1,3 @@
-import { DesignSchema } from './design.js';
 import { z } from 'zod';
 import { ApplicationSchema } from './application.js';
 import { CapabilitySchema } from './capability.js';
@@ -13,6 +12,7 @@ import {
 } from './collections.js';
 import { ConfigSchema } from './config.js';
 import { EntitySchema } from './entity.js';
+import { ExperienceScreenSchema } from './experience.js';
 import { FlowSchema } from './flow.js';
 import { ModuleSchema } from './module.js';
 import { ScreenSchema } from './screen.js';
@@ -24,6 +24,7 @@ export * from './collections.js';
 export * from './common.js';
 export * from './config.js';
 export * from './entity.js';
+export * from './experience.js';
 export * from './flow.js';
 export * from './ids.js';
 export * from './module.js';
@@ -79,6 +80,12 @@ export const SPEC_TYPES = {
     location: 'application/entities/<ID>.md',
   },
   flow: { kind: 'document', schema: FlowSchema, template: 'flow.md', location: 'application/flows/<ID>.md' },
+  experience: {
+    kind: 'document',
+    schema: ExperienceScreenSchema,
+    template: 'experience-screen.md',
+    location: 'experience/screens/<ID>.md',
+  },
   change: {
     kind: 'document',
     schema: ChangeSchema,
@@ -143,8 +150,8 @@ export const JSON_SCHEMAS: Record<string, z.ZodType> = {
   role: RoleItemSchema,
   decision: DecisionItemSchema,
   'glossary-term': GlossaryItemSchema,
+  experience: ExperienceScreenSchema,
   config: ConfigSchema,
-  design: DesignSchema,
 };
 
 export function toJsonSchema(name: string, schema: z.ZodType): object {

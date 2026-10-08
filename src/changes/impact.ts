@@ -13,7 +13,7 @@ import { normalizeSection, sections } from '../spec/sections.js';
 import { MANIFEST_FILE, PROTOTYPE_DIR, type PrototypeManifest } from '../prototype/index.js';
 import { planViews } from '../views/plan.js';
 import { loadChange, type LoadedChange } from './change.js';
-import { specObjects, type SpecObject } from './fingerprint.js';
+import { isExperienceAsset, specObjects, type SpecObject } from './fingerprint.js';
 import { conflicts, mergeChange, overlayObjects, type Conflict } from './merge.js';
 
 /** Rules only `alterspec apply` can satisfy; they are not reported for a change's merged spec. */
@@ -169,8 +169,16 @@ export function computeImpact(dir: string, changeId: string, opts: { spec?: stri
     if (!b) added.push({ key, title: titleOf(a), file: a.file });
     else {
       const d = diff(b, a);
-      if (d.fields?.length || d.sections?.length)
-        modified.push({ key, title: titleOf(a), file: a.file, ...d });
+      // Mockup files have no front-matter or sections: any edit counts.
+      const asset = isExperienceAsset(a.file) && a.text !== b.text;
+      if (d.fields?.length || d.sections?.length || asset)
+        modified.push({
+          key,
+          title: titleOf(a),
+          file: a.file,
+          ...d,
+          ...(asset ? { sections: ['content'] } : {}),
+        });
     }
   }
   const removed = change.proposal.removes.flatMap((key) => {

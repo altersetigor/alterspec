@@ -14,7 +14,12 @@ import { writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { formatHuman, listRules, runValidate } from './commands/validate.js';
 import { runViews } from './commands/views.js';
-import { runPrototypeBuild, runPrototypeCheck, runPrototypeInit } from './commands/prototype.js';
+import {
+  runExperienceInit,
+  runExperienceNew,
+  runExperienceReviewed,
+  runExperienceSync,
+} from './commands/experience.js';
 
 const program = new Command();
 
@@ -275,57 +280,69 @@ program
     }
   });
 
-const prototype = program
-  .command('prototype')
-  .description('Design-system variants of the generated prototype (design/ → prototype/<variant>/)');
+const experience = program
+  .command('experience')
+  .description('The experience layer: UX contracts and realistic mockups of screens (spec/experience/)');
+const experienceOpts = (c: Command) =>
+  c
+    .option('-C, --dir <dir>', 'project directory', '.')
+    .option('--spec <path>', 'spec folder, relative to the project', 'spec')
+    .option('--change <CHG>', 'work inside this change proposal (required after the baseline)')
+    .option('--json', 'print as JSON');
+type ExperienceCliOpts = { dir: string; spec: string; change?: string; json?: boolean };
 
-prototype
-  .command('init')
-  .description('Write a starter design/ folder (design.yaml, tokens.css). Never overwrites')
-  .option('-C, --dir <dir>', 'project directory', '.')
-  .option('--base <base>', 'bootstrap | tabler | tailwind | custom', 'bootstrap')
-  .option('--json', 'print as JSON')
-  .action((opts: { dir: string; base: string; json?: boolean }) => {
-    const r = runPrototypeInit(opts.dir, opts);
-    if (opts.json) console.log(JSON.stringify(r, null, 2));
-    else {
-      for (const f of r.created) console.log(`created ${f}`);
-      for (const f of r.skipped) console.log(`kept ${f} (exists)`);
-    }
-  });
+experienceOpts(
+  experience
+    .command('init')
+    .description('Add the starter design system, patterns and mockup kit. Never overwrites'),
+).action((opts: ExperienceCliOpts) => {
+  const r = runExperienceInit(opts.dir, opts);
+  if (opts.json) console.log(JSON.stringify(r, null, 2));
+  else {
+    for (const f of r.created) console.log(`created spec/${f}`);
+    for (const f of r.skipped) console.log(`kept spec/${f} (exists)`);
+  }
+});
 
-prototype
-  .command('build')
-  .description('Render a variant into prototype/<variant>/ from the spec and design/')
-  .option('-C, --dir <dir>', 'project directory', '.')
-  .option('--spec <path>', 'spec folder, relative to the project', 'spec')
-  .option('--variant <variant>', 'bootstrap | tabler | tailwind (default: base in design.yaml)')
-  .option('--json', 'print as JSON')
-  .action((opts: { dir: string; spec: string; variant?: string; json?: boolean }) => {
-    const r = runPrototypeBuild(opts.dir, opts);
-    if (opts.json) console.log(JSON.stringify(r, null, 2));
-    else console.log(`${r.variant}: ${r.folder}/ (${r.files.length} files)`);
-  });
+experienceOpts(
+  experience
+    .command('new')
+    .description('Draft the experience screen and mockup of a screen')
+    .argument('<SCR>'),
+).action((id: string, opts: ExperienceCliOpts) => {
+  const r = runExperienceNew(opts.dir, id, opts);
+  if (opts.json) console.log(JSON.stringify(r));
+  else for (const f of r.files) console.log(`wrote spec/${f}`);
+});
 
-prototype
-  .command('check')
-  .description('Check variants against the spec: every page and element present, nothing added, not stale')
-  .option('-C, --dir <dir>', 'project directory', '.')
-  .option('--spec <path>', 'spec folder, relative to the project', 'spec')
-  .option('--variant <variant>', 'one variant (default: every folder in prototype/)')
-  .option('--stamp', 'when only the stamp is out of date, record the current spec in variant.json')
-  .option('--json', 'print as JSON')
-  .action((opts: { dir: string; spec: string; variant?: string; stamp?: boolean; json?: boolean }) => {
-    const r = runPrototypeCheck(opts.dir, opts);
-    if (opts.json) console.log(JSON.stringify(r, null, 2));
-    else if (r.variants.length === 0) console.log('No variants in prototype/.');
-    else {
-      for (const v of r.stamped) console.log(`stamped ${v}`);
-      for (const f of r.findings) console.log(`${f.file}  ${f.kind}  ${f.message}`);
-      if (r.findings.length === 0) console.log(`✓ ${r.variants.join(', ')} match the spec.`);
-    }
-    if (r.findings.length) process.exitCode = 1;
-  });
+experienceOpts(
+  experience
+    .command('reviewed')
+    .description('Record a clean parity review; refused while the screen or its mockup has findings')
+    .argument('<SCR>'),
+).action((id: string, opts: ExperienceCliOpts) => {
+  const r = runExperienceReviewed(opts.dir, id, opts);
+  if (opts.json) console.log(JSON.stringify(r, null, 2));
+  else if (r.reviewed) console.log(`${r.screen}: review recorded (${r.reviewed})`);
+  else for (const f of r.findings) console.log(`${f.file}:${f.line ?? ''}  ${f.rule}  ${f.message}`);
+  if (!r.reviewed) process.exitCode = 1;
+});
+
+experienceOpts(
+  experience
+    .command('sync')
+    .description('Align an experience screen and its mockup with its changed screen')
+    .argument('<SCR>'),
+).action((id: string, opts: ExperienceCliOpts) => {
+  const r = runExperienceSync(opts.dir, id, opts);
+  if (opts.json) console.log(JSON.stringify(r, null, 2));
+  else {
+    for (const s of r.added) console.log(`added ${s} (place it in the mockup)`);
+    for (const s of r.removed) console.log(`removed ${s}`);
+    for (const s of r.states) console.log(`added state ${s}`);
+    if (!r.added.length && !r.removed.length && !r.states.length) console.log(`${r.screen} is aligned.`);
+  }
+});
 
 program.parseAsync().catch((err: unknown) => {
   console.error(err instanceof Error ? err.message : err);

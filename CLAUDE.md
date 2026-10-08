@@ -15,14 +15,15 @@ before starting a phase or changing the content model, IDs, validation rules or 
 - **Plan first.** Before each phase (see HANDOVER §9), enter plan mode, present the plan and wait for approval.
   Stop for user review when a phase is done.
 - **Ask about open decisions** (HANDOVER §10) before you build anything that depends on them: capability
-  granularity, where rules live, SR/EN bilingual scope, who writes the spec, and whether a tech layer is ever in
-  scope. (Mockup format is decided: see Prototypes below.)
+  granularity, where rules live, SR/EN bilingual scope and who writes the spec. (Decided: mockups and the UI-only
+  experience layer, see Prototype and experience below; there is still no backend or architecture tech layer.)
 - **Check current Claude Code docs** (code.claude.com/docs) before you build or change the `.claude/` files that
   alterspec installs into user projects (skill `SKILL.md` front-matter, invocation control, subagent format).
   Commands are now skills; `.claude/commands/` is legacy. Don't rely on memory for these formats.
 - **Test every linter rule** against fixture specs, with both a passing and a failing case.
 - **Keep spec content tech-agnostic.** Templates, prompts and example specs must contain no DB types, endpoints,
-  frameworks or libraries.
+  frameworks or libraries. The one exception is the experience layer (`spec/experience/`): UI components, layout and
+  interaction details only, never business content the business spec lacks.
 - **Don't invent product content** beyond what the example fixture needs.
 - Keep dependencies small.
 
@@ -86,11 +87,13 @@ skill and agent with `alterspec-`.
   `flows/FLOW-*.md`, `events.md`, `integrations.md`, `nfr.md`, `decisions.md`
 - `modules/<mod>/`: `module.md`, `screens/SCR-*.md`, `capabilities/CAP-*.md`
 - `changes/CHG-*/`: `proposal.md` and delta files; moved to `changes/archive/` after merge
+- `experience/`: `design-system.md`, `patterns.md`, `screens/UX-SCR-*.md`, `mockups/` (kit, `nav.js`, one page per
+  screen); UI-technical by design, baselined and changed like the rest
 - `_generated/`: matrices, traceability, coverage, lint report and the generic `prototype/` (never hand-edited)
 
 **IDs** are stable and never reused: `APP`, `MOD-<CODE>`, `CAP-<MOD>-<NNN>`, `SCR-<MOD>-<NN>` / `SCR-GLB-<NN>`,
 `ROLE-<NAME>`, `PER-<NAME>`, `ENT-<NAME>`, `RULE-<NNN>`, `FLOW-<NNN>`, `EVT-<NAME>`, `DEC-<NNN>`, `CHG-<NNN>`,
-and `<CAP>-AC-<NN>` for acceptance criteria.
+`UX-SCR-…` for experience screens, and `<CAP>-AC-<NN>` for acceptance criteria.
 
 **Capability YAML front-matter is authoritative.** Module capability lists, role matrices, screen
 back-references and entity coverage are generated into marked blocks and never edited by hand:
@@ -107,10 +110,11 @@ Statuses: `draft → refined → ready → approved → implemented`.
   call it through Bash and prompts never pick IDs or copy templates themselves.
 - Skills (17): `/alterspec-init`; `-create-module|capability|screen|entity`; `-change-module|capability|screen|entity`
   (edit one existing object, via a change proposal after the baseline; shared flow in `prompts/_change-object.md`);
-  `-refine`, `-validate`, `-views`, `-change`, `-impact`, `-apply`, `-handoff`, `-prototype`. The skill name minus `alterspec-` is the
+  `-refine`, `-validate`, `-views`, `-change`, `-impact`, `-apply`, `-handoff`, `-experience`. The skill name minus `alterspec-` is the
   prompt file name in `assets/prompts/`.
-- Agents: `alterspec-analyst` (gap analysis and drafting; it does not interview, the skill in the main conversation does)
-  and `alterspec-reviewer` (read-only; reports findings with severity and never edits the spec).
+- Agents: `alterspec-analyst` (gap analysis and drafting; it does not interview, the skill in the main conversation does),
+  `alterspec-reviewer` (read-only; reports findings with severity and never edits the spec), `alterspec-ux-designer`
+  (edits only experience screens and mockups) and `alterspec-experience-reviewer` (read-only parity table).
 - Change management (Phase 4): `alterspec baseline` records object fingerprints in `spec/_generated/baseline.json`;
   after that the `direct-edit` rule makes every edit go through a change. A change is `spec/changes/CHG-NNN/` with
   `proposal.md` and an overlay `spec/` holding only touched objects (whole docs, single collection items). `change
@@ -120,20 +124,20 @@ Statuses: `draft → refined → ready → approved → implemented`.
   (`src/handoff/bundle.ts`) and renders it per target (`src/handoff/targets/`), writing only to
   `handoff/<target>/<ID>/`. Target formats were checked on 2026-10-07 (Spec Kit v1.1.1, OpenSpec v1.14.1, BMAD v6.12.1
   `epics.md`); re-check the upstream templates before changing a renderer. alterspec never gets a tech layer.
-- Prototypes (Phase 6): screens list their data in `fields` (entity, attribute names, `list|view|edit`); entity
-  attributes carry `references` / `options`. `src/prototype/model.ts` builds one page model from the spec;
-  `render.ts` renders it with a skin (`skins/`), so the generic prototype (`views` → `spec/_generated/prototype/`) and
-  every variant (`prototype build` → `prototype/<variant>/`, from the user-owned `design/`) carry the same `data-src`
-  markers; `prototype check` compares them with `manifest.json`. Mock data is deterministic. The spec stays
-  tech-agnostic: design-system names live only in `design/`, `prototype/` and `src/prototype/skins/`. CDN versions
-  and SRI hashes are pinned in `skins/cdn.ts` (checked 2026-10-07); recompute the hash when bumping a version.
-- `examples/catalog/` is the reference example and a golden fixture: tests require 0 findings, current views, that
-  re-running its handoffs (`--date 2026-10-07`) reproduces `examples/catalog/handoff/` byte for byte, and that
-  rebuilding `prototype/bootstrap/` reproduces it. After changing a renderer or bumping the package version,
-  regenerate it: `node dist/cli.js views examples/catalog`,
-  `node dist/cli.js handoff CAP-PRC-001 --target all --date 2026-10-07 -C examples/catalog`,
-  `node dist/cli.js handoff MOD-PRC --date 2026-10-07 -C examples/catalog` and
-  `node dist/cli.js prototype build -C examples/catalog`.
+- Prototype and experience (Phases 6–7): screens list their data in `fields`; entity attributes carry `references` /
+  `options`. `src/prototype/` builds the dry page model and renders the generic prototype (`views` →
+  `spec/_generated/prototype/`, `manifest.json` lists every `data-src` and its roles). `src/experience/` is the wet layer:
+  catalogue (`patterns.md` archetypes, `design-system.md` components), a small HTML reader, `dryHash` (only what an
+  experience screen realises), `reviewHash`, and the scaffold behind `experience new|sync`. The `experience-*` lint
+  rules in `src/lint/rules/experience.ts` enforce zero deviation; handoff refuses screens whose experience isn't
+  ready, reviewed and finding-free (no override). Mockup files are spec objects (`file:experience/mockups/…`) and
+  `change edit UX-SCR-…` copies the mockup along. The starter kit lives in `assets/experience/` (plain CSS, no CDN).
+- `examples/catalog/` is the reference example and a golden fixture: tests require 0 findings, current views, and that
+  re-running its handoffs (`--date 2026-10-07`) reproduces `examples/catalog/handoff/` byte for byte. Its applied
+  CHG-003 adds the experience layer with SCR-PRC-01 designed and reviewed. After changing a renderer or
+  bumping the package version, regenerate it: `node dist/cli.js views examples/catalog`,
+  `node dist/cli.js handoff CAP-PRC-001 --target all --date 2026-10-07 -C examples/catalog` and
+  `node dist/cli.js handoff MOD-PRC --date 2026-10-07 -C examples/catalog`.
 - Decided: interview-then-draft; one capability = one goal, one acting role, one session; `refine` moves status to
   `refined` at most, anything beyond needs the person's explicit word.
 
@@ -144,4 +148,5 @@ Statuses: `draft → refined → ready → approved → implemented`.
 3. Authoring commands and the analyst agent
 4. Semantic review and change management
 5. Handoff and a full example project (reference fixture)
-6. Screen fields, generated prototype and design-system variants
+6. Screen fields and the generated (dry) prototype
+7. Experience layer: UX contracts and realistic mockups, zero-deviation checks and the handoff gate

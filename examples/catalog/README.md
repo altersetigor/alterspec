@@ -3,7 +3,7 @@
 A small but complete alterspec project: a product catalog with brands, articles, units of measure, categories,
 suppliers and prices. It is the reference example for alterspec and the fixture its tests run against.
 
-Only `spec/`, `handoff/`, `design/` and `prototype/` are committed here. To use the slash commands on it, copy the folder and run
+Only `spec/` and `handoff/` are committed here. To use the slash commands on it, copy the folder and run
 `npx @alterset/alterspec init` in the copy; that adds `.alterspec/` and `.claude/` without touching `spec/`.
 
 ## What's in the spec
@@ -40,16 +40,18 @@ The first version was baselined (`alterspec baseline`), so every later edit goes
 - **[CHG-002 Article replacement on discontinuation](spec/changes/CHG-002/proposal.md)** — in review. It adds a
   replacement article to `ENT-ARTICLE` and changes `CAP-CAT-006`. See its [impact report](spec/changes/CHG-002/impact.md).
 
-## Prototype
+## Prototype and experience
 
-Every screen lists the data it shows in `fields`, so the spec renders as a clickable prototype with made-up data:
+Every screen lists the data it shows in `fields`, so the spec renders as a clickable
+[generic prototype](spec/_generated/prototype/index.html) with made-up data, written by `alterspec views`.
 
-- [generic prototype](spec/_generated/prototype/index.html), written by `alterspec views`
-- [Bootstrap variant](prototype/bootstrap/index.html), built by `alterspec prototype build` from
-  [design/design.yaml](design/design.yaml) (a purple brand colour)
-
-Pick a role in the header to see what that role sees; the state buttons on each screen show its empty,
-no-permission and validation-error states.
+The applied **[CHG-003 Experience for sales price review](spec/changes/archive/CHG-003/proposal.md)** added the
+experience layer: the starter [design system](spec/experience/design-system.md) and
+[patterns](spec/experience/patterns.md), and the sales price review designed in detail —
+its [experience contract](spec/experience/screens/UX-SCR-PRC-01.md) and its
+[mockup](spec/experience/mockups/SCR-PRC-01.html), checked element by element against
+[SCR-PRC-01](spec/modules/prc/screens/SCR-PRC-01.md) and reviewed. That is why the Pricing handoffs pass the
+experience gate, while handing off the Catalog module is refused until its screens are designed too.
 
 ## Handoff
 
@@ -70,13 +72,11 @@ From the alterspec repository root:
 npx @alterset/alterspec validate examples/catalog
 npx @alterset/alterspec show CAP-PRC-002 -C examples/catalog
 npx @alterset/alterspec impact CHG-002 -C examples/catalog
-npx @alterset/alterspec handoff MOD-CAT --target openspec --allow-draft -C examples/catalog
-npx @alterset/alterspec prototype check -C examples/catalog
+npx @alterset/alterspec handoff MOD-CAT --target openspec --allow-draft -C examples/catalog   # refused: no experience yet
 ```
 
 ## How it was built
 
 Every object was created with `alterspec new`, so its ID came from the tool. The content was then written in
-business language, the first version was baselined, and both changes went through `change new`, `change edit`,
-`impact`, `change status` and `apply`. The handoff folders are the unedited output of `alterspec handoff`, and `prototype/bootstrap/` of
-`alterspec prototype build`.
+business language, the first version was baselined, and all three changes went through `change new`, `change edit`,
+`impact`, `change status` and `apply`. The handoff folders are the unedited output of `alterspec handoff`.

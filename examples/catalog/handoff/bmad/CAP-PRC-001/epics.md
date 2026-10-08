@@ -1,7 +1,7 @@
 ---
 status: draft
 inputDocuments: ["alterspec CAP-PRC-001 v1"]
-exportedBy: "alterspec 0.3.0"
+exportedBy: "alterspec 0.4.0"
 ---
 
 # Product Catalog - Epic Breakdown
@@ -27,7 +27,7 @@ None in this export.
 
 ### UX Design Requirements
 
-- SCR-PRC-01 Sales price review: Work through articles that need a sales price, proposals that need approval, and discontinued articles whose prices must expire. Shows Purchase price (list): Supplier, Amount, Valid from. Shows Sales price (edit): Article, Amount, Valid from. Actions: Propose, Approve, Expire.
+- SCR-PRC-01 Sales price review: Work through articles that need a sales price, proposals that need approval, and discontinued articles whose prices must expire. Shows Purchase price (list): Supplier, Amount, Valid from. Shows Sales price (edit): Article, Amount, Valid from. Actions: Propose, Approve, Expire. Experience contract: spec/experience/screens/UX-SCR-PRC-01.md; mockup: spec/experience/mockups/SCR-PRC-01.html.
 
 ### FR Coverage Map
 

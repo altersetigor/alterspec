@@ -35,7 +35,7 @@ check it, change it and hand it over to development.
 - [Validation](#validation)
 - [Change management](#change-management)
 - [Handoff](#handoff)
-- [Prototypes](#prototypes)
+- [Prototype and experience](#prototype-and-experience)
 - [Configuration and customisation](#configuration-and-customisation)
 - [Using alterspec in CI](#using-alterspec-in-ci)
 - [Updating](#updating)
@@ -112,8 +112,9 @@ agents or settings.
 2. **Refine.** `/alterspec-refine <ID>` finds the gaps in one object and asks about them until the object is complete.
    Only then does it move the object to `refined`. Moving to `ready` or `approved` always needs your explicit word.
 3. **Validate.** `/alterspec-validate` runs the deterministic linter and a semantic review, and gives you one report.
-   **Look at it.** `spec/_generated/prototype/index.html` is a clickable prototype generated from the spec, and
-   `/alterspec-prototype` renders it in Bootstrap, Tabler, Tailwind or your own design system.
+   **Look at it.** `spec/_generated/prototype/index.html` is a clickable prototype generated from the spec.
+   **Design it.** `/alterspec-experience` adds the experience layer: a UX contract and a realistic mockup per screen,
+   checked element by element against the spec.
 4. **Baseline.** When the first version is agreed, run `npx alterspec baseline`. From that moment on, every edit goes
    through a change proposal. Direct edits are reported as errors.
 5. **Change.** `/alterspec-change-capability CAP-CAT-001` (or `-module`, `-screen`, `-entity`) changes one object;
@@ -145,7 +146,7 @@ agents or settings.
 | `/alterspec-impact <CHG>` | Impact analysis of a change, for a business reader |
 | `/alterspec-apply <CHG>` | Approve, after your explicit word, and merge a change |
 | `/alterspec-handoff <ID> [target]` | Export to Spec Kit, OpenSpec, BMAD or a bundle |
-| `/alterspec-prototype [variant]` | Set up `design/`, then build and check a design-system variant of the prototype |
+| `/alterspec-experience [init \| <SCR> \| review <SCR> \| sync <SCR>]` | Design system, UX contracts and mockups, kept fully aligned with the spec |
 
 Two agents work behind these commands:
 
@@ -198,7 +199,7 @@ alterspec show CAP-CAT-001        # references both ways, empty sections, open q
 
 | Command | Description |
 | --- | --- |
-| `alterspec validate [--json] [--report] [--change <CHG>]` | Run the 32 lint rules. Exits with 1 on errors. |
+| `alterspec validate [--json] [--report] [--change <CHG>]` | Run the 40 lint rules. Exits with 1 on errors. |
 | `alterspec validate --list-rules` | List every rule with its default severity. |
 | `alterspec views [--check]` | Regenerate the generated blocks and `spec/_generated/`. `--check` only reports. |
 
@@ -221,13 +222,16 @@ alterspec show CAP-CAT-001        # references both ways, empty sections, open q
 | --- | --- |
 | `alterspec handoff <CAP\|MOD> --target <t>` | Export to `handoff/<target>/<ID>/`. Targets: `bundle`, `speckit`, `openspec`, `bmad`, `all`. |
 
-### Prototypes
+### Experience
 
 | Command | Description |
 | --- | --- |
-| `alterspec prototype init [--base <b>]` | Write a starter `design/` folder. Never overwrites. |
-| `alterspec prototype build [--variant <v>]` | Render `prototype/<variant>/` (`bootstrap`, `tabler`, `tailwind`) from the spec and `design/`. |
-| `alterspec prototype check [--variant <v>] [--stamp]` | Check variants against the spec. Exits with 1 on findings. |
+| `alterspec experience init` | Add the starter design system, patterns and mockup kit to `spec/experience/`. Never overwrites. |
+| `alterspec experience new <SCR>` | Draft a screen's experience contract and mockup; both pass every check. |
+| `alterspec experience sync <SCR>` | Align them with a changed business screen. |
+| `alterspec experience reviewed <SCR>` | Record a clean parity review; refused while anything is out of line. |
+
+Each takes `--change <CHG>`, which is required once a baseline exists.
 
 ## The spec format
 
@@ -249,6 +253,7 @@ spec/
 │   ├── rules.md            rules owned by this module
 │   ├── capabilities/CAP-*.md
 │   └── screens/SCR-*.md
+├── experience/             the experience layer: design system, patterns, UX contracts, mockups
 ├── changes/                open change proposals, and archive/
 └── _generated/             traceability, coverage, role matrix, baseline — never edit
 ```
@@ -264,6 +269,7 @@ spec/
 | Entity, role, persona, event | `ENT-`, `ROLE-`, `PER-`, `EVT-` + name | `ENT-ARTICLE` |
 | Rule | `RULE-NNN` (shared) or `RULE-<CODE>-NNN` (module) | `RULE-CAT-001` |
 | Flow, decision, change | `FLOW-NNN`, `DEC-NNN`, `CHG-NNN` | `FLOW-001` |
+| Experience screen | `UX-` + its screen ID | `UX-SCR-PRC-01` |
 
 ### A capability
 
@@ -354,7 +360,7 @@ instead.
 
 ## Validation
 
-`alterspec validate` runs 32 deterministic rules. Here is a selection:
+`alterspec validate` runs 40 deterministic rules. Here is a selection:
 
 | Area | Examples |
 | --- | --- |
@@ -364,6 +370,7 @@ instead.
 | Events | every consumed event has an emitter or is marked external |
 | Consistency | flows and capabilities agree; screen actions and capabilities agree |
 | Screens | shown attributes exist; edited data is captured by an action; every action has a role on the screen |
+| Experience | contracts and mockups carry every element and nothing else, with the declared labels, roles and states |
 | Quality | acceptance criteria are numbered and present from `ready`; refined objects have no empty sections |
 | Language | glossary synonyms and technology words in prose |
 | Living spec | generated views up to date and not edited; no direct edits after the baseline |
@@ -406,50 +413,52 @@ npx alterspec handoff CAP-PRC-001 --target openspec
 
 | Target | Output | Next step |
 | --- | --- | --- |
-| `bundle` | `README.md` and `bundle.json`: the capability with every role, entity, rule, event, screen, flow and term it needs, plus a clickable prototype of its screens | input for your technical design |
+| `bundle` | `README.md` and `bundle.json`: the capability with every role, entity, rule, event, screen, flow and term it needs, plus a clickable prototype of its screens and, with an experience layer, their UX contracts and mockups | input for your technical design |
 | `speckit` | GitHub Spec Kit `spec.md`: user stories with priorities, `FR-###`, `SC-###`, key entities, `[NEEDS CLARIFICATION]` | copy to `specs/<NNN>-<name>/spec.md` |
 | `openspec` | OpenSpec change folder: proposal, tasks, SHALL/MUST requirements with scenarios | copy to `openspec/changes/`, run `openspec validate` |
 | `bmad` | BMAD `epics.md`: an epic per module, a story per capability, Given/When/Then | give to BMAD as the epics document |
 
 - **Where it writes:** handoff only ever writes to `handoff/<target>/<ID>/`. It never touches another tool's folders.
-- **What it refuses:** capabilities below `ready` (unless you pass `--allow-draft`), and anything with lint errors.
+- **What it refuses:** capabilities below `ready` (unless you pass `--allow-draft`), anything with lint errors, and,
+  with an experience layer, any screen whose experience isn't ready, reviewed and free of findings.
 - **Traceability:** every output carries `manifest.json` with the source IDs, versions and fingerprints, so you can see
   later which handoffs are out of date.
 
-## Prototypes
+## Prototype and experience
 
-The spec stays the source of truth; prototypes are generated from it and never edited by hand.
+Two layers show what the spec describes, like a dry and a wet signal:
 
 ```text
-spec/_generated/prototype/   generic prototype: written by `alterspec views`, part of the generated views
-design/                      yours: design.yaml (base, brand, layout, theme) and tokens.css (your own CSS)
-prototype/<variant>/         design-system variants: written by `alterspec prototype build`
+spec/_generated/prototype/   dry: the generic prototype, generated from the business spec by `alterspec views`
+spec/experience/             wet: the experience layer — design system, patterns, a UX contract and a realistic
+                             mockup per screen
 ```
 
-- **Generic prototype.** One page per screen, with navigation from modules and entry points, the data from `fields`
-  filled with made-up records, the actions (each says which capability it performs), a role picker that hides what a
-  role can't see, and buttons for the empty, no-permission and validation-error states. Anything the spec doesn't say
-  yet shows as a highlighted "Not specified" note.
-- **Variants.** The same pages in Bootstrap, Tabler or Tailwind (shadcn/ui-style tokens), with your colours, font,
-  radius, logo and layout from `design/design.yaml`. A `custom` variant in your own design system is written with
-  Claude through `/alterspec-prototype`, from HTML examples of your components in `design/components/`. Variants load
-  the design system from a CDN with pinned versions.
-- **No drift.** Every business element carries its spec ID (`data-src="SCR-PRC-01.A01"`). `views --check` catches a
-  stale generic prototype, and `prototype check` fails when a variant misses an element, adds one the spec doesn't
-  have, or was built from an older spec. `impact` lists the screens whose pages a change affects.
+- **Dry: the generic prototype.** One page per screen, with navigation from modules and entry points, the data from
+  `fields` filled with made-up records, the actions (each says which capability it performs), a role picker, and
+  buttons for the empty, no-permission and validation-error states. Anything the spec doesn't say yet shows as a
+  highlighted "Not specified" note. It needs no design work and is always current.
+- **Wet: the experience layer.** It says how the product looks and behaves, precisely enough that a developer never
+  has to ask the product owner or a designer. It is part of the spec (baselined, changed through change proposals,
+  handed off) and UI-technical by design: components, regions, layout, exact labels and messages, interactions,
+  loading and errors, responsive and accessibility rules.
+  - `design-system.md` and `mockups/kit/`: a neutral starter design system in plain CSS. Replace it with your own
+    tokens and components.
+  - `patterns.md`: page archetypes (list, detail, editor, dashboard, dialog) and their regions, plus state and
+    microcopy patterns.
+  - `screens/UX-SCR-….md`: per screen, every business element with its region, component and exact label, the
+    states (each a link: `?as=<role>&state=<id>`), and how it behaves.
+  - `mockups/SCR-….html`: a realistic, standalone page with the app shell, a demo-user switcher and a link per state.
+- **Zero deviation.** Every business element carries its spec ID in the mockup (`data-src="SCR-PRC-01.A01"`). The
+  linter fails when an element is missing or added, a label differs, a role or state isn't covered, or a component
+  isn't in the catalogue; it warns when the business screen changed (`experience sync`) or the screen changed since
+  its parity review. A change to a business screen can't go to review until its experience screen follows, and
+  **handoff refuses any screen whose experience isn't ready, reviewed and finding-free** — there is no override.
 
-```yaml
-# design/design.yaml
-base: bootstrap          # bootstrap | tabler | tailwind | custom
-app:
-  name: Product Catalog
-  logo: assets/logo.svg  # relative to design/
-shell: sidebar           # sidebar | topbar
-theme:
-  primary: "#7c3aed"
-  font: "Inter, system-ui, sans-serif"
-  radius: 6px
-  dark: false
+```text
+/alterspec-experience init                  design system interview
+/alterspec-experience SCR-PRC-01            draft, then shape the screen with the UX designer agent
+/alterspec-experience review SCR-PRC-01     parity review; recorded only when everything matches
 ```
 
 ## Configuration and customisation
@@ -496,7 +505,6 @@ jobs:
       - run: npm ci
       - run: npx alterspec validate
       - run: npx alterspec views --check
-      - run: npx alterspec prototype check   # if you commit design-system variants
 ```
 
 `validate` exits with 1 on errors only. To make the build strict about a warning, set that rule to `error` in
@@ -510,7 +518,7 @@ npx alterspec update
 npx alterspec doctor
 ```
 
-After an update, run `npx alterspec views` once: new versions can add generated views, such as the prototype in 0.3.0.
+After an update, run `npx alterspec views` once: new versions can add generated views, such as the prototype.
 
 `update` refreshes `.alterspec/` and the `.claude/` commands. It never touches `spec/`, `config.yaml` or
 `.alterspec/custom/`, and it skips any command file you edited by hand (use `--force` to overwrite).
@@ -521,7 +529,7 @@ After an update, run `npx alterspec views` once: new versions can add generated 
 - 4 modules, 16 capabilities and 5 cross-module flows
 - a baseline, one applied change and one change in review
 - handoff output for every target
-- a `design/` folder and a Bootstrap variant of the prototype in `prototype/bootstrap/`
+- an experience layer with the sales price review designed, reviewed and handed off
 
 It's the quickest way to see what a finished alterspec project looks like.
 
@@ -544,8 +552,8 @@ old ID is never reused.
 
 **Is my spec sent anywhere?**
 The CLI works only on local files and makes no network calls. Claude Code works with your files the way it does for
-any code. Design-system variants of the prototype load Bootstrap, Tabler or Tailwind from a CDN when you open them in
-a browser; the generic prototype loads nothing.
+any code. Prototype pages and mockups are plain local files and
+load nothing from the internet.
 
 ## License
 

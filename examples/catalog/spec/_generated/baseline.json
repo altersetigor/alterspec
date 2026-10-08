@@ -237,6 +237,10 @@
       "hash": "0d7b1ea080178f98",
       "file": "modules/sup/screens/SCR-SUP-02.md"
     },
+    "UX-SCR-PRC-01": {
+      "hash": "a39546a98eff97d8",
+      "file": "experience/screens/UX-SCR-PRC-01.md"
+    },
     "file:application/integrations.md": {
       "hash": "70735aa80a774337",
       "file": "application/integrations.md"
@@ -244,6 +248,38 @@
     "file:application/nfr.md": {
       "hash": "90228b02c597f0ef",
       "file": "application/nfr.md"
+    },
+    "file:experience/design-system.md": {
+      "hash": "5826caa4315c7df5",
+      "file": "experience/design-system.md"
+    },
+    "file:experience/mockups/SCR-PRC-01.html": {
+      "hash": "4b8fd80b30db7c42",
+      "file": "experience/mockups/SCR-PRC-01.html"
+    },
+    "file:experience/mockups/index.html": {
+      "hash": "c9eb41c141f4377d",
+      "file": "experience/mockups/index.html"
+    },
+    "file:experience/mockups/kit/components.css": {
+      "hash": "494e48cad4c3ca83",
+      "file": "experience/mockups/kit/components.css"
+    },
+    "file:experience/mockups/kit/shell.js": {
+      "hash": "0d880c2e70994862",
+      "file": "experience/mockups/kit/shell.js"
+    },
+    "file:experience/mockups/kit/tokens.css": {
+      "hash": "a54e14849b764412",
+      "file": "experience/mockups/kit/tokens.css"
+    },
+    "file:experience/mockups/nav.js": {
+      "hash": "e43ac7329202a777",
+      "file": "experience/mockups/nav.js"
+    },
+    "file:experience/patterns.md": {
+      "hash": "0d6b31537352db19",
+      "file": "experience/patterns.md"
     },
     "term:Article": {
       "hash": "792fffebabe9a476",
@@ -274,5 +310,5 @@
       "file": "application/glossary.md"
     }
   },
-  "updated": "2026-10-06"
+  "updated": "2026-10-08"
 }

@@ -28,3 +28,5 @@ A screen spec describes what people see and do, in business terms: never layout,
 5. Each capability an action performs must list this screen in its `screens`; add it there too.
 6. If an action needs a capability that doesn't exist yet, list it as a next step for `/alterspec-create-capability`.
 7. Run `alterspec views` and `alterspec show <SCR>`; fix errors.
+8. If the project has an experience layer (`spec/experience/`), suggest `/alterspec-experience <SCR>` once the screen
+   is refined.

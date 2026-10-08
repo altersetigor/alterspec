@@ -24,6 +24,16 @@ import {
   screenFieldsMissing,
   screenRoleAction,
 } from './screens.js';
+import {
+  experienceElements,
+  experienceLabels,
+  experienceMissing,
+  experienceMockup,
+  experienceStale,
+  experienceStates,
+  experienceUnreviewed,
+  experienceVocabulary,
+} from './experience.js';
 import { glossaryForbidden, techLeak } from './text.js';
 
 /** Findings for these rules come from the loader, not from a check. */
@@ -57,6 +67,14 @@ export const RULES: LintRule[] = [
   screenRoleAction,
   screenFieldsMissing,
   entityAttributeDetail,
+  experienceElements,
+  experienceMockup,
+  experienceLabels,
+  experienceStates,
+  experienceVocabulary,
+  experienceStale,
+  experienceMissing,
+  experienceUnreviewed,
   foreignModuleRule,
   acceptanceIds,
   incompleteSection,

@@ -19,3 +19,8 @@ What to check, depending on what changes:
   terms only, never layout or widgets.
 
 The "Used by capabilities" block is generated: never edit it.
+
+**Experience layer.** If `spec/experience/screens/UX-<SCR>.md` exists, the experience screen and its mockup must
+follow in the same change, or the change can't go to review: after the edit, run
+`npx @alterset/alterspec experience sync <SCR>` (with `--change <CHG>` after the baseline) and tell the person to
+finish it with `/alterspec-experience <SCR>`.

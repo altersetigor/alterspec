@@ -32,6 +32,8 @@ const VARS: Record<string, string> = {
   kind: 'open_question',
   external: 'false',
   persona_roles: 'ROLE-HR-MANAGER',
+  SCREEN: 'SCR-HR-01',
+  archetype: 'detail',
 };
 
 const render = (name: string) => renderTemplate(readAsset(`templates/${name}`), VARS);

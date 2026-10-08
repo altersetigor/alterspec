@@ -102,8 +102,31 @@ export function renderBundle(b: Bundle, ctx: TargetContext): TargetOutput {
       for (const a of s.actions) out.push(`- ${a.id} ${a.label} → ${a.capability}`);
       for (const m of s.mockups) out.push(`- Mockup (${m.type}): ${m.ref}`);
       if (s.fields.length || s.actions.length || s.mockups.length) out.push('');
+      const x = s.experience;
+      if (x) {
+        out.push(
+          `**Experience (${x.status}):** ${x.archetype} layout. The contract is [${x.id}](experience/screens/${x.id}.md); the mockup is [experience/mockups/${s.id}.html](experience/mockups/${s.id}.html), built to match it exactly. States:`,
+          '',
+          ...x.states.map((st) => {
+            const q = [st.as ? `as=${st.as}` : '', st.id === 'default' ? '' : `state=${st.id}`]
+              .filter(Boolean)
+              .join('&');
+            return `- [${st.id}${st.as ? ` as ${st.as}` : ''}](experience/mockups/${s.id}.html${q ? `?${q}` : ''})`;
+          }),
+          '',
+        );
+      }
     }
-    out.push('A clickable prototype of these screens, with made-up data, is in `prototype/index.html`.', '');
+    out.push(
+      'A clickable prototype of these screens, with made-up data, is in `prototype/index.html`.',
+      ...(b.screens.some((s) => s.experience)
+        ? [
+            '',
+            'The experience contracts and mockups in `experience/` are binding: they say how each screen looks and behaves, and they were checked element by element against this specification.',
+          ]
+        : []),
+      '',
+    );
   }
   if (b.roles.length)
     out.push(

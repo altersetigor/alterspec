@@ -37,7 +37,12 @@ export function normalizeSection(text: string): string {
     .trim();
 }
 
-const TEMPLATE_FOR = { capability: 'capability.md', screen: 'screen.md', entity: 'entity.md' } as const;
+const TEMPLATE_FOR = {
+  capability: 'capability.md',
+  screen: 'screen.md',
+  entity: 'entity.md',
+  experience: 'experience-screen.md',
+} as const;
 export type SectionedType = keyof typeof TEMPLATE_FOR;
 
 const cache = new Map<SectionedType, Section[]>();

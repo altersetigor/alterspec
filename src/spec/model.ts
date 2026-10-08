@@ -1,4 +1,13 @@
-import type { Application, Capability, Change, Entity, Flow, Module, Screen } from '../schemas/index.js';
+import type {
+  Application,
+  Capability,
+  Change,
+  Entity,
+  ExperienceScreen,
+  Flow,
+  Module,
+  Screen,
+} from '../schemas/index.js';
 import type { z } from 'zod';
 import type {
   DecisionItemSchema,
@@ -25,6 +34,7 @@ export type FileType =
   | 'screen'
   | 'entity'
   | 'flow'
+  | 'experience'
   | 'change'
   | 'personas-roles'
   | 'glossary'
@@ -74,6 +84,7 @@ export interface SpecModel {
   screens: Map<string, LocatedDoc<Screen>>;
   entities: Map<string, LocatedDoc<Entity>>;
   flows: Map<string, LocatedDoc<Flow>>;
+  experiences: Map<string, LocatedDoc<ExperienceScreen>>;
   changes: Map<string, LocatedDoc<Change>>;
   rules: Map<string, Located<RuleItem>>;
   events: Map<string, Located<EventItem>>;
@@ -95,6 +106,7 @@ export function emptyModel(): SpecModel {
     screens: new Map(),
     entities: new Map(),
     flows: new Map(),
+    experiences: new Map(),
     changes: new Map(),
     rules: new Map(),
     events: new Map(),

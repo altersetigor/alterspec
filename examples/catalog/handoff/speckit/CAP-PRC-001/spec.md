@@ -5,7 +5,7 @@
 **Status**: Draft  
 **Input**: Product specification CAP-PRC-001 exported from alterspec (CAP-PRC-001 v1)
 
-<!-- Exported by alterspec 0.3.0 from CAP-PRC-001 (CAP-PRC-001 v1). Edit the source spec, not this file. -->
+<!-- Exported by alterspec 0.4.0 from CAP-PRC-001 (CAP-PRC-001 v1). Edit the source spec, not this file. -->
 
 ## User Scenarios & Testing *(mandatory)*
 

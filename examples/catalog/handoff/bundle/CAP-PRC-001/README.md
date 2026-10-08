@@ -1,6 +1,6 @@
 # CAP-PRC-001 — Propose sales price
 
-<!-- Exported by alterspec 0.3.0 from CAP-PRC-001 (CAP-PRC-001 v1). Edit the source spec, not this file. -->
+<!-- Exported by alterspec 0.4.0 from CAP-PRC-001 (CAP-PRC-001 v1). Edit the source spec, not this file. -->
 
 Self-contained product specification exported from alterspec on 2026-10-07. It describes what the product does and why, in business terms; technical design decisions are made from here on.
 
@@ -173,7 +173,16 @@ Work through articles that need a sales price, proposals that need approval, and
 - A02 Approve → CAP-PRC-002
 - A03 Expire → CAP-PRC-003
 
+**Experience (ready):** list layout. The contract is [UX-SCR-PRC-01](experience/screens/UX-SCR-PRC-01.md); the mockup is [experience/mockups/SCR-PRC-01.html](experience/mockups/SCR-PRC-01.html), built to match it exactly. States:
+
+- [default as ROLE-PRICING-MANAGER](experience/mockups/SCR-PRC-01.html?as=ROLE-PRICING-MANAGER)
+- [empty as ROLE-PRICING-MANAGER](experience/mockups/SCR-PRC-01.html?as=ROLE-PRICING-MANAGER&state=empty)
+- [no-permission](experience/mockups/SCR-PRC-01.html?state=no-permission)
+- [validation as ROLE-PRICING-MANAGER](experience/mockups/SCR-PRC-01.html?as=ROLE-PRICING-MANAGER&state=validation)
+
 A clickable prototype of these screens, with made-up data, is in `prototype/index.html`.
+
+The experience contracts and mockups in `experience/` are binding: they say how each screen looks and behaves, and they were checked element by element against this specification.
 
 ## Roles
 

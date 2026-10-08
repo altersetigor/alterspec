@@ -20,7 +20,7 @@ export interface SpecObject {
 }
 
 const COLLECTIONS = new Set(['personas-roles', 'glossary', 'rules', 'module-rules', 'events', 'decisions']);
-const DOCUMENTS = new Set(['application', 'module', 'capability', 'screen', 'entity', 'flow']);
+const DOCUMENTS = new Set(['application', 'module', 'capability', 'screen', 'entity', 'flow', 'experience']);
 
 /** GENERATED blocks reduced to bare markers, so regenerating views never changes a fingerprint. */
 export const withoutGenerated = (text: string) =>
@@ -58,10 +58,14 @@ function docKey(file: SpecFile): string {
 }
 
 /** Every object of the main spec (changes and generated files excluded). */
+/** Mockup files (HTML, CSS, scripts, images) are spec objects too: each file is one object, keyed by its path. */
+export const isExperienceAsset = (path: string) =>
+  path.startsWith('experience/mockups/') && !path.endsWith('.md');
+
 export function specObjects(files: SpecFile[]): Map<string, SpecObject> {
   const out = new Map<string, SpecObject>();
   for (const f of files) {
-    if (isIgnored(f.path) || f.path.startsWith('changes/')) continue;
+    if ((isIgnored(f.path) && !isExperienceAsset(f.path)) || f.path.startsWith('changes/')) continue;
     const { type } = classify(f);
     if (type && COLLECTIONS.has(type)) {
       for (const item of splitItems(f.content)) {

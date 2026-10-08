@@ -16,6 +16,8 @@ const SLIP = 'application/entities/ENT-PAYSLIP.md';
 const GLB1S = 'modules/glb/screens/SCR-GLB-01.md';
 const HR1S = 'modules/hr/screens/SCR-HR-01.md';
 const PAY1S = 'modules/pay/screens/SCR-PAY-01.md';
+const UX = 'experience/screens/UX-SCR-HR-01.md';
+const MOCK = 'experience/mockups/SCR-HR-01.html';
 const both =
   (...edits: ((s: string) => string)[]) =>
   (s: string) =>
@@ -286,6 +288,109 @@ const CASES: Record<string, Case[]> = {
         ),
       },
       expect: { file: EMP, line: 12, message: /its options/ },
+    },
+  ],
+  'experience-elements': [
+    {
+      label: 'business element missing',
+      edits: {
+        [UX]: replace(
+          '  - src: SCR-HR-01.ENT-EMPLOYEE.Contract type\n    region: form\n    component: field-select\n    label: Contract type\n',
+          '',
+        ),
+      },
+      expect: { file: UX, message: /Contract type is missing/ },
+    },
+    {
+      label: 'element the screen does not have',
+      edits: {
+        [UX]: replace(
+          '  - src: SCR-HR-01.ENT-EMPLOYEE.Contract type',
+          '  - src: SCR-HR-01.ENT-EMPLOYEE.Grade',
+        ),
+      },
+      expect: { file: UX, line: 25, message: /Grade is not an element of SCR-HR-01/ },
+    },
+    {
+      label: 'ready while the business screen has gaps',
+      edits: {
+        'modules/hr/screens/SCR-HR-01.md': replace(
+          '- **Empty:** a new employee with nothing filled in.\n',
+          '',
+        ),
+      },
+      expect: { file: UX, line: 1, message: /still has 1 gap/ },
+    },
+  ],
+  'experience-mockup': [
+    {
+      label: 'element missing from the mockup',
+      edits: { [MOCK]: replace('data-src="SCR-HR-01.A02" ', '') },
+      expect: { file: MOCK, message: /no element with data-src="SCR-HR-01.A02"/ },
+    },
+    {
+      label: 'element the screen does not have',
+      edits: { [MOCK]: replace('</main>', '<button data-src="SCR-HR-01.A09">Delete</button>\n</main>') },
+      expect: { file: MOCK, message: /SCR-HR-01.A09" is not an element/ },
+    },
+    {
+      label: 'missing mockup page',
+      edits: { [MOCK]: null },
+      expect: { file: UX, line: 1, message: /mockup experience\/mockups\/SCR-HR-01.html is missing/ },
+    },
+  ],
+  'experience-labels': [
+    {
+      label: 'text differs from the declared label',
+      edits: {
+        [MOCK]: replace('Activate employee">Activate</button>', 'Activate employee">Enable</button>'),
+      },
+      expect: { file: MOCK, line: 18, message: /SCR-HR-01.A02 should read "Activate"/ },
+    },
+  ],
+  'experience-states': [
+    {
+      label: 'business state not declared',
+      edits: { [UX]: replace('  - id: empty\n    as: ROLE-HR-MANAGER\n', '') },
+      expect: { file: UX, message: /no "empty" state/ },
+    },
+    {
+      label: 'state not marked in the mockup',
+      edits: { [MOCK]: replace(' data-show-in="validation"', '') },
+      expect: { file: UX, message: /doesn't mark the "validation" state/ },
+    },
+  ],
+  'experience-vocabulary': [
+    {
+      label: 'unknown archetype',
+      edits: { [UX]: replace('archetype: editor', 'archetype: wizard') },
+      expect: { file: UX, line: 5, message: /archetype "wizard"/ },
+    },
+    {
+      label: 'unknown component',
+      edits: { [UX]: replace('component: field-date', 'component: date-wheel') },
+      expect: { file: UX, line: 23, message: /component "date-wheel"/ },
+    },
+  ],
+  'experience-stale': [
+    {
+      label: 'business screen changed since alignment',
+      edits: { [UX]: (t: string) => t.replace(/^dry: .*$/m, 'dry: deadbeef0000') },
+      expect: { file: UX, line: 7, message: /SCR-HR-01 changed since/ },
+    },
+  ],
+  'experience-missing': [
+    {
+      label: 'ready screen without experience screen',
+      edits: { [PAY1S]: replace('status: draft', 'status: ready') },
+      expect: { file: PAY1S, line: 1, message: /has no experience screen/ },
+    },
+  ],
+  'experience-unreviewed': [
+    {
+      label: 'edited after the review',
+      edits: { [UX]: replace('in one column.', 'in two columns.') },
+      expect: { file: UX, line: 6, message: /changed since its last parity review/ },
     },
   ],
   'foreign-module-rule': [

@@ -27,6 +27,12 @@ actions:
 
 Shows one employee and what can be done with the record.
 
+## Business states
+
+- **Empty:** a new employee with nothing filled in.
+- **No permission:** other roles are told the record is for HR only.
+- **Validation errors:** a missing full name or start date is named.
+
 ## Used by capabilities
 
 <!-- GENERATED:start screen-capabilities hash=091aa6cf3174 -->

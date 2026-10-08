@@ -50,6 +50,15 @@ export function outgoingRefs(model: SpecModel): { owner: Located<unknown>; refs:
       ],
     });
   }
+  for (const x of model.experiences.values()) {
+    out.push({
+      owner: x,
+      refs: [
+        { id: x.data.screen, path: ['screen'] },
+        ...each(x.data.states, ['states'], (s) => s.as).map((r) => ({ ...r, path: [...r.path, 'as'] })),
+      ],
+    });
+  }
   for (const e of model.entities.values()) {
     out.push({
       owner: e,

@@ -23,6 +23,8 @@ const LOCATIONS: [FileType, RegExp][] = [
   ['events', /^application\/events\.md$/],
   ['decisions', /^application\/decisions\.md$/],
   ['prose', /^application\/(?:integrations|nfr)\.md$/],
+  ['prose', /^experience\/(?:design-system|patterns)\.md$/],
+  ['experience', /^experience\/screens\/(?<name>[^/]+)\.md$/],
   ['entity', /^application\/entities\/(?<name>[^/]+)\.md$/],
   ['flow', /^application\/flows\/(?<name>[^/]+)\.md$/],
   ['module', /^modules\/(?<mod>[^/]+)\/module\.md$/],
@@ -156,8 +158,12 @@ export function loadSpec(files: SpecFile[]): LoadResult {
         screen: model.screens,
         entity: model.entities,
         flow: model.flows,
+        experience: model.experiences,
         change: model.changes,
-      }[file.type as 'application' | 'module' | 'capability' | 'screen' | 'entity' | 'flow' | 'change'];
+      }[
+        file.type as
+          'application' | 'module' | 'capability' | 'screen' | 'entity' | 'flow' | 'experience' | 'change'
+      ];
       if (file.type === 'application') model.application = doc;
       else if (target && !target.has(doc.id)) target.set(doc.id, doc);
       continue;

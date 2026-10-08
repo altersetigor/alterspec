@@ -1,9 +1,9 @@
 {
-  "hash": "28b4b1601e95",
+  "hash": "bd77c628335a",
   "screens": {
     "SCR-CAT-01": {
       "file": "SCR-CAT-01.html",
-      "hash": "5b5c19d18f3b",
+      "hash": "5baeb59333a4",
       "elements": [
         "SCR-CAT-01",
         "SCR-CAT-01.A01",
@@ -21,11 +21,58 @@
         "SCR-CAT-01.state.empty",
         "SCR-CAT-01.state.no-permission",
         "SCR-CAT-01.state.validation"
-      ]
+      ],
+      "roles": {
+        "SCR-CAT-01": [
+          "ROLE-CATALOG-MANAGER"
+        ],
+        "SCR-CAT-01.A01": [
+          "ROLE-CATALOG-MANAGER"
+        ],
+        "SCR-CAT-01.A02": [
+          "ROLE-CATALOG-MANAGER"
+        ],
+        "SCR-CAT-01.A03": [
+          "ROLE-CATALOG-MANAGER"
+        ],
+        "SCR-CAT-01.ENT-ARTICLE": [
+          "ROLE-CATALOG-MANAGER"
+        ],
+        "SCR-CAT-01.ENT-ARTICLE.Article number": [
+          "ROLE-CATALOG-MANAGER"
+        ],
+        "SCR-CAT-01.ENT-ARTICLE.Brand": [
+          "ROLE-CATALOG-MANAGER"
+        ],
+        "SCR-CAT-01.ENT-ARTICLE.Category": [
+          "ROLE-CATALOG-MANAGER"
+        ],
+        "SCR-CAT-01.ENT-ARTICLE.Description": [
+          "ROLE-CATALOG-MANAGER"
+        ],
+        "SCR-CAT-01.ENT-ARTICLE.Name": [
+          "ROLE-CATALOG-MANAGER"
+        ],
+        "SCR-CAT-01.ENT-ARTICLE.Unit of measure": [
+          "ROLE-CATALOG-MANAGER"
+        ],
+        "SCR-CAT-01.entry.1": [
+          "ROLE-CATALOG-MANAGER"
+        ],
+        "SCR-CAT-01.state.empty": [
+          "ROLE-CATALOG-MANAGER"
+        ],
+        "SCR-CAT-01.state.no-permission": [
+          "ROLE-CATALOG-MANAGER"
+        ],
+        "SCR-CAT-01.state.validation": [
+          "ROLE-CATALOG-MANAGER"
+        ]
+      }
     },
     "SCR-CAT-02": {
       "file": "SCR-CAT-02.html",
-      "hash": "a9aab59f1f59",
+      "hash": "79f55a480246",
       "elements": [
         "SCR-CAT-02",
         "SCR-CAT-02.A01",
@@ -43,11 +90,58 @@
         "SCR-CAT-02.state.empty",
         "SCR-CAT-02.state.no-permission",
         "SCR-CAT-02.state.validation"
-      ]
+      ],
+      "roles": {
+        "SCR-CAT-02": [
+          "ROLE-CATALOG-MANAGER"
+        ],
+        "SCR-CAT-02.A01": [
+          "ROLE-CATALOG-MANAGER"
+        ],
+        "SCR-CAT-02.A02": [
+          "ROLE-CATALOG-MANAGER"
+        ],
+        "SCR-CAT-02.A03": [
+          "ROLE-CATALOG-MANAGER"
+        ],
+        "SCR-CAT-02.ENT-BRAND": [
+          "ROLE-CATALOG-MANAGER"
+        ],
+        "SCR-CAT-02.ENT-BRAND.Name": [
+          "ROLE-CATALOG-MANAGER"
+        ],
+        "SCR-CAT-02.ENT-CATEGORY": [
+          "ROLE-CATALOG-MANAGER"
+        ],
+        "SCR-CAT-02.ENT-CATEGORY.Name": [
+          "ROLE-CATALOG-MANAGER"
+        ],
+        "SCR-CAT-02.ENT-CATEGORY.Parent category": [
+          "ROLE-CATALOG-MANAGER"
+        ],
+        "SCR-CAT-02.ENT-UNIT-OF-MEASURE": [
+          "ROLE-CATALOG-MANAGER"
+        ],
+        "SCR-CAT-02.ENT-UNIT-OF-MEASURE.Code": [
+          "ROLE-CATALOG-MANAGER"
+        ],
+        "SCR-CAT-02.ENT-UNIT-OF-MEASURE.Name": [
+          "ROLE-CATALOG-MANAGER"
+        ],
+        "SCR-CAT-02.state.empty": [
+          "ROLE-CATALOG-MANAGER"
+        ],
+        "SCR-CAT-02.state.no-permission": [
+          "ROLE-CATALOG-MANAGER"
+        ],
+        "SCR-CAT-02.state.validation": [
+          "ROLE-CATALOG-MANAGER"
+        ]
+      }
     },
     "SCR-GLB-01": {
       "file": "SCR-GLB-01.html",
-      "hash": "bfbf8e810c79",
+      "hash": "2b841fc8c859",
       "elements": [
         "SCR-GLB-01",
         "SCR-GLB-01.ENT-ARTICLE",
@@ -63,11 +157,52 @@
         "SCR-GLB-01.state.empty",
         "SCR-GLB-01.state.no-permission",
         "SCR-GLB-01.state.validation"
-      ]
+      ],
+      "roles": {
+        "SCR-GLB-01": [
+          "ROLE-SALES-STAFF"
+        ],
+        "SCR-GLB-01.ENT-ARTICLE": [
+          "ROLE-SALES-STAFF"
+        ],
+        "SCR-GLB-01.ENT-ARTICLE.Article number": [
+          "ROLE-SALES-STAFF"
+        ],
+        "SCR-GLB-01.ENT-ARTICLE.Brand": [
+          "ROLE-SALES-STAFF"
+        ],
+        "SCR-GLB-01.ENT-ARTICLE.Category": [
+          "ROLE-SALES-STAFF"
+        ],
+        "SCR-GLB-01.ENT-ARTICLE.Name": [
+          "ROLE-SALES-STAFF"
+        ],
+        "SCR-GLB-01.ENT-ARTICLE.Unit of measure": [
+          "ROLE-SALES-STAFF"
+        ],
+        "SCR-GLB-01.ENT-SALES-PRICE": [
+          "ROLE-SALES-STAFF"
+        ],
+        "SCR-GLB-01.ENT-SALES-PRICE.Amount": [
+          "ROLE-SALES-STAFF"
+        ],
+        "SCR-GLB-01.ENT-SALES-PRICE.Valid from": [
+          "ROLE-SALES-STAFF"
+        ],
+        "SCR-GLB-01.state.empty": [
+          "ROLE-SALES-STAFF"
+        ],
+        "SCR-GLB-01.state.no-permission": [
+          "ROLE-SALES-STAFF"
+        ],
+        "SCR-GLB-01.state.validation": [
+          "ROLE-SALES-STAFF"
+        ]
+      }
     },
     "SCR-PRC-01": {
       "file": "SCR-PRC-01.html",
-      "hash": "cc18c39c4810",
+      "hash": "8b457e86ef82",
       "elements": [
         "SCR-PRC-01",
         "SCR-PRC-01.A01",
@@ -85,11 +220,58 @@
         "SCR-PRC-01.state.empty",
         "SCR-PRC-01.state.no-permission",
         "SCR-PRC-01.state.validation"
-      ]
+      ],
+      "roles": {
+        "SCR-PRC-01": [
+          "ROLE-PRICING-MANAGER"
+        ],
+        "SCR-PRC-01.A01": [
+          "ROLE-PRICING-MANAGER"
+        ],
+        "SCR-PRC-01.A02": [
+          "ROLE-PRICING-MANAGER"
+        ],
+        "SCR-PRC-01.A03": [
+          "ROLE-PRICING-MANAGER"
+        ],
+        "SCR-PRC-01.ENT-PURCHASE-PRICE": [
+          "ROLE-PRICING-MANAGER"
+        ],
+        "SCR-PRC-01.ENT-PURCHASE-PRICE.Amount": [
+          "ROLE-PRICING-MANAGER"
+        ],
+        "SCR-PRC-01.ENT-PURCHASE-PRICE.Supplier": [
+          "ROLE-PRICING-MANAGER"
+        ],
+        "SCR-PRC-01.ENT-PURCHASE-PRICE.Valid from": [
+          "ROLE-PRICING-MANAGER"
+        ],
+        "SCR-PRC-01.ENT-SALES-PRICE": [
+          "ROLE-PRICING-MANAGER"
+        ],
+        "SCR-PRC-01.ENT-SALES-PRICE.Amount": [
+          "ROLE-PRICING-MANAGER"
+        ],
+        "SCR-PRC-01.ENT-SALES-PRICE.Article": [
+          "ROLE-PRICING-MANAGER"
+        ],
+        "SCR-PRC-01.ENT-SALES-PRICE.Valid from": [
+          "ROLE-PRICING-MANAGER"
+        ],
+        "SCR-PRC-01.state.empty": [
+          "ROLE-PRICING-MANAGER"
+        ],
+        "SCR-PRC-01.state.no-permission": [
+          "ROLE-PRICING-MANAGER"
+        ],
+        "SCR-PRC-01.state.validation": [
+          "ROLE-PRICING-MANAGER"
+        ]
+      }
     },
     "SCR-SUP-01": {
       "file": "SCR-SUP-01.html",
-      "hash": "2c10aab5cab3",
+      "hash": "315d1131997b",
       "elements": [
         "SCR-SUP-01",
         "SCR-SUP-01.A01",
@@ -103,11 +285,46 @@
         "SCR-SUP-01.state.empty",
         "SCR-SUP-01.state.no-permission",
         "SCR-SUP-01.state.validation"
-      ]
+      ],
+      "roles": {
+        "SCR-SUP-01": [
+          "ROLE-PURCHASER"
+        ],
+        "SCR-SUP-01.A01": [
+          "ROLE-PURCHASER"
+        ],
+        "SCR-SUP-01.A02": [
+          "ROLE-PURCHASER"
+        ],
+        "SCR-SUP-01.A03": [
+          "ROLE-PURCHASER"
+        ],
+        "SCR-SUP-01.ENT-SUPPLIER": [
+          "ROLE-PURCHASER"
+        ],
+        "SCR-SUP-01.ENT-SUPPLIER.Contact person": [
+          "ROLE-PURCHASER"
+        ],
+        "SCR-SUP-01.ENT-SUPPLIER.Name": [
+          "ROLE-PURCHASER"
+        ],
+        "SCR-SUP-01.ENT-SUPPLIER.Registration number": [
+          "ROLE-PURCHASER"
+        ],
+        "SCR-SUP-01.state.empty": [
+          "ROLE-PURCHASER"
+        ],
+        "SCR-SUP-01.state.no-permission": [
+          "ROLE-PURCHASER"
+        ],
+        "SCR-SUP-01.state.validation": [
+          "ROLE-PURCHASER"
+        ]
+      }
     },
     "SCR-SUP-02": {
       "file": "SCR-SUP-02.html",
-      "hash": "6d9bb7f0c13c",
+      "hash": "a78f5f90f878",
       "elements": [
         "SCR-SUP-02",
         "SCR-SUP-02.A01",
@@ -123,7 +340,48 @@
         "SCR-SUP-02.state.empty",
         "SCR-SUP-02.state.no-permission",
         "SCR-SUP-02.state.validation"
-      ]
+      ],
+      "roles": {
+        "SCR-SUP-02": [
+          "ROLE-PURCHASER"
+        ],
+        "SCR-SUP-02.A01": [
+          "ROLE-PURCHASER"
+        ],
+        "SCR-SUP-02.A02": [
+          "ROLE-PURCHASER"
+        ],
+        "SCR-SUP-02.A03": [
+          "ROLE-PURCHASER"
+        ],
+        "SCR-SUP-02.ENT-PURCHASE-PRICE": [
+          "ROLE-PURCHASER"
+        ],
+        "SCR-SUP-02.ENT-PURCHASE-PRICE.Amount": [
+          "ROLE-PURCHASER"
+        ],
+        "SCR-SUP-02.ENT-PURCHASE-PRICE.Article": [
+          "ROLE-PURCHASER"
+        ],
+        "SCR-SUP-02.ENT-PURCHASE-PRICE.Supplier": [
+          "ROLE-PURCHASER"
+        ],
+        "SCR-SUP-02.ENT-PURCHASE-PRICE.Valid from": [
+          "ROLE-PURCHASER"
+        ],
+        "SCR-SUP-02.entry.1": [
+          "ROLE-PURCHASER"
+        ],
+        "SCR-SUP-02.state.empty": [
+          "ROLE-PURCHASER"
+        ],
+        "SCR-SUP-02.state.no-permission": [
+          "ROLE-PURCHASER"
+        ],
+        "SCR-SUP-02.state.validation": [
+          "ROLE-PURCHASER"
+        ]
+      }
     }
   }
 }

@@ -7,7 +7,7 @@ export const incompleteSection: LintRule = {
   name: 'incomplete-section',
   severity: 'warn',
   description:
-    'Capabilities, screens and entities that are refined or later have every template section filled in.',
+    'Capabilities, screens, entities and experience screens that are refined or later have every template section filled in.',
   check: ({ model }) => {
     const out: RawFinding[] = [];
     const groups: [
@@ -24,6 +24,7 @@ export const incompleteSection: LintRule = {
       ['capability', model.capabilities.values()],
       ['screen', model.screens.values()],
       ['entity', model.entities.values()],
+      ['experience', model.experiences.values()],
     ];
     for (const [type, objects] of groups) {
       for (const o of objects) {

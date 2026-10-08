@@ -1,3 +1,4 @@
+import { runExperienceReviewed, runExperienceSync } from '../../src/commands/experience.js';
 import { existsSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
@@ -110,6 +111,10 @@ describe('apply', () => {
     );
     runChangeEdit(dir, id, 'CAP-HR-002');
     edit(dir, overlay(id, HR2), 'ops: [R, U]', 'ops: [R, U, A]');
+    // The experience screen and its mockup must follow in the same change.
+    expect(() => runChangeStatus(dir, id, 'in_review')).toThrow(/lint error/);
+    expect(runExperienceSync(dir, 'SCR-HR-01', { change: id }).removed).toEqual(['SCR-HR-01.A03']);
+    expect(runExperienceReviewed(dir, 'SCR-HR-01', { change: id }).findings).toEqual([]);
     runChangeStatus(dir, id, 'in_review');
     runChangeStatus(dir, id, 'approved');
     const r = runApply(dir, id);

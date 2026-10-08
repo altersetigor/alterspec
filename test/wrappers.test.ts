@@ -24,7 +24,7 @@ const COMMANDS = [
   'impact',
   'apply',
   'handoff',
-  'prototype',
+  'experience',
 ];
 
 const SkillFrontMatter = z
@@ -83,7 +83,7 @@ describe('skill wrappers', () => {
 });
 
 describe('agent wrappers', () => {
-  for (const agent of ['analyst', 'reviewer']) {
+  for (const agent of ['analyst', 'reviewer', 'ux-designer', 'experience-reviewer']) {
     it(`alterspec-${agent} is a valid thin wrapper`, () => {
       const { data, body } = parseFrontMatter(readAsset(`claude/agents/alterspec-${agent}.md`));
       expect(issues(AgentFrontMatter.safeParse(data))).toEqual([]);
@@ -97,8 +97,10 @@ describe('agent wrappers', () => {
     expect(
       (parseFrontMatter(readAsset('claude/agents/alterspec-analyst.md')).data as { tools: string }).tools,
     ).toContain('Bash');
-    const { data } = parseFrontMatter(readAsset('claude/agents/alterspec-reviewer.md'));
-    expect((data as { tools: string }).tools).not.toMatch(/Write|Edit/);
+    for (const reviewer of ['reviewer', 'experience-reviewer']) {
+      const { data } = parseFrontMatter(readAsset(`claude/agents/alterspec-${reviewer}.md`));
+      expect((data as { tools: string }).tools).not.toMatch(/Write|Edit/);
+    }
   });
 });
 
@@ -119,7 +121,7 @@ describe('prompts', () => {
     'baseline',
     'change',
     'handoff',
-    'prototype',
+    'experience',
   ];
 
   it('only mention real CLI commands and `new` types', () => {
