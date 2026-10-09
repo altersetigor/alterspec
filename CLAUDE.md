@@ -57,8 +57,8 @@ via the built-in `z.toJSONSchema`). Dev: `tsup`, `vitest`, `eslint` + `typescrip
   org. Its `prepare` script runs `tsup`, so a git-URL install still builds `dist/`; keep it. Publishing needs the
   user's one-time password, so `npm publish` is run by the user in their terminal. Never run `npm publish`,
   `npm unpublish` or `npm deprecate` unless the user asks for it in chat.
-- Versions 0.0.0-stage to 0.6.0 remain public on npm from before the package went private; 0.7.0 was unpublished
-  on 2026-10-10. They are not maintained and must not be referenced as the current release.
+- Every version from 0.0.1 to 0.7.0 was unpublished on 2026-10-10 and the package access set to private on the
+  registry; only `0.0.0-stage` remains as a placeholder. Nothing before 0.8.0 is a usable release.
 - Never commit auth tokens. Any `.npmrc` containing `_authToken` stays out of git.
 
 ## Two different `.claude/` folders
@@ -204,7 +204,7 @@ Decided (don't reopen without the person's word):
 - **Naming** (0.2.0): installed skills and agents are prefixed `alterspec-`; front-matter is parsed without
   `gray-matter`.
 - **Private package** (2026-10-10, revised the same day): releases go to npm with `access: restricted`, visible to
-  the `@alterset` org only; 0.7.0 was unpublished while the package was briefly off npm. Users in the org install
+  the `@alterset` org only; the earlier public versions were unpublished. Users in the org install
   it from npm; others from this repo by git URL. See "npm and registry".
 - **Product profile** (2026-10-09): the core five dimensions (channels with responsive/offline, tenancy, languages,
   currencies, time zones) live in `application.md`; with several languages or currencies a default is mandatory;
