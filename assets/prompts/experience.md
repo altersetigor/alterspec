@@ -39,8 +39,8 @@ Once a baseline exists, every command below needs `--change <CHG>`: ask which op
    the change folder) and never overwrites. On an existing layer, `--kit` refreshes the kit and the sign-in page to
    this version.
 2. Interview, at most 3 questions at a time:
-   - The product as people will see it: its name, logo (URL or a file to put in `mockups/assets/`), currency and
-     locale. Write them into `config.js`.
+   - The product as people will see it: its name and logo (URL or a file to put in `mockups/assets/`). Write them
+     into `config.js`. Its `currency` and `locale` already come from the product profile; don't ask again.
    - Brand: does the team have a design system or component library? If yes: its tokens and components — put the
      tokens into `mockups/kit/tokens.css`, restyle `mockups/kit/components.css` (or add their stylesheet and link it),
      list their components in `design-system.md`. If not: primary colour, font, corner radius, light or dark.
@@ -74,7 +74,8 @@ real product, based on the application's vision, glossary and entities:
    experience screen and a working page; both already pass every check.
 3. Interview about what the draft can't know: which archetype; what goes where; component per field and action;
    exact labels and messages; what happens after each action (confirmation, where the person lands, focus);
-   validation messages per required field and per rule; loading and error behaviour; narrow screens; keyboard.
+   validation messages per required field and per rule; loading and error behaviour; narrow screens, only when a
+   channel the screen is for is `responsive` (otherwise "Responsive behaviour" is "None."); keyboard.
 4. Hand the answers to the `alterspec-ux-designer` agent with the screen ID. It updates the experience screen and the
    page and reports anything the business spec must provide.
 5. Run `npx @alterset/alterspec validate` and resolve every `experience-*` finding.

@@ -2,7 +2,7 @@
 id: APP
 title: "Product Catalog"
 status: refined
-version: 2
+version: 1
 channels:
   - name: Backoffice
     kind: backoffice

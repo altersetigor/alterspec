@@ -10,6 +10,8 @@ A screen spec describes what people see and do, in business terms: never layout,
 1. Read the module and its capabilities so you can link actions to them.
 2. Interview:
    - purpose of the screen, and how people get there (other screens or situations)
+   - which channels it is for, only when the application has more than one channel people use (not `api`); otherwise
+     leave `channels` empty, which means every channel
    - the business information shown: for each entity, which of its attributes, and whether the screen shows many
      records (`list`), one record (`view`) or one record being entered or changed (`edit`). Use the entity's attribute
      names exactly. Information no entity holds is a gap: ask whether an entity needs a new attribute.
@@ -19,7 +21,8 @@ A screen spec describes what people see and do, in business terms: never layout,
    - the business states: nothing to show yet, no permission, validation errors (what the person is told)
    - whether a mockup exists: Figma link, image, HTML or other, and where
 3. Summarise, then run `alterspec new screen --module <MOD> --title "<title>" --json`.
-4. Fill the front-matter: `roles`, `fields` (`entity`, `attributes`, `mode`, optional `roles`), `entry_points`,
+4. Fill the front-matter: `roles`, `channels` (names from `application.md`, or empty), `fields` (`entity`,
+   `attributes`, `mode`, optional `roles`), `entry_points`,
    `actions` (`A01`, `A02`… each with `label`, `capability` and optional `roles`) and `mockups` (`type` and `ref`).
    Fill every body section.
    - Data shown in `edit` mode needs an action whose capability creates or updates that entity; data shown in `list`

@@ -7,8 +7,21 @@ channels: []
 # - name: Backoffice
 #   kind: backoffice        # backoffice | customer | partner | mobile | web | api | other
 #   audience: Internal staff
+#   responsive: true        # web kinds: works on phones and tablets
+#   offline: false          # mobile: works without a connection
 modules: []
 # - MOD-HR
+# The product profile decides how much there is to specify. `alterspec profile set` writes it.
+# profile:
+#   tenancy: single         # single | multi
+#   tenant_data: separate   # multi only: shared | separate
+#   languages: [en]
+#   default_language: en    # required with several languages; one of them
+#   localised_content: false # several languages only: content people enter is translated too
+#   currencies: [EUR]
+#   default_currency: EUR   # required with several currencies; one of them
+#   time_zones: single      # single | per_user
+#   time_zone: Europe/Belgrade
 ---
 
 # {{app_name}}
@@ -29,7 +42,8 @@ no databases, endpoints, frameworks, libraries or programming languages.
 ## Apps and channels
 
 <!-- How people and partners reach the product (backoffice, customer app, partner app, mobile, integrations).
-     Keep the `channels` list in the front-matter in sync. -->
+     The `channels` list and the `profile` in the front-matter hold the facts; `alterspec new channel` and
+     `alterspec profile set` write them. -->
 
 ## Modules
 

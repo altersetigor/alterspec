@@ -41,6 +41,9 @@ The first version was baselined (`alterspec baseline`), so every later edit goes
   replacement article to `ENT-ARTICLE` and changes `CAP-CAT-006`. See its [impact report](spec/changes/CHG-002/impact.md).
 - **CHG-003** and **CHG-004** — applied; they added the experience layer (next section). The experience layer is part
   of the spec, so it went through the same proposals, impact reports and approvals.
+- **[CHG-005 Product profile](spec/changes/archive/CHG-005/proposal.md)** — applied. It recorded the product profile
+  on `APP` (one company, English, US dollars, one time zone) and marked the Sales desk as responsive, written with
+  `alterspec profile set --change CHG-005 …`. `APP` is now version 2.
 
 ## Wireframe and experience
 

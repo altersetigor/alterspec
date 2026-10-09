@@ -233,6 +233,7 @@ const MODULE_ICONS: [RegExp, string][] = [
 export function defaultConfig(model: SpecModel): AppConfig {
   const spec = buildSpecJs(model);
   const name = spec.app;
+  const profile = model.application?.data.profile;
   const users: DemoUser[] = [];
   let i = 0;
   const onScreens = new Set(Object.values(spec.screens).flatMap((s) => s.roles));
@@ -255,8 +256,9 @@ export function defaultConfig(model: SpecModel): AppConfig {
         .toLowerCase()
         .replace(/[^a-z0-9]+/g, '-')
         .replace(/^-|-$/g, '') || 'app',
-    currency: '$',
-    locale: 'en-US',
+    // From the product profile: the default currency and language, or neutral defaults without a profile.
+    currency: profile?.default_currency ?? profile?.currencies[0] ?? '$',
+    locale: profile?.default_language ?? profile?.languages[0] ?? 'en-US',
     images: 'https://picsum.photos/seed/{keywords}-{n}/{w}/{h}',
     icons: {
       modules: Object.fromEntries(

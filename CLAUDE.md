@@ -106,8 +106,8 @@ Statuses: `draft → refined → ready → approved → implemented`.
 
 ## CLI and skills
 
-- CLI: `init`, `update`, `doctor`, `validate [--json]`, `views [--check]`, `new <type>`, `show <ID>`, and later
-  `impact <CHG>`, `apply <CHG>`. All deterministic work lives in the CLI (IDs, file locations, references); skills
+- CLI: `init`, `update`, `doctor`, `validate [--json]`, `views [--check]`, `new <type>`, `show <ID>`,
+  `profile set|show`, and later `impact <CHG>`, `apply <CHG>`. All deterministic work lives in the CLI (IDs, file locations, references); skills
   call it through Bash and prompts never pick IDs or copy templates themselves.
 - Skills (17): `/alterspec-init`; `-create-module|capability|screen|entity`; `-change-module|capability|screen|entity`
   (edit one existing object, via a change proposal after the baseline; shared flow in `prompts/_change-object.md`);
@@ -150,6 +150,16 @@ Statuses: `draft → refined → ready → approved → implemented`.
   After changing a renderer or bumping the package version, regenerate it: `node dist/cli.js views examples/catalog`,
   `node dist/cli.js handoff CAP-PRC-001 --date 2026-10-07 -C examples/catalog` and
   `node dist/cli.js handoff MOD-PRC --date 2026-10-07 -C examples/catalog`.
+- Product profile (Phase 9): `application.md` front-matter holds `channels` (with optional `responsive` / `offline`)
+  and `profile` (`tenancy` [+ `tenant_data`], `languages` [+ `default_language`, `localised_content`], `currencies`
+  [+ `default_currency`], `time_zones` [+ `time_zone`]); schema in `src/schemas/application.ts`, a default is
+  mandatory when a list has several values. Screens have an optional `channels` list. Written only by
+  `alterspec new channel` and `alterspec profile set` (`src/commands/profile.ts`, front-matter edits through
+  `src/lib/frontmatter-edit.ts`). Consumers: `_shared.md` (never ask what the profile settles, never specify what it
+  excludes), `init.md` (the profile interview), the create prompts, the rules in `src/lint/rules/profile.ts`
+  (`profile-missing`, `screen-channel`, `profile-excluded` with `lint.profile_terms`, `tenant-visibility`), and
+  `defaultConfig` in `src/experience/app.ts` (currency and locale). Every profile field has a consumer; don't add
+  fields nobody reads. Audit and data residency were deferred (2026-10-09).
 - Decided: interview-then-draft; `refine` moves status to `refined` at most, anything beyond needs the person's
   explicit word. Granularity and rule placement: see Decisions below.
 
@@ -169,6 +179,9 @@ Decided (don't reopen without the person's word):
   architecture design stay outside alterspec.
 - **Naming** (0.2.0): installed skills and agents are prefixed `alterspec-`; front-matter is parsed without
   `gray-matter`.
+- **Product profile** (2026-10-09): the core five dimensions (channels with responsive/offline, tenancy, languages,
+  currencies, time zones) live in `application.md`; with several languages or currencies a default is mandatory;
+  screens may name their channels. Audit and data residency stay out until they have a consumer.
 
 Open (ask before building anything that depends on it):
 
@@ -185,3 +198,5 @@ Open (ask before building anything that depends on it):
 6. Screen fields and the generated (dry) wireframe
 7. Experience layer: UX contracts and realistic mockups, zero-deviation checks and the handoff gate
 8. Living mockups: the experience mockups are a working app (sign-in as a role, demo data, real-app look)
+9. Product profile: channels, tenancy, languages, currencies and time zones recorded at init and consumed by
+   prompts, lint and the mockup app, so nothing is specified that the product doesn't need

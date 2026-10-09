@@ -122,6 +122,7 @@ describe('prompts', () => {
     'change',
     'handoff',
     'experience',
+    'profile',
   ];
 
   it('only mention real CLI commands and `new` types', () => {

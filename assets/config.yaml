@@ -31,3 +31,25 @@ lint:
     - Kubernetes
     - AWS
     - Azure
+  # Words the profile-excluded check flags when the product profile rules a dimension out
+  # (one currency, one language, single tenancy, one time zone). Tune them to your product.
+  profile_terms:
+    currency:
+      - currency conversion
+      - exchange rate
+      - multi-currency
+      - multiple currencies
+    language:
+      - translation
+      - translate
+      - translated
+      - multilingual
+      - multi-language
+    tenant:
+      - tenant
+      - tenants
+      - multi-tenant
+    time_zone:
+      - time zone
+      - time zones
+      - timezone

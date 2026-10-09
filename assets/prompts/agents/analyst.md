@@ -39,6 +39,8 @@ Input: an object ID, its file, and the person's answers grouped by section.
    Write "None." for a section the answers say is empty. Number acceptance criteria `<ID>-AC-01`, `-02`… with Given /
    When / Then and a "Covers:" line.
 3. Where the answers leave a gap, don't fill it: write the question under "Open questions".
+   Never add behaviour the product profile in `application.md` excludes (currency conversion, translation, tenants,
+   time zones); if an answer asks for it, make it an open question instead.
 4. Leave front-matter alone unless the brief asks you to change it. Never touch GENERATED blocks.
 5. Run `npx @alterset/alterspec views`, then `npx @alterset/alterspec show <ID>`, and fix any error you caused.
 6. Return: a 3–5 line summary of what you wrote, the open questions, and any finding you could not fix.

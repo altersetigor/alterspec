@@ -15,6 +15,7 @@ const EMP = 'application/entities/ENT-EMPLOYEE.md';
 const SLIP = 'application/entities/ENT-PAYSLIP.md';
 const GLB1S = 'modules/glb/screens/SCR-GLB-01.md';
 const HR1S = 'modules/hr/screens/SCR-HR-01.md';
+const APP = 'application/application.md';
 const PAY1S = 'modules/pay/screens/SCR-PAY-01.md';
 const UX = 'experience/screens/UX-SCR-HR-01.md';
 const MOCK = 'experience/mockups/SCR-HR-01.html';
@@ -126,7 +127,7 @@ const CASES: Record<string, Case[]> = {
     {
       label: 'listed module without file',
       edits: { 'application/application.md': replace('  - MOD-PAY\n', '  - MOD-PAY\n  - MOD-INV\n') },
-      expect: { file: 'application/application.md', line: 17 },
+      expect: { file: 'application/application.md', line: 23 },
     },
     {
       label: 'folder without module.md',
@@ -216,7 +217,7 @@ const CASES: Record<string, Case[]> = {
     {
       label: 'attribute the entity does not have',
       edits: { [HR1S]: replace('Contract type]', 'Grade]') },
-      expect: { file: HR1S, line: 10, message: /no attribute "Grade"/ },
+      expect: { file: HR1S, line: 11, message: /no attribute "Grade"/ },
     },
   ],
   'screen-field-op': [
@@ -250,7 +251,7 @@ const CASES: Record<string, Case[]> = {
           '    capability: CAP-HR-001\n    roles: [ROLE-EMPLOYEE]',
         ),
       },
-      expect: { file: HR1S, line: 16, message: /not a role of this screen/ },
+      expect: { file: HR1S, line: 17, message: /not a role of this screen/ },
     },
   ],
   'screen-fields-missing': [
@@ -531,6 +532,46 @@ const CASES: Record<string, Case[]> = {
       expect: { file: 'application/nfr.md', message: /removed directly/ },
     },
   ],
+  'profile-missing': [
+    {
+      label: 'application without a profile',
+      edits: {
+        [APP]: replace(
+          'profile:\n  tenancy: single\n  languages: [en]\n  currencies: [EUR]\n  time_zones: single\n',
+          '',
+        ),
+      },
+      expect: { file: APP, line: 1, message: /no product profile/ },
+    },
+  ],
+  'screen-channel': [
+    {
+      label: 'unknown channel name',
+      edits: { [HR1S]: replace('channels: [Backoffice]', 'channels: [Backoffice, Kiosk]') },
+      expect: { file: HR1S, line: 8, message: /"Kiosk" is not in application.md/ },
+    },
+  ],
+  'profile-excluded': [
+    {
+      label: 'currency conversion in a single-currency product',
+      edits: { [PAY2]: append('\nAmounts use the exchange rate of the day.\n') },
+      expect: { file: PAY2, message: /"exchange rate" but the profile says one currency/ },
+    },
+    {
+      label: 'tenants in a single-tenant product',
+      edits: { [HR1S]: append('\nEach tenant sees its own employees.\n') },
+      expect: { file: HR1S, message: /"tenant" but the profile says single tenancy/ },
+    },
+  ],
+  'tenant-visibility': [
+    {
+      label: 'ready capability silent about tenants in a multi-tenant product',
+      edits: {
+        [APP]: replace('tenancy: single', 'tenancy: multi\n  tenant_data: separate'),
+      },
+      expect: { file: HR1, line: 59, message: /CAP-HR-001 is ready in a multi-tenant product/ },
+    },
+  ],
   'tech-leak': [
     {
       label: 'technology word',
@@ -595,6 +636,39 @@ describe('direct-edit', () => {
       ),
     });
     expect(findings.filter((f) => f.rule === 'direct-edit')).toEqual([]);
+  });
+});
+
+describe('profile rules', () => {
+  it('are silent without a profile, except profile-missing', () => {
+    const findings = lintFixture({
+      [APP]: replace(
+        'profile:\n  tenancy: single\n  languages: [en]\n  currencies: [EUR]\n  time_zones: single\n',
+        '',
+      ),
+      [PAY2]: append('\nAmounts use the exchange rate of the day. Each tenant sees its own.\n'),
+    });
+    expect(
+      findings
+        .filter((f) => f.rule.startsWith('profile-') || f.rule === 'tenant-visibility')
+        .map((f) => f.rule),
+    ).toEqual(['profile-missing']);
+  });
+  it('allow what the profile includes', () => {
+    const findings = lintFixture({
+      [APP]: replace(
+        'profile:\n  tenancy: single\n  languages: [en]\n  currencies: [EUR]\n  time_zones: single\n',
+        'profile:\n  tenancy: multi\n  tenant_data: separate\n  languages: [en, de]\n  default_language: en\n  currencies: [EUR, USD]\n  default_currency: EUR\n  time_zones: per_user\n',
+      ),
+      [PAY2]: append('\nAmounts use the exchange rate of the day, translated per tenant and time zone.\n'),
+      [HR1]: replace(
+        'HR managers can register employees for the whole organisation.',
+        'HR managers can register employees for the whole organisation, within their own tenant.',
+      ),
+    });
+    expect(findings.filter((f) => f.rule === 'profile-excluded' || f.rule === 'tenant-visibility')).toEqual(
+      [],
+    );
   });
 });
 

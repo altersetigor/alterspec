@@ -5,6 +5,7 @@ module: MOD-HR
 status: draft
 roles:
   - role: ROLE-HR-MANAGER
+channels: [Backoffice]
 fields:
   - entity: ENT-EMPLOYEE
     attributes: [Full name, Start date, Contract type]

@@ -35,6 +35,7 @@ import {
   experienceUnreviewed,
   experienceVocabulary,
 } from './experience.js';
+import { profileExcluded, profileMissing, screenChannel, tenantVisibility } from './profile.js';
 import { glossaryForbidden, techLeak } from './text.js';
 
 /** Findings for these rules come from the loader, not from a check. */
@@ -68,6 +69,10 @@ export const RULES: LintRule[] = [
   screenRoleAction,
   screenFieldsMissing,
   entityAttributeDetail,
+  screenChannel,
+  profileMissing,
+  profileExcluded,
+  tenantVisibility,
   experienceElements,
   experienceMockup,
   experienceLabels,

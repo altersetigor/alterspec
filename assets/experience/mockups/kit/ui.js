@@ -26,7 +26,13 @@
     if (a.kind === 'reference') return UX.store.label(value);
     if (a.kind === 'amount') {
       var n = Number(value);
-      return isNaN(n) ? value : (app.currency || '$') + ' ' + n.toLocaleString(app.locale || 'en', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      if (isNaN(n)) return value;
+      var cur = app.currency || '$';
+      // A three-letter code (EUR, USD) formats as that currency; anything else is a symbol to put in front.
+      if (/^[A-Za-z]{3}$/.test(cur)) {
+        try { return n.toLocaleString(app.locale || 'en', { style: 'currency', currency: cur.toUpperCase() }); } catch { /* not a currency code: use it as a symbol */ }
+      }
+      return cur + ' ' + n.toLocaleString(app.locale || 'en', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     }
     if (a.kind === 'date') {
       var d = new Date(value);

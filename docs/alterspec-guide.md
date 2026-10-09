@@ -60,8 +60,14 @@ their design, not the spec model.
    This writes three folders, all meant to be committed: `spec/` (yours), `.alterspec/` (templates, prompts,
    schemas, config, your `custom/` overrides) and `.claude/` (the `/alterspec-*` skills and the four agents).
 2. Open Claude Code in the project and type `/alterspec-init`. Claude interviews you, at most three questions at a
-   time: the product and its problems, the apps and channels, personas and roles, the business areas (modules, each
+   time: the product and its problems, the product profile, personas and roles, the business areas (modules, each
    with a 2–6 letter code; shared screens go in `GLB`), and the key terms with the words not to use.
+   The **product profile** narrows the spec effort before it starts: which apps and channels exist (and whether a web
+   channel must work on phones), one company or many, the languages and currencies (with a mandatory default when
+   there are several) and the time zones. It lands in `application.md` through `alterspec new channel` and
+   `alterspec profile set`. Every later interview reads it and doesn't ask about what it settles; the linter reports
+   currency conversion, translation, tenants or time zones in the spec when the profile rules them out, so nobody
+   specifies a multi-currency product that is single-currency.
 3. It then writes `spec/application/`: application, personas and roles, glossary, and one `module.md` per module.
    Every object is created by the CLI (`alterspec new …`), which picks the ID, the file and the template.
 4. Finish with `/alterspec-validate`. The spec is readable Markdown with YAML front-matter; you can edit it by hand
@@ -85,7 +91,7 @@ The first version is built before any baseline exists, so edits go straight into
 - `/alterspec-refine ID`: closes the gaps in one object. It merges the linter's findings with the analyst's gap
   analysis, asks only about those, and moves the object to `refined` when nothing is missing. `ready` and beyond
   always need your explicit word.
-- `/alterspec-validate`: the 41 deterministic rules plus the reviewer agent's semantic findings (contradictions,
+- `/alterspec-validate`: the 45 deterministic rules plus the reviewer agent's semantic findings (contradictions,
   data nobody produces, permission holes, untestable criteria) in one report. Fix errors as they appear; it is far
   cheaper than later.
 
@@ -273,7 +279,7 @@ business spec from inside a design session.
 | Deterministic (the CLI, same input → same output)                              | Model (Claude Code skills and agents)                                   |
 | ------------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
 | IDs, file locations, templates (`new`)                                          | Interviewing you, three questions at a time                               |
-| Schema and the 41 lint rules (`validate`)                                       | Semantic review: contradictions, gaps, permission holes (reviewer agent) |
+| Schema and the 45 lint rules (`validate`)                                       | Semantic review: contradictions, gaps, permission holes (reviewer agent) |
 | Generated blocks, matrices, traceability, wireframe, `spec.js` (`views`)        | Drafting body text from your answers (analyst agent)                      |
 | Fingerprints, baseline, conflicts, approval hash, merge, versions (`change`, `impact`, `apply`) | Writing the "Why" and "What changes" of a proposal                |
 | Experience drafts, sync, dry and review fingerprints, parity checks             | Shaping layout, components, labels, realistic data (UX designer agent)    |
@@ -301,7 +307,7 @@ Commands you edited under `.claude/` are skipped by `update` unless you pass `--
 ## Quick reference
 
 ```text
-Start      npx alterspec init --name "X"      /alterspec-init
+Start      npx alterspec init --name "X"      /alterspec-init     npx alterspec profile set|show
 Author     /alterspec-create-entity|capability|screen|module      /alterspec-refine ID
 Check      /alterspec-validate     npx alterspec validate [--json] [--change CHG]     npx alterspec views [--check]
 Design     /alterspec-experience init | SCR | review SCR | sync SCR | rebuild SCR

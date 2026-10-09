@@ -20,8 +20,8 @@
 
 ## Languages
 
-<!-- Languages people use the product in. -->
+<!-- The languages are in the profile (application.md). Here: how language is chosen and what stays untranslated. -->
 
 ## Currencies
 
-<!-- Currencies and how amounts are shown. -->
+<!-- The currencies are in the profile (application.md). Here: how amounts are shown and rounded. -->

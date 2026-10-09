@@ -6,6 +6,7 @@ status: draft
 roles: []
 # - role: ROLE-...
 #   scope: own              # own | team | org | all (optional: narrows what this role sees here)
+channels: []                # channel names from application.md; empty: every channel
 fields: []
 # - entity: ENT-...
 #   attributes: [Name, Status]   # attribute names exactly as the entity lists them

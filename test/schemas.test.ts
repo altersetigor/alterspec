@@ -69,6 +69,15 @@ describe('ID formats', () => {
   });
 });
 
+const app = {
+  id: 'APP',
+  title: 'Demo',
+  status: 'draft',
+  version: 1,
+  channels: [{ name: 'Backoffice', kind: 'backoffice' }],
+  modules: ['MOD-HR'],
+};
+
 const capability = {
   id: 'CAP-HR-004',
   title: 'Hire employee',
@@ -93,6 +102,7 @@ const screen = {
   entry_points: ['SCR-HR-01'],
   actions: [{ id: 'A01', label: 'Hire', capability: 'CAP-HR-004' }],
   mockups: [{ type: 'figma', ref: 'https://figma.example/file/abc' }],
+  channels: ['Backoffice'],
 };
 
 const entity = {
@@ -191,21 +201,91 @@ const cases: Case[] = [
   {
     name: 'application',
     schema: ApplicationSchema,
-    valid: {
-      id: 'APP',
-      title: 'Demo',
-      status: 'draft',
-      version: 1,
-      channels: [{ name: 'Backoffice', kind: 'backoffice' }],
-      modules: ['MOD-HR'],
-    },
+    valid: app,
     invalid: [
       [
         'bad channel kind',
         { id: 'APP', title: 'Demo', status: 'draft', version: 1, channels: [{ name: 'X', kind: 'ios' }] },
       ],
       ['version 0', { id: 'APP', title: 'Demo', status: 'draft', version: 0 }],
+      [
+        'several currencies without a default',
+        {
+          ...app,
+          profile: { tenancy: 'single', languages: ['en'], currencies: ['EUR', 'USD'], time_zones: 'single' },
+        },
+      ],
+      [
+        'default not listed',
+        {
+          ...app,
+          profile: {
+            tenancy: 'single',
+            languages: ['en', 'de'],
+            default_language: 'fr',
+            currencies: ['EUR'],
+            time_zones: 'single',
+          },
+        },
+      ],
+      [
+        'multi-tenant without tenant data',
+        {
+          ...app,
+          profile: { tenancy: 'multi', languages: ['en'], currencies: ['EUR'], time_zones: 'single' },
+        },
+      ],
+      [
+        'tenant data on a single-tenant product',
+        {
+          ...app,
+          profile: {
+            tenancy: 'single',
+            tenant_data: 'shared',
+            languages: ['en'],
+            currencies: ['EUR'],
+            time_zones: 'single',
+          },
+        },
+      ],
+      [
+        'localised content with one language',
+        {
+          ...app,
+          profile: {
+            tenancy: 'single',
+            languages: ['en'],
+            localised_content: true,
+            currencies: ['EUR'],
+            time_zones: 'single',
+          },
+        },
+      ],
+      ['bad channel flag', { ...app, channels: [{ name: 'Portal', kind: 'web', responsive: 'yes' }] }],
     ],
+  },
+  {
+    name: 'application with a full profile',
+    schema: ApplicationSchema,
+    valid: {
+      ...app,
+      channels: [
+        { name: 'Backoffice', kind: 'backoffice', responsive: false },
+        { name: 'Field app', kind: 'mobile', offline: true },
+      ],
+      profile: {
+        tenancy: 'multi',
+        tenant_data: 'separate',
+        languages: ['en', 'de'],
+        default_language: 'en',
+        localised_content: true,
+        currencies: ['EUR', 'USD'],
+        default_currency: 'EUR',
+        time_zones: 'per_user',
+        time_zone: 'Europe/Belgrade',
+      },
+    },
+    invalid: [],
   },
   {
     name: 'change',
@@ -284,11 +364,15 @@ const cases: Case[] = [
     valid: {
       version: '0.0.1',
       language: 'en',
-      lint: { rules: { 'tech-leak': 'warn' }, tech_terms: ['SQL'] },
+      lint: { rules: { 'tech-leak': 'warn' }, tech_terms: ['SQL'], profile_terms: { tenant: ['tenant'] } },
     },
     invalid: [
       ['bilingual not in v1', { version: '0.0.1', language: 'sr' }],
       ['bad severity', { version: '0.0.1', language: 'en', lint: { rules: { x: 'fatal' } } }],
+      [
+        'unknown profile dimension',
+        { version: '0.0.1', language: 'en', lint: { profile_terms: { audit: [] } } },
+      ],
     ],
   },
 ];

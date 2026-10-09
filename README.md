@@ -108,7 +108,9 @@ agents or settings.
 
 1. **Author.** `/alterspec-init`, then `/alterspec-create-module`, `-entity`, `-capability` and `-screen`. Claude
    interviews you, at most three questions at a time, and writes the files. The CLI picks every ID and file location,
-   so nothing is guessed.
+   so nothing is guessed. `init` also records the **product profile**: the channels (and whether a web channel is
+   responsive), one company or many, languages, currencies and time zones. Every later interview reads it and skips
+   what it settles; the linter flags spec content the profile rules out.
 2. **Refine.** `/alterspec-refine <ID>` finds the gaps in one object and asks about them until the object is complete.
    Only then does it move the object to `refined`. Moving to `ready` or `approved` always needs your explicit word.
 3. **Validate.** `/alterspec-validate` runs the deterministic linter and a semantic review, and gives you one report.
@@ -193,17 +195,23 @@ alterspec new event      --name article-activated --title "Article activated"
 alterspec new persona    --name catalog-lead --title "Catalog lead" --role catalog-manager
 alterspec new decision   --title "Do prices differ per customer group?" --kind open_question
 alterspec new term       --term "Article" --forbidden "item,product"
+alterspec new channel    --name "Sales desk" --kind web --audience "Sales staff" --responsive
+
+alterspec profile set --tenancy single --languages en,de --default-language en --currencies EUR --time-zones single
+alterspec profile show
 
 alterspec show CAP-CAT-001        # references both ways, empty sections, open questions, findings
 ```
 
 `new` always picks the next free ID, and never reuses one, even if it was removed in an earlier change.
+`profile set` writes the product profile into `application.md`; with several languages or currencies it refuses
+until a default is given. After the baseline both take `--change <CHG>`.
 
 ### Checking
 
 | Command | Description |
 | --- | --- |
-| `alterspec validate [--json] [--report] [--change <CHG>]` | Run the 41 lint rules. Exits with 1 on errors. |
+| `alterspec validate [--json] [--report] [--change <CHG>]` | Run the 45 lint rules. Exits with 1 on errors. |
 | `alterspec validate --list-rules` | List every rule with its default severity. |
 | `alterspec views [--check]` | Regenerate the generated blocks and `spec/_generated/`. `--check` only reports. |
 
@@ -244,7 +252,7 @@ Each takes `--change <CHG>`, which is required once a baseline exists.
 ```text
 spec/
 ├── application/
-│   ├── application.md      vision, problems solved, apps and channels, modules
+│   ├── application.md      vision, problems solved, channels and the product profile, modules
 │   ├── personas-roles.md   personas (who people are) and roles (what access they have)
 │   ├── glossary.md         canonical terms and the synonyms not to use
 │   ├── rules.md            business rules shared by several modules
@@ -323,6 +331,32 @@ flows: [FLOW-001]
 A capability is **one user goal, reached in one session, by the roles allowed to perform it**. If work pauses for
 someone else, such as an approval, that becomes a separate capability, connected by a flow step or an event.
 
+### The product profile
+
+`application.md` carries the facts that decide how much there is to specify. With several languages or currencies, a
+default is mandatory and must be one of them:
+
+```yaml
+channels:
+  - name: Backoffice
+    kind: backoffice            # backoffice | customer | partner | mobile | web | api | other
+    audience: Pricing staff
+  - name: Sales desk
+    kind: web
+    responsive: true            # web kinds: works on phones and tablets (mobile: `offline`)
+profile:
+  tenancy: single               # single | multi (with `tenant_data: shared | separate`)
+  languages: [en, de]
+  default_language: en
+  currencies: [EUR]
+  time_zones: single            # single | per_user
+```
+
+Screens may name the channels they are for (`channels: [Sales desk]`; empty means all). The interviews don't ask
+about what the profile settles, the mockup app takes its currency and locale from it, and `validate` reports currency
+conversion, translation, tenants or time zones in the spec when the profile rules them out (`profile-excluded`), and
+multi-tenant capabilities silent about what tenants see (`tenant-visibility`).
+
 ### A screen
 
 A screen says what people see and do, never how it looks. `fields` lists the data it shows, per entity:
@@ -366,7 +400,7 @@ instead.
 
 ## Validation
 
-`alterspec validate` runs 41 deterministic rules. Here is a selection:
+`alterspec validate` runs 45 deterministic rules. Here is a selection:
 
 | Area | Examples |
 | --- | --- |
@@ -379,6 +413,7 @@ instead.
 | Experience | contracts and mockups carry every element and nothing else, with the declared labels, roles and states |
 | Quality | acceptance criteria are numbered and present from `ready`; refined objects have no empty sections |
 | Language | glossary synonyms and technology words in prose |
+| Profile | a profile exists; screen channels are known; nothing the profile excludes is specified; tenants are visible |
 | Living spec | generated views up to date and not edited; no direct edits after the baseline |
 
 ```text
@@ -491,6 +526,11 @@ lint:
     - database
     - endpoint
     - microservice
+  profile_terms:                      # words the profile-excluded rule flags, per dimension the profile rules out
+    currency: [currency conversion, exchange rate]
+    language: [translation, multilingual]
+    tenant: [tenant, multi-tenant]
+    time_zone: [time zone]
 ```
 
 To change how a command behaves, copy its prompt or template into `.alterspec/custom/` and edit the copy:

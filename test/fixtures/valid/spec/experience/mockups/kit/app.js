@@ -4,6 +4,7 @@
 (function () {
   var UX = (window.UX = window.UX || {});
   var app = window.UX_APP || {};
+  if (app.locale) document.documentElement.lang = app.locale;
   var spec = window.UX_SPEC || { modules: [], screens: {}, entities: {}, roles: {} };
   var body = document.body;
   var SESSION = (app.storeKey || 'ux') + '-session';

@@ -9,14 +9,29 @@ Goal: from a short interview, write the application skeleton in `spec/applicatio
    say so and ask whether to extend them rather than start over.
 3. Interview, in this order, a few questions at a time:
    1. the product in one or two sentences, and the main problems it solves, for whom
-   2. the apps and channels people use (backoffice, customer app, partner app, mobile, integrations with partners)
+   2. the product profile, which decides how much there is to specify (see the shared rules):
+      - the apps and channels people use: for each, a name, its kind (backoffice, customer, partner, mobile, web,
+        api, other) and who uses it; for web kinds, whether it must work on phones and tablets (`responsive`); for
+        mobile, whether it works without a connection (`offline`)
+      - one company or many (`tenancy`): with several, whether tenants see shared data or only their own
+      - the languages people use the product in, and with several, which one is the default; and whether content
+        people enter is translated too, or only the interface
+      - the currencies amounts are in, and with several, which one is the default
+      - one time zone or one per person, and which time zone the product lives in
+      Offer the simple answer first (one company, one language, one currency, one time zone); most products are.
    3. the people involved: personas (who they are, their goals, their pain points) and roles (what access they need).
       Keep persona and role apart: one persona can hold several roles, one role can serve several personas.
    4. the main business areas, which become modules, each with a 2–6 letter code. Shared screens (dashboard,
       notifications, profile) go in a module with code `GLB`.
    5. the key business terms, and words the team should not use for them
 4. Summarise and confirm. Then write:
-   - the prose of `application.md`: vision, problems solved, apps and channels (also the `channels` front-matter list),
+   - channels: `alterspec new channel --name "<Name>" --kind <kind> --audience "<who>" [--responsive|--no-responsive]
+     [--offline] --json`, one per channel
+   - the profile: one `alterspec profile set --tenancy <single|multi> [--tenant-data <shared|separate>]
+     --languages <a,b> [--default-language <a>] [--localised-content] --currencies <a,b> [--default-currency <a>]
+     --time-zones <single|per_user> [--time-zone "<zone>"] --json`. With several languages or currencies it refuses
+     without a default: ask, don't pick.
+   - the prose of `application.md`: vision, problems solved, apps and channels (what each channel is for, in words),
      high-level business architecture
    - roles first: `alterspec new role --name <NAME> --title "<Title>" --json`, then fill the role's description
    - personas: `alterspec new persona --name <NAME> --title "<Title>" --role <ROLE> --json`, then goals and pain points;

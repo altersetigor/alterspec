@@ -17,12 +17,14 @@ Arguments: `<MOD> <title>`. Ask for whatever is missing.
 Work through the sections in this order, at most 3 questions at a time. Offer existing IDs as choices.
 
 1. user story (persona-based) and business value
-2. roles and their permission scope: own, team, org or all
+2. roles and their permission scope: own, team, org or all; in a multi-tenant product (profile), also what the role
+   sees across tenants, which goes under "Permissions and data visibility"
 3. preconditions and what triggers it
 4. main flow, step by step: for each step, the screen and the action used
 5. alternative and exception flows
 6. data in and data out (entity attributes); entity operations (C create, R read, U update, D delete, A archive) and
-   state changes
+   state changes. Only when the profile has several currencies: which currency each amount is in and whether it is
+   converted; only with `time_zones: per_user`: in whose time zone dates are shown
 7. business rules that apply: existing `RULE-*`, or new ones
 8. notifications, and business events emitted or consumed
 9. acceptance criteria: Given / When / Then, each linked to a rule or a main-flow step

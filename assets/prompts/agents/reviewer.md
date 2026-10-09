@@ -38,6 +38,9 @@ reports.
 7. **Granularity**: capabilities covering more than one goal, or work that pauses for someone else (a hand-over
    between roles belongs in two capabilities joined by a flow step or an event; several roles performing the same
    goal is fine).
+8. **Profile drift**: behaviour the product profile in `application.md` rules out (currency conversion in a
+   single-currency product, translation with one language, tenants in a single-tenant product), or, in a multi-tenant
+   product, capabilities silent about what each tenant sees. The linter catches the words; you catch the meaning.
 
 Report only real problems you can point to. Don't report style preferences, and don't invent business facts: if
 something is unclear rather than wrong, report it as `minor` with a question.

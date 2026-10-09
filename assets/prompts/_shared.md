@@ -14,6 +14,22 @@ The CLI is `npx @alterset/alterspec`. Below it is written as `alterspec`; always
 - **Front-matter is authoritative.** It decides roles, screens, entities, rules, events and flows. The body explains.
   Never edit text between `<!-- GENERATED:start ... -->` and `<!-- GENERATED:end -->`, or files in `spec/_generated/`.
 
+## The product profile
+
+`spec/application/application.md` carries the product profile in its front-matter: `channels` (each with a `kind`,
+and `responsive` or `offline` where it matters) and `profile` (`tenancy`, `languages` and `default_language`,
+`currencies` and `default_currency`, `time_zones`). Read it before you interview.
+
+- **Never ask about what the profile settles.** One currency: don't ask which currency an amount is in. One
+  language: don't ask about translations. Single tenancy: don't ask about tenants. One time zone: don't ask how
+  dates are shown elsewhere.
+- **Don't specify what the profile excludes.** `alterspec validate` reports currency conversion, translation,
+  tenants or time zones in the spec as `profile-excluded` when the profile rules them out. If the person wants such
+  behaviour, the answer is an open question on `APP`, not a capability that quietly widens the product.
+- **Changing the profile** is an edit of the application: `alterspec profile set ...` (with `--change <CHG>` after the
+  baseline) and `alterspec new channel ...`. With several languages or currencies, a default is mandatory.
+- **No profile yet** (`profile-missing`): run `/alterspec-init`, or ask the questions it asks and record the answers.
+
 ## How you work with the person
 
 - **Interview, then draft.** Ask at most 3 questions at a time. When the spec already suggests answers (existing roles,
@@ -56,7 +72,8 @@ Check whether `spec/_generated/baseline.json` exists.
   Types: `module --code --title`, `capability --module --title --role [--scope]`, `screen --module --title`,
   `entity --name --title`, `flow --title --capability`, `rule --title [--module]`,
   `event --name --title [--external]`, `persona --name --title [--role]`, `role --name --title`,
-  `decision --title [--kind]`, `term --term [--forbidden a,b]`.
+  `decision --title [--kind]`, `term --term [--forbidden a,b]`,
+  `channel --name --kind [--audience] [--responsive|--no-responsive] [--offline]`.
 - **Shared or module rule?** A rule used by one module only is a module rule (`--module`). A rule two modules share
   is an application rule (no `--module`).
 - **Then edit** the file `new` reported: fill front-matter lists and body sections. Keep YAML valid. Keep the template's

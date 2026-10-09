@@ -5,6 +5,7 @@ import { printResult, runInit } from './commands/init.js';
 import { NEW_TYPES, runNew, type NewOptions, type NewType } from './commands/new.js';
 import { formatShow, runShow } from './commands/show.js';
 import { runUpdate } from './commands/update.js';
+import { formatProfile, runProfileSet, runProfileShow } from './commands/profile.js';
 import { runBaseline } from './commands/baseline.js';
 import { runHandoff } from './commands/handoff.js';
 import { runChangeEdit, runChangeNew, runChangeRemove, runChangeStatus } from './commands/change.js';
@@ -134,6 +135,10 @@ program
   .option('--kind <kind>', 'decision | open_question | assumption (decision)')
   .option('--term <term>', 'canonical term (term)')
   .option('--forbidden <list>', 'comma-separated forbidden synonyms (term)')
+  .option('--audience <text>', 'who uses the channel (channel)')
+  .option('--responsive', 'the channel adapts to narrow screens (channel)')
+  .option('--no-responsive', 'the channel is desktop-only (channel)')
+  .option('--offline', 'the channel works without a connection (channel)')
   .option('--change <CHG>', 'create the object inside this change proposal')
   .option('--json', 'print { id, file, line } as JSON')
   .action(
@@ -144,6 +149,50 @@ program
       );
     },
   );
+
+const profile = program
+  .command('profile')
+  .description('The product profile in application.md: tenancy, languages, currencies, time zones');
+const profileOpts = (c: Command) =>
+  c
+    .option('-C, --dir <dir>', 'project directory', '.')
+    .option('--spec <path>', 'spec folder, relative to the project', 'spec')
+    .option('--change <CHG>', 'edit the application inside this change proposal')
+    .option('--json', 'print as JSON');
+
+profileOpts(
+  profile
+    .command('set')
+    .description('Set profile facts; with several languages or currencies a default is required')
+    .option('--tenancy <v>', 'single | multi')
+    .option('--tenant-data <v>', 'shared | separate (with multi)')
+    .option('--languages <list>', 'comma-separated languages people use the product in')
+    .option('--default-language <v>', 'the default language (required with several)')
+    .option('--localised-content', 'user-entered content is translated too')
+    .option('--no-localised-content', 'only the interface is translated')
+    .option('--currencies <list>', 'comma-separated currencies amounts are in')
+    .option('--default-currency <v>', 'the default currency (required with several)')
+    .option('--time-zones <v>', 'single | per_user')
+    .option('--time-zone <v>', "the product's or default time zone"),
+).action((opts: Parameters<typeof runProfileSet>[1] & { dir: string; json?: boolean }) => {
+  const r = runProfileSet(opts.dir, opts);
+  console.log(
+    opts.json
+      ? JSON.stringify(r, null, 2)
+      : `profile written to ${r.file}:${r.line}\n${formatProfile(r.profile)}`,
+  );
+});
+
+profileOpts(profile.command('show').description('Print the product profile')).action(
+  (opts: { dir: string; spec: string; change?: string; json?: boolean }) => {
+    const r = runProfileShow(opts.dir, opts);
+    if (opts.json) console.log(JSON.stringify(r?.profile ?? null, null, 2));
+    else
+      console.log(
+        r ? formatProfile(r.profile) : 'No profile yet: run /alterspec-init or `alterspec profile set`.',
+      );
+  },
+);
 
 program
   .command('show')

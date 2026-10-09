@@ -10,6 +10,12 @@ channels:
   - name: Employee portal
     kind: web
     audience: Employees
+    responsive: true
+profile:
+  tenancy: single
+  languages: [en]
+  currencies: [EUR]
+  time_zones: single
 modules:
   - MOD-GLB
   - MOD-HR

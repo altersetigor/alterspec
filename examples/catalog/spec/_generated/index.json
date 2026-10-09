@@ -3,7 +3,7 @@
     "id": "APP",
     "title": "Product Catalog",
     "status": "refined",
-    "version": 1,
+    "version": 2,
     "channels": [
       {
         "name": "Backoffice",
@@ -13,7 +13,8 @@
       {
         "name": "Sales desk",
         "kind": "web",
-        "audience": "Sales staff looking up articles and prices"
+        "audience": "Sales staff looking up articles and prices",
+        "responsive": true
       }
     ],
     "modules": [
@@ -22,6 +23,16 @@
       "MOD-SUP",
       "MOD-PRC"
     ],
+    "profile": {
+      "tenancy": "single",
+      "languages": [
+        "en"
+      ],
+      "currencies": [
+        "USD"
+      ],
+      "time_zones": "single"
+    },
     "file": "application/application.md"
   },
   "modules": [
@@ -912,6 +923,7 @@
         }
       ],
       "mockups": [],
+      "channels": [],
       "file": "modules/cat/screens/SCR-CAT-01.md"
     },
     {
@@ -974,6 +986,7 @@
         }
       ],
       "mockups": [],
+      "channels": [],
       "file": "modules/cat/screens/SCR-CAT-02.md"
     },
     {
@@ -1012,6 +1025,7 @@
       ],
       "actions": [],
       "mockups": [],
+      "channels": [],
       "file": "modules/glb/screens/SCR-GLB-01.md"
     },
     {
@@ -1068,6 +1082,7 @@
         }
       ],
       "mockups": [],
+      "channels": [],
       "file": "modules/prc/screens/SCR-PRC-01.md"
     },
     {
@@ -1114,6 +1129,7 @@
         }
       ],
       "mockups": [],
+      "channels": [],
       "file": "modules/sup/screens/SCR-SUP-01.md"
     },
     {
@@ -1163,6 +1179,7 @@
         }
       ],
       "mockups": [],
+      "channels": [],
       "file": "modules/sup/screens/SCR-SUP-02.md"
     }
   ],

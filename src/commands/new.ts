@@ -1,12 +1,11 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
-import { isSeq, parseDocument } from 'yaml';
 import { nextNumber } from '../authoring/ids.js';
 import { extractItems } from '../install/skeleton.js';
-import { splitFrontMatter } from '../lib/frontmatter.js';
+import { addToList, lineOfKey } from '../lib/frontmatter-edit.js';
 import { renderTemplate } from '../lib/template.js';
 import { readTemplate } from '../lib/templates.js';
-import { ID_REGEX, Scope, moduleCode } from '../schemas/index.js';
+import { ChannelKind, ID_REGEX, Scope, moduleCode, type Channel } from '../schemas/index.js';
 import { readSpecDir } from '../spec/files.js';
 import { loadSpec } from '../spec/load.js';
 import type { SpecModel } from '../spec/model.js';
@@ -27,6 +26,7 @@ export const NEW_TYPES = [
   'role',
   'decision',
   'term',
+  'channel',
 ] as const;
 export type NewType = (typeof NEW_TYPES)[number];
 
@@ -45,6 +45,9 @@ export interface NewOptions {
   kind?: string;
   term?: string;
   forbidden?: string;
+  audience?: string;
+  responsive?: boolean;
+  offline?: boolean;
 }
 
 export interface NewResult {
@@ -66,6 +69,7 @@ const REQUIRED: Record<NewType, (keyof NewOptions)[]> = {
   role: ['name', 'title'],
   decision: ['title'],
   term: ['term'],
+  channel: ['name', 'kind'],
 };
 
 /** Normalise `HR`, `hr` or `MOD-HR` to the module code `HR`. */
@@ -337,6 +341,22 @@ function create(type: NewType, o: NewOptions, ctx: Ctx): NewResult {
         line: appendItem(ctx, 'application/decisions.md', itemOf(ctx, 'decisions.md', 'DEC-', vars)),
       };
     }
+    case 'channel': {
+      const kind = ChannelKind.safeParse(o.kind);
+      if (!kind.success) throw new NewError(`--kind must be one of ${ChannelKind.options.join(', ')}`);
+      const name = o.name!.trim();
+      const app = ctx.model.application;
+      if (app?.data.channels.some((c) => c.name.toLowerCase() === name.toLowerCase()))
+        throw new NewError(`channel "${name}" already exists`);
+      const channel: Channel = { name, kind: kind.data };
+      if (o.audience) channel.audience = o.audience;
+      if (o.responsive !== undefined) channel.responsive = o.responsive;
+      if (o.offline !== undefined) channel.offline = o.offline;
+      ctx.touch('APP');
+      const file = applicationFile(ctx);
+      addToList(file, 'channels', channel);
+      return { id: 'APP', file: 'application/application.md', line: lineOfKey(file, 'channels') };
+    }
     case 'term': {
       const term = oneLine(o.term!);
       if (ctx.model.glossary.some((g) => g.data.term.toLowerCase() === term.toLowerCase())) {
@@ -375,27 +395,16 @@ function insertBefore(ctx: Ctx, path: string, heading: string, item: string): nu
   return before.split('\n').length;
 }
 
-/** Edit a list in a file's front-matter, keeping comments and layout. */
-function editFrontMatterList(full: string, key: string, add: string) {
-  const src = readFileSync(full, 'utf8');
-  const split = splitFrontMatter(src);
-  if (split.raw === undefined) throw new Error(`${full} has no front-matter`);
-  const doc = parseDocument(split.raw);
-  const list = doc.get(key, true);
-  if (isSeq(list)) {
-    if (list.items.some((i) => (i as { value?: unknown }).value === add || i === add)) return;
-    list.flow = false;
-  }
-  doc.addIn([key], add);
-  writeFileSync(full, `---\n${doc.toString().trimEnd()}\n---\n${split.body}`);
+function applicationFile(ctx: Ctx): string {
+  const app = join(ctx.specRoot, 'application/application.md');
+  if (!existsSync(app))
+    throw new NewError('application/application.md is missing; run `alterspec init` first');
+  return app;
 }
 
 function registerModule(ctx: Ctx, id: string) {
   ctx.touch('APP');
-  const app = join(ctx.specRoot, 'application/application.md');
-  if (!existsSync(app))
-    throw new NewError('application/application.md is missing; run `alterspec init` first');
-  editFrontMatterList(app, 'modules', id);
+  addToList(applicationFile(ctx), 'modules', id);
 }
 
 /** A new flow's first step uses a capability: list the flow in that capability too. */
@@ -403,7 +412,7 @@ function linkFlow(ctx: Ctx, cap: string, flow: string) {
   const c = ctx.model.capabilities.get(cap);
   if (!c) return;
   ctx.touch(cap);
-  editFrontMatterList(join(ctx.specRoot, c.file), 'flows', flow);
+  addToList(join(ctx.specRoot, c.file), 'flows', flow);
 }
 
 export { NewError };

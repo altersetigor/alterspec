@@ -2,7 +2,7 @@
   "created": "2026-10-06",
   "objects": {
     "APP": {
-      "hash": "4dcee37e5241c0d2",
+      "hash": "1b41a7812ee61a90",
       "file": "application/application.md"
     },
     "CAP-CAT-001": {
@@ -326,5 +326,5 @@
       "file": "application/glossary.md"
     }
   },
-  "updated": "2026-10-08"
+  "updated": "2026-10-09"
 }

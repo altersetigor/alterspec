@@ -13,7 +13,8 @@
       {
         "name": "Employee portal",
         "kind": "web",
-        "audience": "Employees"
+        "audience": "Employees",
+        "responsive": true
       }
     ],
     "modules": [
@@ -21,6 +22,16 @@
       "MOD-HR",
       "MOD-PAY"
     ],
+    "profile": {
+      "tenancy": "single",
+      "languages": [
+        "en"
+      ],
+      "currencies": [
+        "EUR"
+      ],
+      "time_zones": "single"
+    },
     "file": "application/application.md"
   },
   "modules": [
@@ -341,6 +352,7 @@
       ],
       "actions": [],
       "mockups": [],
+      "channels": [],
       "file": "modules/glb/screens/SCR-GLB-01.md"
     },
     {
@@ -387,6 +399,9 @@
         }
       ],
       "mockups": [],
+      "channels": [
+        "Backoffice"
+      ],
       "file": "modules/hr/screens/SCR-HR-01.md"
     },
     {
@@ -427,6 +442,7 @@
         }
       ],
       "mockups": [],
+      "channels": [],
       "file": "modules/pay/screens/SCR-PAY-01.md"
     }
   ],

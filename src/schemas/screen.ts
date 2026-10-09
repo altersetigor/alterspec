@@ -55,6 +55,8 @@ export const ScreenSchema = z
         .strict(),
     ),
     mockups: list(MockupSchema),
+    /** Channel names from application.md the screen is for. Empty: every channel. */
+    channels: list(z.string().min(1)),
   })
   .strict()
   .superRefine((s, ctx) => {
