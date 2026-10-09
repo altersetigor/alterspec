@@ -559,8 +559,9 @@ For the interviews, reviews and drafting, yes. The CLI (`new`, `validate`, `view
 No. alterspec is deliberately product-only. Technical design starts after handoff, in the tool of your choice.
 
 **What about Spec Kit, OpenSpec or BMAD — do I have to choose?**
-No. alterspec sits upstream of them. Keep the product spec in alterspec and hand off each capability to whichever tool
-your team uses.
+No. alterspec is a specification framework like them, with the product spec as its focus. Keep the spec in alterspec
+and deliver each capability to your development team as a bundle, or in the format of whichever of those tools they
+use.
 
 **Can I rename an ID?**
 IDs are stable by design. To replace an object, add the new one and remove the old one through a change proposal. The

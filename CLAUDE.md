@@ -4,8 +4,9 @@ The spec changes with the product. alterspec is a product specification framewor
 published as `@alterset/alterspec` by Alterset d.o.o. (MIT).
 
 It keeps a tech-agnostic product spec (**Application → Module → Capability**) as the single source of truth and
-evolves it through reviewed change proposals (deltas). It sits upstream of Spec Kit, OpenSpec and BMAD, and
-hands off to them via `/alterspec-handoff`.
+evolves it through reviewed change proposals (deltas). It is a specification framework in the same family as Spec
+Kit, OpenSpec and BMAD: it delivers the spec to development teams via `/alterspec-handoff`, as its own bundle or in
+the format those tools read, and never gets a technology layer of its own.
 
 This file is the build brief: every decision made so far is recorded here. Read it before starting a phase or
 changing the content model, IDs, validation rules or install layout.
