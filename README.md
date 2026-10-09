@@ -597,6 +597,8 @@ npx alterspec doctor
 
 After an update, run `npx alterspec views` once: new versions can add or rename generated views, such as the wireframe (0.6 renamed `_generated/prototype/` to `_generated/wireframe/`; `views` removes the old folder).
 
+0.7 adds the `/alterspec` front door and `/alterspec-groom`, lets Claude start the authoring skills from plain language, makes the experience follow a change (`change sync`), and hands off at `apply`. `npx alterspec update` installs the new skills and prompts; nothing in `spec/` changes.
+
 `update` refreshes `.alterspec/` and the `.claude/` commands. It never touches `spec/`, `config.yaml` or
 `.alterspec/custom/`, and it skips any command file you edited by hand (use `--force` to overwrite).
 
