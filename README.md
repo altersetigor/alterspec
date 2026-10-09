@@ -52,15 +52,17 @@ check it, change it and hand it over to development.
 
 ## Quick start
 
-alterspec is a private package: it is not published to npm, you install it from this repository. In the root of
-your project:
+alterspec is a private package on npm, restricted to members of the `@alterset` organisation. Sign in to npm with
+an account in the organisation, then in the root of your project:
 
 ```bash
-npm install --save-dev github:altersetigor/alterspec
+npm install --save-dev @alterset/alterspec
 npx alterspec init --name "My Product"
 ```
 
-npm clones the repository and builds the CLI on install, so Node 20+ and git are all you need.
+Without an organisation account you can install it from this repository instead
+(`npm install --save-dev github:altersetigor/alterspec`); npm clones it and builds the CLI on install, so Node 20+
+and git are all you need.
 
 Then open Claude Code in the project and describe the product:
 
@@ -592,13 +594,13 @@ jobs:
 ## Updating
 
 ```bash
-npm install --save-dev github:altersetigor/alterspec
+npm install --save-dev @alterset/alterspec@latest
 npx alterspec update
 npx alterspec doctor
 ```
 
-The first line fetches the current `main` and rebuilds the CLI; pin a commit or a tag with `github:altersetigor/alterspec#<ref>` if you
-want every developer on the same version (tags before the package went private do not build on install).
+From the repository instead: `npm install --save-dev github:altersetigor/alterspec#v0.8.0` (a tag, so every
+developer is on the same version; it rebuilds the CLI on install).
 
 After an update, run `npx alterspec views` once: new versions can add or rename generated views, such as the wireframe (0.6 renamed `_generated/prototype/` to `_generated/wireframe/`; `views` removes the old folder).
 

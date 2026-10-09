@@ -1,8 +1,8 @@
 # alterspec
 
 The spec changes with the product. alterspec is a product specification framework for AI-assisted delivery,
-packaged as `@alterset/alterspec` by Alterset d.o.o. (MIT). The package is private (`"private": true` in
-`package.json`, decided 2026-10-10): it is not published to npm and is used from this repo or a git URL.
+packaged as `@alterset/alterspec` by Alterset d.o.o. (MIT). The package is private on npm (`access: restricted`,
+decided 2026-10-10): only members of the `@alterset` npm org can install it.
 
 It keeps a tech-agnostic product spec (**Application → Module → Capability**) as the single source of truth and
 evolves it through reviewed change proposals (deltas). It is a spec-driven framework that covers only the product
@@ -44,21 +44,21 @@ via the built-in `z.toJSONSchema`). Dev: `tsup`, `vitest`, `eslint` + `typescrip
 - `test/fixtures/valid/` must stay at zero findings. After editing it, run
   `node dist/cli.js views test/fixtures/valid` so its generated blocks stay current.
 - Skills reference the CLI as `npx @alterset/alterspec`, never `npx alterspec`: the unscoped name isn't ours yet,
-  and npx would download whatever package holds it. While the package is private, npx resolves that name to the
-  stale public 0.6.0; a user project links the CLI from this repo (`npm link` or a git URL) so the name resolves
-  locally.
+  and npx would download whatever package holds it. The scoped package is restricted: a user must be signed in to
+  npm as a member of the `@alterset` org, or install it locally, for the name to resolve to the current version
+  rather than the stale public 0.6.0.
 
 ## npm and registry
 
 - The user's global `~/.npmrc` points to a corporate Artifactory. **Never read, edit or rely on `~/.npmrc`.**
 - The project `.npmrc` must keep `registry=https://registry.npmjs.org/`.
-- `package.json` keeps `"private": true`, so `npm publish` is refused. Its `prepare` script runs `tsup`, so
-  `npm install github:altersetigor/alterspec` builds `dist/` in the user project; keep it. Never remove the flag, and never run
-  `npm publish`, `npm unpublish` or `npm deprecate` unless the user asks for it in chat.
+- `package.json` must keep `publishConfig: { registry: "https://registry.npmjs.org/", access: "restricted" }` and
+  no `"private"` flag: since 0.8.0 (decided 2026-10-10) releases are published to npm restricted to the `@alterset`
+  org. Its `prepare` script runs `tsup`, so a git-URL install still builds `dist/`; keep it. Publishing needs the
+  user's one-time password, so `npm publish` is run by the user in their terminal. Never run `npm publish`,
+  `npm unpublish` or `npm deprecate` unless the user asks for it in chat.
 - Versions 0.0.0-stage to 0.6.0 remain public on npm from before the package went private; 0.7.0 was unpublished
   on 2026-10-10. They are not maintained and must not be referenced as the current release.
-- `publishConfig` (`registry: https://registry.npmjs.org/`, `access: "public"`) stays as a record for a later
-  decision to publish again; it has no effect while the package is private.
 - Never commit auth tokens. Any `.npmrc` containing `_authToken` stays out of git.
 
 ## Two different `.claude/` folders
@@ -203,8 +203,9 @@ Decided (don't reopen without the person's word):
   architecture design stay outside alterspec.
 - **Naming** (0.2.0): installed skills and agents are prefixed `alterspec-`; front-matter is parsed without
   `gray-matter`.
-- **Private package** (2026-10-10): `package.json` carries `"private": true`; 0.7.0 was unpublished and nothing is
-  published to npm from now on. Users install from this repo (`npm link` or a git URL). See "npm and registry".
+- **Private package** (2026-10-10, revised the same day): releases go to npm with `access: restricted`, visible to
+  the `@alterset` org only; 0.7.0 was unpublished while the package was briefly off npm. Users in the org install
+  it from npm; others from this repo by git URL. See "npm and registry".
 - **Product profile** (2026-10-09): the core five dimensions (channels with responsive/offline, tenancy, languages,
   currencies, time zones) live in `application.md`; with several languages or currencies a default is mandatory;
   screens may name their channels. Audit and data residency stay out until they have a consumer.
