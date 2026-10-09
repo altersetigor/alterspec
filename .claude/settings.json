@@ -16,14 +16,14 @@
       "Bash(npx @alterset/alterspec validate:*)",
       "Bash(npx prettier --check:*)",
       "Bash(npm view:*)",
-      "Bash(npm pack --dry-run:*)"
+      "Bash(npm pack --dry-run:*)",
+      "Bash(git push origin main)"
     ],
     "ask": [
       "Bash(npm publish:*)",
       "Bash(npm login:*)",
       "Bash(npm adduser:*)",
-      "Bash(npm config set:*)",
-      "Bash(git push:*)"
+      "Bash(npm config set:*)"
     ],
     "deny": [
       "Read(~/.npmrc)",
