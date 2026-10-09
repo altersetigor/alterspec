@@ -11,6 +11,6 @@ Arguments: `<CODE> <title>`. Ask for whatever is missing.
 4. Write the Description section, and set `depends_on` in the front-matter.
 5. Ask whether the module has rules of its own. For each: `alterspec new rule --module <CODE> --title "<rule>" --json`,
    then state the rule in one testable sentence ("A ... must ... when ...").
-6. Ask for the capabilities the module needs (titles and acting role only) and list them as next steps for
+6. Ask for the capabilities the module needs (titles and roles only) and list them as next steps for
    `/alterspec-create-capability`. Don't create them unless the person asks.
 7. Run `alterspec views` and `alterspec show MOD-<CODE>`; fix errors.

@@ -22,9 +22,11 @@ The CLI is `npx @alterset/alterspec`. Below it is written as `alterspec`; always
 - **Ask, don't invent.** Never fill a gap with a plausible guess. If the person doesn't know, record an open question:
   `alterspec new decision --title "<question>" --kind open_question --json`, add the object's ID to that item's
   `affects` list, and add a line under the object's "Open questions" section.
-- **Granularity.** One capability = one user goal, done by one acting role, in one session. Propose a split when a
-  description covers two goals, two acting roles, or work that pauses for someone else (an approval, a reply from a
-  partner). Each part becomes its own capability, and the hand-over between them becomes a flow step or an event.
+- **Granularity.** One capability = one user goal, reached in one session, by the roles allowed to perform it (one or
+  several, each with its own scope). Propose a split when a description covers two goals, or work that pauses for
+  someone else (an approval, a reply from a partner). Each part becomes its own capability, and the hand-over between
+  them becomes a flow step or an event. Several roles doing the same thing is one capability; one role handing over to
+  another is two.
 - **Status.** New objects start as `draft`. Only `/alterspec-refine` moves an object to `refined`, and only when it has no
   open gaps. Moving to `ready`, `approved` or `implemented` needs the person to say so explicitly; then raise
   `version` by 1.

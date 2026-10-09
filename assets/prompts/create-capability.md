@@ -8,9 +8,9 @@ Arguments: `<MOD> <title>`. Ask for whatever is missing.
 
 1. Read the module (`alterspec show MOD-<CODE>`), `spec/application/personas-roles.md`, `glossary.md`, and the
    entities and screens the capability is likely to touch, so you reuse existing IDs.
-2. Ask: who does it (persona and acting role), what goal they reach, and what ends it.
-3. Apply the granularity rule. If it covers two goals, two acting roles, or pauses for someone else, propose the split
-   (titles and roles) and agree on which part to write now.
+2. Ask: who does it (personas and the roles allowed to), what goal they reach, and what ends it.
+3. Apply the granularity rule. If it covers two goals, or pauses for someone else, propose the split (titles and roles)
+   and agree on which part to write now.
 
 ## 2. Interview
 

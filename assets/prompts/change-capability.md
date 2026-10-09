@@ -6,8 +6,8 @@ Before editing, read the capability, its screens, entities and rules, and the fl
 
 What to check, depending on what changes:
 
-- **Goal or acting role** — check the granularity rule again (one goal, one acting role, one session). If the change
-  makes it two capabilities, propose a split through `/alterspec-change`.
+- **Goal or roles** — check the granularity rule again (one goal, one session, the roles allowed to perform it). If the
+  change makes it two capabilities, propose a split through `/alterspec-change`.
 - **Roles and scopes** — the "Permissions and data visibility" section must match the front-matter `roles`.
 - **Main flow and screens** — every step names a screen and an action; each screen action that performs this capability
   must exist on that screen (`change edit` the screen too), and the screen must be listed in `screens`.

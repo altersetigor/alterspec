@@ -320,8 +320,8 @@ flows: [FLOW-001]
 ## Open questions
 ```
 
-A capability is **one user goal, done by one acting role, in one session**. If work pauses for someone else, such as
-an approval, that becomes a separate capability, connected by a flow step or an event.
+A capability is **one user goal, reached in one session, by the roles allowed to perform it**. If work pauses for
+someone else, such as an approval, that becomes a separate capability, connected by a flow step or an event.
 
 ### A screen
 

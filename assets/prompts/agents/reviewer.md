@@ -35,8 +35,9 @@ reports.
    people act at once.
 6. **Glossary drift**: different words for the same thing that the forbidden-synonym list doesn't catch, or a term
    used with a different meaning than its definition.
-7. **Granularity**: capabilities covering more than one goal, more than one acting role, or work that pauses for
-   someone else.
+7. **Granularity**: capabilities covering more than one goal, or work that pauses for someone else (a hand-over
+   between roles belongs in two capabilities joined by a flow step or an event; several roles performing the same
+   goal is fine).
 
 Report only real problems you can point to. Don't report style preferences, and don't invent business facts: if
 something is unclear rather than wrong, report it as `minor` with a question.

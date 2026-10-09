@@ -14,7 +14,7 @@ changing the content model, IDs, validation rules or install layout.
 
 - **Plan first.** Before each phase (see Phases below), enter plan mode, present the plan and wait for approval.
   Stop for user review when a phase is done.
-- **Ask about open decisions** (see Open decisions below) before you build anything that depends on them.
+- **Ask about open decisions** (see Decisions below) before you build anything that depends on them.
 - **Check current Claude Code docs** (code.claude.com/docs) before you build or change the `.claude/` files that
   alterspec installs into user projects (skill `SKILL.md` front-matter, invocation control, subagent format).
   Commands are now skills; `.claude/commands/` is legacy. Don't rely on memory for these formats.
@@ -148,26 +148,30 @@ Statuses: `draft → refined → ready → approved → implemented`.
   After changing a renderer or bumping the package version, regenerate it: `node dist/cli.js views examples/catalog`,
   `node dist/cli.js handoff CAP-PRC-001 --target all --date 2026-10-07 -C examples/catalog` and
   `node dist/cli.js handoff MOD-PRC --date 2026-10-07 -C examples/catalog`.
-- Decided: interview-then-draft; one capability = one goal, one acting role, one session; `refine` moves status to
-  `refined` at most, anything beyond needs the person's explicit word.
+- Decided: interview-then-draft; `refine` moves status to `refined` at most, anything beyond needs the person's
+  explicit word. Granularity and rule placement: see Decisions below.
 
-## Open decisions
+## Decisions
 
-Ask before deciding; record the answer here when it is made.
+Decided (don't reopen without the person's word):
 
-1. **Capability granularity**: working rule is one user goal, one acting role, one session (see Decided below), but
-   it has not been confirmed as the final rule.
-2. **Where rules live**: today application-level `RULE-NNN` plus module-level `RULE-<MOD>-NNN`, with
-   `foreign-module-rule` warning when a capability uses another module's rule. Not confirmed as final.
-3. **Bilingual SR/EN**: `config.language` is `en` only; whether the glossary and templates get SR/EN pairs in v1 is
-   open.
-4. **Who writes the spec**: a business analyst with an AI interviewer, or AI drafts with human approval. The
-   commands are built interview-then-draft; a different answer changes command design.
+- **Capability granularity** (2026-10-09): one user goal, reached in one session, performed by one or several roles
+  (each with its own scope). A hand-over between roles (an approval, a reply) is two capabilities joined by a flow
+  step or an event; several roles doing the same thing is one.
+- **Where rules live** (2026-10-09): shared rules in `application/rules.md` as `RULE-NNN`, module-own rules in
+  `modules/<mod>/rules.md` as `RULE-<MOD>-NNN`; `foreign-module-rule` warns when a capability uses another module's
+  rule.
+- **Language** (2026-10-09): English only. `config.language` stays `en`; no SR/EN pairs in glossary or templates.
+- **Mockups** (2026-10-07, revised 2026-10-08): a generic HTML prototype generated from the spec, plus the experience
+  layer. The experience layer is UI-only and must match the business spec exactly before handoff; backend, data and
+  architecture design stay outside alterspec.
+- **Naming** (0.2.0): installed skills and agents are prefixed `alterspec-`; front-matter is parsed without
+  `gray-matter`.
 
-Decided: mockups are a generic HTML prototype generated from the spec plus the experience layer (2026-10-07,
-revised 2026-10-08); the experience layer is UI-only and must match the business spec exactly before handoff, and
-backend, data and architecture design stay outside alterspec (2026-10-08); install prefix `alterspec-` and
-front-matter parsed without `gray-matter` (0.2.0).
+Open (ask before building anything that depends on it):
+
+- **Who writes the spec**: a business analyst with an AI interviewer, or AI drafts with human approval. The commands
+  are built interview-then-draft; a different answer changes command design.
 
 ## Phases
 

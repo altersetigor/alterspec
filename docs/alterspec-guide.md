@@ -24,7 +24,7 @@ The first version is built before any baseline exists, so edits go straight into
 
 - `/alterspec-create-entity NAME Title`: a business thing with attributes (business kinds only: text, amount, date,
   choice, reference…), relationships and a lifecycle (states and allowed transitions).
-- `/alterspec-create-capability MOD "Title"`: one user goal, one acting role, one session. The interview walks
+- `/alterspec-create-capability MOD "Title"`: one user goal, one session, the roles allowed to perform it. The interview walks
   through the thirteen sections (user story, value, preconditions, main flow per screen and action, exceptions, data
   in and out, rules, state transitions, notifications, permissions, acceptance criteria, out of scope, open
   questions). The analyst agent drafts the body from your answers only; it never invents facts.
@@ -135,7 +135,7 @@ A new feature is a change proposal that mostly adds:
 
 1. `/alterspec-change "New feature"`; describe why and what, in business language.
 2. Inside it, the same commands as during initiation, all with `--change CHG-NNN` behind the scenes: new entity or
-   attributes, new capabilities (one goal, one role, one session each), new or changed screens, rules, events, a
+   attributes, new capabilities (one goal, one session each), new or changed screens, rules, events, a
    flow step that ties the feature into an existing journey.
 3. `/alterspec-refine` the new objects until they are `refined`; `/alterspec-experience` their screens.
 4. `/alterspec-impact`, review, `in_review`, `/alterspec-apply` with your explicit approval.
