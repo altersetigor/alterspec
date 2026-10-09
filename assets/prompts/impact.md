@@ -17,6 +17,8 @@ Arguments: `<CHG>`.
    - the "Experience screens" section: screens to align, draft or drop (`npx @alterset/alterspec change sync <CHG>`
      does those three) and experience screens still to review (`/alterspec-experience review <SCR>`, a person's
      job); the change can't go to review while a screen is stale
+   - the "Handoff after apply" section: which capabilities `apply` will export to developers and which don't pass
+     the gate yet, with the reason (draft, unreviewed experience, lint errors in scope)
    - new lint findings, and findings the change resolves
    - the reviewer's critical and major findings
    - a recommendation: ready for approval, or what must be fixed first

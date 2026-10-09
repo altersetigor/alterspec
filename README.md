@@ -126,7 +126,8 @@ agents or settings.
    generated views.
 7. **Apply.** `/alterspec-apply CHG-001` asks for your explicit approval ("approve CHG-001"), then merges the change,
    raises the version of every modified object and archives the proposal.
-8. **Hand off.** `/alterspec-handoff CAP-CAT-001` exports a ready capability as a bundle for your development team.
+8. **Hand off.** Applying the change already exported every capability that is `ready` with reviewed screens as a
+   bundle for your development team; `/alterspec-handoff MOD-CAT` does the same for a whole module.
 
 ## Claude Code commands
 
@@ -460,8 +461,14 @@ spec/changes/CHG-001/
 
 ## Handoff
 
+Handoff happens when a change is applied: every capability the change touches that passes the gate (`ready` or
+later, no lint errors in scope, every screen's experience reviewed) is exported, and every existing bundle whose
+sources changed is refreshed. `apply` tells you what it exported and what it couldn't, with the reason. The command
+is for the rest: a whole module, an early look at a draft, a re-export on demand.
+
 ```bash
-npx alterspec handoff CAP-PRC-001
+npx alterspec handoff MOD-PRC
+npx alterspec handoff CAP-PRC-002 --allow-draft
 ```
 
 The development team gets one self-contained bundle in `handoff/bundle/<ID>/`:

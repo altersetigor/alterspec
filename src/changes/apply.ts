@@ -7,7 +7,11 @@ import { encodingOf, readSpecDir } from '../spec/files.js';
 import { readBaseline, today, writeBaseline } from './baseline.js';
 import { ChangeError, changeHash, updateProposal } from './change.js';
 import { fingerprint, specObjects } from './fingerprint.js';
-import { computeImpact, mergedFiles } from './impact.js';
+import { computeImpact, handoffImpact, mergedFiles } from './impact.js';
+import { runHandoff } from '../commands/handoff.js';
+import { loadConfig } from '../config.js';
+import { lint } from '../lint/lint.js';
+import { loadSpec } from '../spec/load.js';
 import { overlayObjects } from './merge.js';
 
 export interface ApplyResult {
@@ -16,6 +20,8 @@ export interface ApplyResult {
   deleted: string[];
   versions: { key: string; version: number }[];
   archivedTo: string;
+  /** Bundles exported for developers after the merge, and candidates that don't pass the handoff gate yet. */
+  handoff: { exported: { id: string; folder: string }[]; blocked: { id: string; reason: string }[] };
 }
 
 /** Raise `version` in a document's front-matter. */
@@ -36,7 +42,11 @@ const versionOf = (content: string) => {
   return typeof v === 'number' ? v : undefined;
 };
 
-export function runApply(dir: string, changeId: string, opts: { spec?: string } = {}): ApplyResult {
+export function runApply(
+  dir: string,
+  changeId: string,
+  opts: { spec?: string; date?: string } = {},
+): ApplyResult {
   const root = resolve(dir);
   const specDir = opts.spec ?? 'spec';
   const specRoot = join(root, specDir);
@@ -122,11 +132,29 @@ export function runApply(dir: string, changeId: string, opts: { spec?: string } 
   // after archiving, so the generated index no longer lists the change as open
   runViews(root, { spec: specDir });
 
+  // Developers get every capability of the change that passes the handoff gate, and every bundle that went stale.
+  const handoff: ApplyResult['handoff'] = { exported: [], blocked: [] };
+  const nowFiles = readSpecDir(specRoot);
+  const nowLoad = loadSpec(nowFiles);
+  const plan = handoffImpact(
+    root,
+    nowLoad.model,
+    nowFiles,
+    lint(nowLoad, loadConfig(root), root),
+    [...impact.added, ...impact.modified].map((o) => o.key),
+  );
+  handoff.blocked = plan.blocked;
+  for (const id of plan.exports) {
+    const r = runHandoff(root, id, { spec: specDir, ...(opts.date ? { date: opts.date } : {}) });
+    handoff.exported.push({ id, folder: r.outputs[0]!.folder });
+  }
+
   return {
     id: change.id,
     written: written.sort(),
     deleted: deleted.sort(),
     versions,
     archivedTo: `${specDir}/changes/archive/${change.id}`,
+    handoff,
   };
 }

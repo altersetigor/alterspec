@@ -135,7 +135,10 @@ Statuses: `draft → refined → ready → approved → implemented`.
 - Handoff (Phase 5): `alterspec handoff <CAP|MOD>` builds a bundle (`src/handoff/bundle.ts`) and renders it
   (`src/handoff/targets/bundle.ts`), writing only to `handoff/bundle/<ID>/`. It is the one handoff format: the
   development team gets the spec, the wireframe and the experience of the screens in scope (2026-10-09: the earlier
-  exports to third-party spec tools were removed, don't reintroduce them). alterspec never gets a tech layer.
+  exports to third-party spec tools were removed, don't reintroduce them). The gate is `handoffBlockers` /
+  `handoffCheck`; `apply` runs it for every capability the change touched and for every bundle whose sources moved
+  (`src/handoff/stale.ts`), exports what passes and reports the rest; `impact` announces it ("Handoff after apply").
+  `alterspec handoff` stays for modules, `--allow-draft` and re-exports. alterspec never gets a tech layer.
 - Wireframe and experience (Phases 6–7): screens list their data in `fields`; entity attributes carry `references` /
   `options`. `src/wireframe/` builds the dry page model and renders the generic wireframe (`views` →
   `spec/_generated/wireframe/`, `manifest.json` lists every `data-src` and its roles; `views` also deletes a
@@ -221,5 +224,5 @@ Open (ask before building anything that depends on it):
     "Experience screens" section (`experienceImpact` in `src/changes/impact.ts`) and `change status in_review|approved`
     refuses while a screen is stale, orphaned, or ready without an experience; (c) grooming (`/alterspec-groom`, `prompts/groom.md`, the analyst's proposal mode, `templates/groom.md`,
     `change new --groom`), done: one proposal drafted from an idea, asked once, executed on the person's "go" up to
-    `in_review`; the decision "who writes the spec" is recorded above; (d) `apply` hands off every touched capability that passes the gate and
-    refreshes stale bundles. After each step, update the guide in the user's voice.
+    `in_review`; the decision "who writes the spec" is recorded above; (d) `apply` hands off every touched capability that passes the gate and refreshes stale bundles
+    (`handoffImpact`, `src/handoff/stale.ts`), done. After each step, update the guide in the user's voice.

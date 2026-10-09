@@ -28,5 +28,11 @@ On explicit approval: `npx @alterset/alterspec change status <CHG> approved`.
 Run `npx @alterset/alterspec apply <CHG>`. It refuses a change that was edited after approval; then the person must
 review and approve it again.
 
-Report: files written and deleted, the new versions, and where the change was archived. Then run
-`npx @alterset/alterspec validate` and mention any warnings.
+`apply` also hands off: every capability of the change that passes the handoff gate (ready or later, no lint errors in
+scope, every screen's experience ready, reviewed and finding-free) is exported to `handoff/bundle/<CAP>/`, and every
+existing bundle whose sources changed is refreshed. What doesn't pass is listed with the reason.
+
+Report: files written and deleted, the new versions, where the change was archived, what was handed off and what was
+not, each with its reason and next step (`/alterspec-refine <CAP>` for a draft, `/alterspec-experience review <SCR>`
+for an unreviewed screen). `/alterspec-handoff` is only needed for a whole module, an early look with `--allow-draft`,
+or a re-export on demand. Then run `npx @alterset/alterspec validate` and mention any warnings.

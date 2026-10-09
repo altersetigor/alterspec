@@ -321,7 +321,7 @@ program
 program
   .command('handoff')
   .description(
-    'Export a capability or module as a self-contained bundle for the development team (into handoff/bundle/)',
+    'Export a capability or module as a self-contained bundle for the development team (into handoff/bundle/); apply does this for ready capabilities',
   )
   .argument('<id>', 'capability or module ID')
   .option('-C, --dir <dir>', 'project directory', '.')
@@ -351,18 +351,23 @@ program
 
 program
   .command('apply')
-  .description('Merge an approved change into the spec, regenerate views and archive the change')
+  .description(
+    'Merge an approved change into the spec, regenerate views, archive the change and hand off what is ready',
+  )
   .argument('<CHG>')
   .option('-C, --dir <dir>', 'project directory', '.')
   .option('--spec <path>', 'spec folder, relative to the project', 'spec')
+  .option('--date <date>', 'date written into the handoff bundles (YYYY-MM-DD)')
   .option('--json', 'print as JSON')
-  .action((id: string, opts: { dir: string; spec: string; json?: boolean }) => {
+  .action((id: string, opts: { dir: string; spec: string; date?: string; json?: boolean }) => {
     const r = runApply(opts.dir, id, opts);
     if (opts.json) console.log(JSON.stringify(r, null, 2));
     else {
       console.log(`Applied ${r.id}: ${r.written.length} file(s) written, ${r.deleted.length} deleted.`);
       for (const v of r.versions) console.log(`  ${v.key} is now version ${v.version}`);
       console.log(`Archived in ${r.archivedTo}`);
+      for (const h of r.handoff.exported) console.log(`handed off: ${h.id} → ${h.folder}/`);
+      for (const b of r.handoff.blocked) console.log(`not handed off: ${b.id} (${b.reason})`);
     }
   });
 

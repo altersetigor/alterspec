@@ -12,7 +12,7 @@ import { EXPERIENCE_DIR, hasExperience, mockupPath } from '../experience/index.j
 import { SPEC_JS, buildSpecJs, configJs, parseConfig, specJs } from '../experience/app.js';
 import type { SpecModel } from '../spec/model.js';
 import { scopedWireframe } from '../wireframe/index.js';
-import { encodingOf, readSpecDir } from '../spec/files.js';
+import { encodingOf, readSpecDir, type SpecFile } from '../spec/files.js';
 import { loadSpec } from '../spec/load.js';
 
 /** Handoff has one format: the self-contained bundle, written to `handoff/bundle/<ID>/`. */
@@ -80,39 +80,66 @@ function experienceFiles(model: SpecModel, bundle: Bundle): Map<string, string> 
   return new Map([...out].sort(([a], [b]) => (a < b ? -1 : 1)));
 }
 
-export function runHandoff(dir: string, rawId: string, opts: HandoffOptions = {}): HandoffResult {
-  const root = resolve(dir);
-  const specRoot = join(root, opts.spec ?? 'spec');
-  const files = readSpecDir(specRoot);
-  const load = loadSpec(files);
-  const bundle = buildBundle(load.model, files, rawId);
+/**
+ * Why a bundle may not go to developers yet, in the order the checks run: lint errors in scope, an experience layer
+ * that doesn't match the spec, capabilities below `ready` (the last one is a warning instead when drafts are allowed).
+ * Empty when the bundle may be handed off.
+ */
+export function handoffBlockers(
+  model: SpecModel,
+  findings: Finding[],
+  bundle: Bundle,
+  opts: { allowDraft?: boolean } = {},
+): { blockers: string[]; warnings: string[] } {
+  const blockers: string[] = [];
+  const warnings: string[] = [];
   const sourceIds = new Set(bundle.sources.map((s) => s.id));
-
-  const findings = lint(load, loadConfig(root), root);
   const errors = findings.filter((f) => f.severity === 'error' && f.id && sourceIds.has(f.id));
   if (errors.length) {
-    throw new HandoffError(
+    blockers.push(
       `${bundle.scope.id} has ${errors.length} lint error(s) in its scope: ${errors
         .slice(0, 5)
         .map((e) => `${e.id} ${e.rule}`)
         .join(', ')}. Run \`alterspec validate\`.`,
     );
   }
-  const experience = experienceGate(load.model, bundle, findings);
+  const experience = experienceGate(model, bundle, findings);
   if (experience.length) {
-    throw new HandoffError(
+    blockers.push(
       `${bundle.scope.id} isn't ready for developers: its experience layer doesn't fully match the spec (${experience
         .slice(0, 6)
         .join('; ')}${experience.length > 6 ? '; …' : ''}). Finish it with /alterspec-experience.`,
     );
   }
-  const warnings: string[] = [];
   const drafts = bundle.capabilities.filter((c) => !READY.has(c.status));
   if (drafts.length) {
     const msg = `${drafts.map((c) => `${c.id} is ${c.status}`).join(', ')}; handoff expects ready or later`;
-    if (!opts.allowDraft) throw new HandoffError(`${msg}. Refine it first, or pass --allow-draft.`);
-    warnings.push(msg);
+    if (opts.allowDraft) warnings.push(msg);
+    else blockers.push(`${msg}. Refine it first, or pass --allow-draft.`);
   }
+  return { blockers, warnings };
+}
+
+/** Build the bundle of an ID over already loaded, already linted files and say whether it may be handed off. */
+export function handoffCheck(
+  model: SpecModel,
+  files: SpecFile[],
+  findings: Finding[],
+  rawId: string,
+  opts: { allowDraft?: boolean } = {},
+): { bundle: Bundle; blockers: string[]; warnings: string[] } {
+  const bundle = buildBundle(model, files, rawId);
+  return { bundle, ...handoffBlockers(model, findings, bundle, opts) };
+}
+
+export function runHandoff(dir: string, rawId: string, opts: HandoffOptions = {}): HandoffResult {
+  const root = resolve(dir);
+  const specRoot = join(root, opts.spec ?? 'spec');
+  const files = readSpecDir(specRoot);
+  const load = loadSpec(files);
+  const findings = lint(load, loadConfig(root), root);
+  const { bundle, blockers, warnings } = handoffCheck(load.model, files, findings, rawId, opts);
+  if (blockers.length) throw new HandoffError(blockers[0]!);
   const open =
     bundle.openQuestions.length + bundle.capabilities.reduce((n, c) => n + c.text.openQuestions.length, 0);
   if (open) warnings.push(`${open} open question(s) in scope; they are exported as clarification points`);

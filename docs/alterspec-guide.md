@@ -100,8 +100,9 @@ If a sentence could mean two things, Claude asks one question before doing anyth
 words does the same routing explicitly, and `/alterspec` alone answers questions about the product.
 
 What you still type yourself, because each one is a decision only you can take: `/alterspec-init` once at the
-start, `npx alterspec baseline` when the first version is agreed, `/alterspec-apply CHG-…` with your approval, and
-`/alterspec-handoff CAP-…` to give a capability to the developers.
+start, `npx alterspec baseline` when the first version is agreed, and `/alterspec-apply CHG-…` with your approval.
+Applying is also what hands a capability to the developers, once it is ready and its screens are reviewed;
+`/alterspec-handoff` is only for a whole module or an early look at a draft.
 
 ## 4. Tuning the spec during initiation
 
@@ -209,7 +210,9 @@ After the baseline, the main `spec/` is read-only for people. Direct edits are `
 4. `alterspec change status CHG-NNN in_review` is refused while the change has errors, conflicts or no content.
 5. `/alterspec-apply CHG-NNN` shows the impact and asks for your approval by ID ("approve CHG-NNN"). Nothing else
    counts. Then it merges, raises `version` on every modified object, regenerates views, updates the baseline and
-   archives the proposal.
+   archives the proposal. And it hands off: every capability of the change that is `ready` with reviewed screens
+   goes to the developers as a bundle, and any bundle they already have whose contents moved is refreshed. You are
+   told what was not handed off and why (still a draft, a screen not yet reviewed).
 
 Two changes in flight never get the same new ID. If one is applied and touches an object the other also edits, the
 second gets a conflict and must re-read the object and `change edit --rebase`. A change edited after approval has to
@@ -235,9 +238,10 @@ and your answers.
    inside the change; the experience of every affected screen is aligned; the checks run until clean; the reviewer
    agent reads it; the change goes to review. You get a report in your words, with what a designer must still
    place and review.
-5. **Review, apply, hand off.** `/alterspec-apply CHG-…` with your approval merges it. When the capabilities are
-   `ready` and their screens reviewed, `/alterspec-handoff CAP-…` exports the bundle for the development team,
-   with a manifest of the exact versions handed over.
+5. **Review and apply.** `/alterspec-apply CHG-…` with your approval merges it, and hands off every capability
+   that is `ready` with reviewed screens as a bundle for the development team, with a manifest of the exact
+   versions. New capabilities usually start as drafts: refine them, say `ready`, and the change that applies that
+   word is the one that hands them off.
 
 Before the baseline the same flow writes straight into the spec instead of into a change; the proposal document is
 kept all the same. If you'd rather steer each edit yourself, `/alterspec-change` still interviews you object by
@@ -325,7 +329,7 @@ business spec from inside a design session.
 | Generated blocks, matrices, traceability, wireframe, `spec.js` (`views`)        | Drafting body text from your answers, and a whole proposal from an idea (analyst agent) |
 | Fingerprints, baseline, conflicts, approval hash, merge, versions (`change`, `impact`, `apply`) | Writing the "Why" and "What changes" of a proposal                |
 | Experience drafts, sync, dry and review fingerprints, parity checks             | Shaping layout, components, labels, realistic data (UX designer agent)    |
-| Handoff rendering and the experience gate                                       | Parity table and developer questions (experience reviewer agent)          |
+| Handoff rendering, the experience gate, handoff at apply, stale bundles         | Parity table and developer questions (experience reviewer agent)          |
 | Doctor, install, update                                                         | Optional polish of handoff wording (never content)                        |
 
 Rules that keep the two apart: the model never picks an ID, copies a template, edits a GENERATED block or runs

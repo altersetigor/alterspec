@@ -15,6 +15,8 @@ import { planViews } from '../views/plan.js';
 import { loadChange, type LoadedChange } from './change.js';
 import { isExperienceAsset, specObjects, type SpecObject } from './fingerprint.js';
 import { conflicts, mergeChange, overlayObjects, type Conflict } from './merge.js';
+import { handoffCheck } from '../commands/handoff.js';
+import { staleBundles } from '../handoff/stale.js';
 import {
   hasExperience,
   screensWithoutExperience,
@@ -60,6 +62,41 @@ export interface Impact {
   acceptanceCriteria: string[];
   views: { file: string; blocks?: string[] }[];
   experience: ExperienceImpact;
+  /** What `apply` will hand off: capabilities of the change and bundles that went stale, each passing the gate or not. */
+  handoff: HandoffImpact;
+}
+
+export interface HandoffImpact {
+  /** Bundles `apply` will export: capabilities the change touches and existing bundles whose sources moved. */
+  exports: string[];
+  /** Candidates that don't pass the handoff gate yet, with the first reason. */
+  blocked: { id: string; reason: string }[];
+}
+
+/**
+ * The handoff candidates of a spec after a change: the capabilities in `keys` plus every existing bundle whose
+ * sources changed; each is exported when it passes the gate, otherwise listed with the reason.
+ */
+export function handoffImpact(
+  root: string,
+  model: SpecModel,
+  files: SpecFile[],
+  findings: Finding[],
+  keys: string[],
+): HandoffImpact {
+  const candidates = new Set(keys.filter((k) => k.startsWith('CAP-')));
+  for (const b of staleBundles(root, files)) candidates.add(b.id);
+  const out: HandoffImpact = { exports: [], blocked: [] };
+  for (const id of [...candidates].sort()) {
+    if (!model.capabilities.has(id) && !model.modules.has(id)) {
+      out.blocked.push({ id, reason: `${id} no longer exists; delete handoff/bundle/${id} by hand` });
+      continue;
+    }
+    const { blockers } = handoffCheck(model, files, findings, id);
+    if (blockers.length) out.blocked.push({ id, reason: blockers[0]! });
+    else out.exports.push(id);
+  }
+  return out;
 }
 
 /** What the experience layer still has to do to follow the change (all empty without an experience layer). */
@@ -293,6 +330,13 @@ export function computeImpact(dir: string, changeId: string, opts: { spec?: stri
       modified: modified.map((o) => o.key),
       removed: removed.map((o) => o.key),
     }),
+    handoff: handoffImpact(
+      root,
+      afterModel,
+      merged,
+      newFindingsAll,
+      [...added, ...modified].map((o) => o.key),
+    ),
   };
 }
 
@@ -362,6 +406,13 @@ export function formatImpact(i: Impact): string {
     ...(i.experience.stale.length || i.experience.missing.length || i.experience.orphaned.length
       ? ['', `Run \`alterspec change sync ${i.id}\` for the first three; the review is a person's.`]
       : []),
+    '',
+    '## Handoff after apply',
+    '',
+    list([
+      ...i.handoff.exports.map((id) => `will be exported: ${id}`),
+      ...i.handoff.blocked.map((b) => `not yet: ${b.id} (${b.reason})`),
+    ]),
     '',
     '## New findings',
     '',

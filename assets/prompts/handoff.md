@@ -10,6 +10,10 @@ in scope (`wireframe/index.html`, made-up data) and, with an experience layer, t
 
 alterspec stays a product spec: it never makes technology decisions. Handoff is where they start, with the team.
 
+`/alterspec-apply` already hands off every capability of a change that passes the gate, and refreshes bundles whose
+sources changed. This command is for the rest: a whole module as one bundle, an early look at a draft
+(`--allow-draft`), or a re-export on demand.
+
 ## 1. Check
 
 1. Run `npx @alterset/alterspec show <ID>` for a capability, or `npx @alterset/alterspec validate` for a module.
