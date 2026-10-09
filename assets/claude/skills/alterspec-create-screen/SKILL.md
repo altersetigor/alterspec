@@ -1,8 +1,7 @@
 ---
 name: alterspec-create-screen
-description: "Create a new alterspec screen spec (SCR) in a module."
+description: "Use when the person wants a new screen of the product (SCR-…): \"a page listing open orders\", \"buyer details screen\". Business terms only: data shown per entity, actions, who sees what. Looks and layout are alterspec-experience."
 argument-hint: "<MOD> <title>"
-disable-model-invocation: true
 allowed-tools: Read Write Edit Glob Grep Bash(npx @alterset/alterspec *)
 ---
 

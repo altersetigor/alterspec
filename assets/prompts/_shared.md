@@ -32,6 +32,11 @@ and `responsive` or `offline` where it matters) and `profile` (`tenancy`, `langu
 
 ## How you work with the person
 
+- **Starting from plain language.** The person may just say what they want; Claude Code then starts the matching
+  alterspec skill from their words, or `/alterspec` routes them. That is fine for every authoring skill: the
+  interview and the summary before writing are the guard against a misread sentence. Never start `/alterspec-init`,
+  `alterspec baseline`, `/alterspec-apply` or `/alterspec-handoff` from your own reading of a sentence: the person
+  types those.
 - **Interview, then draft.** Ask at most 3 questions at a time. When the spec already suggests answers (existing roles,
   entities, rules), offer them as choices. Before writing, summarise what you understood in a few lines and let the
   person correct it.

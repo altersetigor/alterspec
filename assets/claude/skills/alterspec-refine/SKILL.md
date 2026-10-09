@@ -1,8 +1,7 @@
 ---
 name: alterspec-refine
-description: "Interview the user about one alterspec object until no open gaps remain, then update its status."
+description: "Use when the person wants to finish, complete or close the gaps of one spec object (CAP, SCR, ENT, MOD): \"what is missing in propose price?\", \"finish the buyer entity\". Interviews only about the gaps; moves the object to refined when nothing is open."
 argument-hint: "<ID>"
-disable-model-invocation: true
 allowed-tools: Read Write Edit Glob Grep Bash(npx @alterset/alterspec *)
 ---
 

@@ -1,8 +1,7 @@
 ---
 name: alterspec-change-screen
-description: "Change an existing alterspec screen (SCR): the data it shows, its actions or per-role differences. Uses a change proposal once the spec is baselined."
+description: "Use when the person wants to change what an existing screen shows or does (SCR-…): data, actions, filters, states, per-role differences: \"show the margin on the approval screen\", \"add a cancel action\". Business content only; after the baseline the edit goes into a change proposal."
 argument-hint: "<SCR>"
-disable-model-invocation: true
 allowed-tools: Read Write Edit Glob Grep Bash(npx @alterset/alterspec *)
 ---
 

@@ -1,8 +1,7 @@
 ---
 name: alterspec-change-entity
-description: "Change an existing alterspec business entity (ENT): attributes, relationships or lifecycle. Uses a change proposal once the spec is baselined."
+description: "Use when the person wants to add, rename or remove an attribute, relationship or lifecycle state of an existing business thing (entity, ENT-…): \"add gender to buyer\", \"orders can also be cancelled\". One entity; after the baseline the edit goes into a change proposal."
 argument-hint: "<ENT>"
-disable-model-invocation: true
 allowed-tools: Read Write Edit Glob Grep Bash(npx @alterset/alterspec *)
 ---
 

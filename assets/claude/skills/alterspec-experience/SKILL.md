@@ -1,8 +1,7 @@
 ---
 name: alterspec-experience
-description: "Design the experience layer of an alterspec spec: mockups that look and work like the future app (sign in as a role, real-looking data), with a UX contract per screen kept fully aligned with the business spec."
+description: "Use when the person talks about how a screen looks or behaves, the mockups or the app: layout, components, labels, states, demo data, \"make the list a table\", \"design the approval screen\", \"review the mockup\". Design only: it never adds business content the spec lacks."
 argument-hint: "[init | <SCR> | review <SCR> | sync <SCR> | rebuild <SCR>]"
-disable-model-invocation: true
 allowed-tools: Read Write Edit Glob Grep Bash(npx @alterset/alterspec *)
 ---
 

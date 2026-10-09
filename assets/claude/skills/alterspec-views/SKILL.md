@@ -1,6 +1,6 @@
 ---
 name: alterspec-views
-description: "Regenerate alterspec generated views: module capability lists, role matrices, traceability and coverage."
+description: "Regenerate the generated views (module capability lists, role matrices, traceability, coverage, wireframe data) after spec edits, or when validate reports stale views. Never edits hand-written content."
 allowed-tools: Read Bash(npx @alterset/alterspec *)
 ---
 

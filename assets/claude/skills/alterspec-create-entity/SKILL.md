@@ -1,8 +1,7 @@
 ---
 name: alterspec-create-entity
-description: "Create a new alterspec business entity (ENT) with attributes and lifecycle states."
+description: "Use when the person wants a new business thing the product keeps (entity, ENT-…): \"we need a Supplier\", \"add Invoice\". Attributes in business kinds, relationships, lifecycle states."
 argument-hint: "<NAME> <title>"
-disable-model-invocation: true
 allowed-tools: Read Write Edit Glob Grep Bash(npx @alterset/alterspec *)
 ---
 

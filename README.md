@@ -130,8 +130,13 @@ agents or settings.
 
 ## Claude Code commands
 
+You don't have to know these. Say what you want in Claude Code ("add gender to buyer", "what can a sales rep do with
+a price?", "buyers should see their order history") and Claude starts the matching skill, or `/alterspec` routes it.
+Only starting a spec, merging a change and handing off to developers are typed by you.
+
 | Command | What it does |
 | --- | --- |
+| `/alterspec [words]` | The front door: answers questions from the spec and routes a wish to the right skill below |
 | `/alterspec-init` | Interview → application, personas and roles, glossary and module list |
 | `/alterspec-create-module <CODE> <title>` | Create a module and its own business rules |
 | `/alterspec-create-entity <NAME> <title>` | Create a business entity with attributes and a lifecycle |

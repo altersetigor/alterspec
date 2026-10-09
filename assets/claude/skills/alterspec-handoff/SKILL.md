@@ -1,6 +1,6 @@
 ---
 name: alterspec-handoff
-description: "Export an alterspec capability or module as a self-contained bundle for the development team."
+description: "Export a capability or module as a self-contained bundle for the development team. Only when the person types it."
 argument-hint: "<CAP|MOD>"
 disable-model-invocation: true
 allowed-tools: Read Write Edit Glob Grep Bash(npx @alterset/alterspec *)

@@ -79,7 +79,7 @@ my-project/
 ```
 
 `init` must be idempotent. It must never overwrite `spec/` or `.alterspec/custom/`. Prefix every installed
-skill and agent with `alterspec-`.
+skill and agent with `alterspec-`; the one exception is the front door, `/alterspec`.
 
 ## Spec content model (`spec/`)
 
@@ -109,10 +109,17 @@ Statuses: `draft → refined → ready → approved → implemented`.
 - CLI: `init`, `update`, `doctor`, `validate [--json]`, `views [--check]`, `new <type>`, `show <ID>`,
   `profile set|show`, and later `impact <CHG>`, `apply <CHG>`. All deterministic work lives in the CLI (IDs, file locations, references); skills
   call it through Bash and prompts never pick IDs or copy templates themselves.
-- Skills (17): `/alterspec-init`; `-create-module|capability|screen|entity`; `-change-module|capability|screen|entity`
-  (edit one existing object, via a change proposal after the baseline; shared flow in `prompts/_change-object.md`);
-  `-refine`, `-validate`, `-views`, `-change`, `-impact`, `-apply`, `-handoff`, `-experience`. The skill name minus `alterspec-` is the
-  prompt file name in `assets/prompts/`.
+- Skills (18): `/alterspec` (the front door: answers questions from the spec and routes plain-language requests to
+  the skill below that does that kind of change; `prompts/alterspec.md`); `/alterspec-init`;
+  `-create-module|capability|screen|entity`; `-change-module|capability|screen|entity` (edit one existing object, via
+  a change proposal after the baseline; shared flow in `prompts/_change-object.md`); `-refine`, `-validate`, `-views`,
+  `-change`, `-impact`, `-apply`, `-handoff`, `-experience`. The skill name minus `alterspec-` is the prompt file name in
+  `assets/prompts/`.
+- Invocation (decided 2026-10-09): every skill's `description` is written as a trigger (what the person says, the
+  object type and ID prefix, an example), so Claude Code may start it from plain language. Only `init`, `apply` and
+  `handoff` keep `disable-model-invocation: true`; `_shared.md` forbids starting those, or `baseline`, from a
+  sentence. The person never needs to know a skill name; the guard is the interview, the summary before writing
+  and the change proposal, not the slash command.
 - Agents: `alterspec-analyst` (gap analysis and drafting; it does not interview, the skill in the main conversation does),
   `alterspec-reviewer` (read-only; reports findings with severity and never edits the spec), `alterspec-ux-designer`
   (edits only experience screens and mockups) and `alterspec-experience-reviewer` (read-only parity table).
@@ -200,3 +207,10 @@ Open (ask before building anything that depends on it):
 8. Living mockups: the experience mockups are a working app (sign-in as a role, demo data, real-app look)
 9. Product profile: channels, tenancy, languages, currencies and time zones recorded at init and consumed by
    prompts, lint and the mockup app, so nothing is specified that the product doesn't need
+10. Conversational alterspec, step by step (agreed 2026-10-09): (a) the front door and model-invocable skills, done;
+    (b) `alterspec change sync <CHG>`: align every stale experience screen of a change in one go, named by
+    `change status in_review`; (c) grooming: one proposal drafted from an idea (module, entities, capabilities,
+    screens, rules, flows, what was not proposed, open questions), asked once, executed on the person's "go" up to
+    `in_review`; this is the "AI drafts, human approves" mode of the open decision above, to be recorded as decided
+    for both modes when (c) is planned; (d) `apply` hands off every touched capability that passes the gate and
+    refreshes stale bundles. After each step, update the guide in the user's voice.

@@ -8,6 +8,7 @@ import { parseFrontMatter } from '../src/lib/frontmatter.js';
 import { issues, readAsset } from './helpers.js';
 
 const COMMANDS = [
+  'alterspec',
   'init',
   'create-module',
   'create-capability',
@@ -29,7 +30,7 @@ const COMMANDS = [
 
 const SkillFrontMatter = z
   .object({
-    name: z.string().regex(/^alterspec-[a-z-]+$/),
+    name: z.string().regex(/^alterspec(-[a-z-]+)?$/),
     description: z.string().min(20),
     'argument-hint': z.string().optional(),
     'disable-model-invocation': z.boolean().optional(),
@@ -48,16 +49,19 @@ const AgentFrontMatter = z
 describe('skill wrappers', () => {
   const dirs = readdirSync(join(ASSETS_DIR, 'claude/skills'));
 
-  it('ships exactly the 17 alterspec-* skills', () => {
-    expect(dirs.sort()).toEqual(COMMANDS.map((c) => `alterspec-${c}`).sort());
+  /** The skill directory of a command: `alterspec-<cmd>`, except the front door, which is `alterspec` itself. */
+  const skillOf = (cmd: string) => (cmd === 'alterspec' ? 'alterspec' : `alterspec-${cmd}`);
+
+  it('ships exactly the 18 skills: the front door and 17 alterspec-* skills', () => {
+    expect(dirs.sort()).toEqual(COMMANDS.map(skillOf).sort());
   });
 
   for (const cmd of COMMANDS) {
-    it(`alterspec-${cmd} is a valid thin wrapper`, () => {
-      const src = readAsset(`claude/skills/alterspec-${cmd}/SKILL.md`);
+    it(`${skillOf(cmd)} is a valid thin wrapper`, () => {
+      const src = readAsset(`claude/skills/${skillOf(cmd)}/SKILL.md`);
       const { data, body } = parseFrontMatter(src);
       expect(issues(SkillFrontMatter.safeParse(data))).toEqual([]);
-      expect((data as { name: string }).name).toBe(`alterspec-${cmd}`);
+      expect((data as { name: string }).name).toBe(skillOf(cmd));
       expect(body).toContain(`.alterspec/prompts/${cmd}.md`);
       expect(body).toContain(`.alterspec/custom/prompts/${cmd}.md`);
       expect(body).toContain('$ARGUMENTS');
@@ -65,19 +69,36 @@ describe('skill wrappers', () => {
     });
   }
 
-  it('only lets the model invoke read-only commands', () => {
-    const modelInvocable = COMMANDS.filter(
-      (c) =>
-        !(
-          parseFrontMatter(readAsset(`claude/skills/alterspec-${c}/SKILL.md`)).data as Record<string, unknown>
-        )['disable-model-invocation'],
-    );
-    expect(modelInvocable.sort()).toEqual(['impact', 'validate', 'views']);
+  const frontMatterOf = (cmd: string) =>
+    parseFrontMatter(readAsset(`claude/skills/${skillOf(cmd)}/SKILL.md`)).data as Record<string, unknown>;
+
+  it("keeps init, apply and handoff out of the model's hands; every other skill may start from plain language", () => {
+    const manual = COMMANDS.filter((c) => frontMatterOf(c)['disable-model-invocation']);
+    expect(manual.sort()).toEqual(['apply', 'handoff', 'init']);
+  });
+
+  it('describes every model-invocable skill as a trigger: when to use it, with an example', () => {
+    for (const cmd of COMMANDS) {
+      if (frontMatterOf(cmd)['disable-model-invocation']) continue;
+      const description = frontMatterOf(cmd).description as string;
+      expect(description.length, `${skillOf(cmd)} description`).toBeGreaterThanOrEqual(60);
+      expect(description, `${skillOf(cmd)} description`).toMatch(/Use when|Use for|Regenerate/);
+    }
+  });
+
+  it('the front door names every skill it can route to, and none it must not start', () => {
+    const prompt = readAsset('prompts/alterspec.md');
+    for (const cmd of COMMANDS) {
+      if (cmd === 'alterspec') continue;
+      expect(prompt, `prompts/alterspec.md mentions ${skillOf(cmd)}`).toContain(skillOf(cmd));
+    }
+    for (const manual of ['init', 'apply', 'handoff'])
+      expect(prompt).toMatch(new RegExp(`never invoke[^.]*\`alterspec-${manual}\``));
   });
 
   it('never pre-approves the unscoped `npx alterspec` package', () => {
     for (const cmd of COMMANDS) {
-      expect(readAsset(`claude/skills/alterspec-${cmd}/SKILL.md`)).not.toMatch(/npx alterspec/);
+      expect(readAsset(`claude/skills/${skillOf(cmd)}/SKILL.md`)).not.toMatch(/npx alterspec/);
     }
   });
 });

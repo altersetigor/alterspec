@@ -1,8 +1,7 @@
 ---
 name: alterspec-create-capability
-description: "Create a new alterspec capability (CAP) in a module, interviewing the user to fill its front-matter and business body."
+description: "Use when the person wants a new thing a user can do, one goal in one session (capability, CAP-…): \"buyers should be able to reorder\", \"add approve price\". Interviews, then drafts all thirteen sections; a feature spanning several objects goes to alterspec-change instead."
 argument-hint: "<MOD> <title>"
-disable-model-invocation: true
 allowed-tools: Read Write Edit Glob Grep Bash(npx @alterset/alterspec *)
 ---
 

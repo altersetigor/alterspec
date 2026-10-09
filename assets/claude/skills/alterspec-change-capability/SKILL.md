@@ -1,8 +1,7 @@
 ---
 name: alterspec-change-capability
-description: "Change an existing alterspec capability (CAP): its behaviour, roles, rules, data or acceptance criteria. Uses a change proposal once the spec is baselined."
+description: "Use when the person wants to change something a user can already do (capability, CAP-…): behaviour, roles and scopes, rules, data, acceptance criteria: \"sales reps may also approve\", \"reorder must skip discontinued articles\". One capability; after the baseline the edit goes into a change proposal."
 argument-hint: "<CAP>"
-disable-model-invocation: true
 allowed-tools: Read Write Edit Glob Grep Bash(npx @alterset/alterspec *)
 ---
 

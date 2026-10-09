@@ -1,8 +1,7 @@
 ---
 name: alterspec-create-module
-description: "Create a new alterspec module (MOD) and register it in the application."
+description: "Use when the person wants a new business area of the product (module, MOD-…): \"we need a loyalty module\", \"add an area for returns\". Creates the module and its own rules; capabilities and screens come after."
 argument-hint: "<CODE> <title>"
-disable-model-invocation: true
 allowed-tools: Read Write Edit Glob Grep Bash(npx @alterset/alterspec *)
 ---
 

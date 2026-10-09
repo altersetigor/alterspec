@@ -75,7 +75,33 @@ their design, not the spec model.
 
 What exists after this step: the skeleton. No entities, capabilities or screens yet.
 
-## 3. Tuning the spec during initiation
+## 3. Talking to alterspec
+
+Once the skeleton exists you don't need to know commands. Open Claude Code in the project and say what you want, in
+the product's own words. What happens depends on what you said, and you don't pick the path:
+
+- **A question.** "What can a sales rep do with a price?" "Is pricing ready for developers?" "What is still open?"
+  Claude answers from the spec. Nothing is changed.
+- **A small change, one thing.** "Add gender to buyer." "The approval screen should also show the margin." Claude
+  shows you the object it understood, asks the two or three things it needs (kind, options, required, who sees
+  it), makes the edit, and tells you which other objects it touches. After the baseline this happens inside a
+  change proposal, and you'll be told its ID.
+- **Something new.** "We need a Supplier." "Buyers should be able to reorder." Claude creates the entity or the
+  capability where it belongs, interviewing you first.
+- **A feature.** "Buyers should see their order history and reorder from it." Claude opens a change proposal and
+  works through every object it needs, asking as it goes. (A later version will draft the whole proposal first and
+  ask you once.)
+- **Looks and behaviour.** "Make the order history a table, newest first." That is the experience layer; the
+  business spec is not touched.
+
+If a sentence could mean two things, Claude asks one question before doing anything. `/alterspec` followed by your
+words does the same routing explicitly, and `/alterspec` alone answers questions about the product.
+
+What you still type yourself, because each one is a decision only you can take: `/alterspec-init` once at the
+start, `npx alterspec baseline` when the first version is agreed, `/alterspec-apply CHG-…` with your approval, and
+`/alterspec-handoff CAP-…` to give a capability to the developers.
+
+## 4. Tuning the spec during initiation
 
 The first version is built before any baseline exists, so edits go straight into `spec/`.
 
@@ -98,9 +124,9 @@ The first version is built before any baseline exists, so edits go straight into
 Tuning never means guessing: when you don't know yet, the answer is recorded as an open question (`DEC-*`) against
 the object, and the object cannot become `refined` until it is answered.
 
-When the first version is agreed: `npx alterspec baseline`. From then on every edit is a change proposal (section 6).
+When the first version is agreed: `npx alterspec baseline`. From then on every edit is a change proposal (section 7).
 
-## 4. Wireframe and experience: making and tuning the UI
+## 5. Wireframe and experience: making and tuning the UI
 
 Two layers show the product. Think of them as a dry and a wet signal.
 
@@ -148,7 +174,7 @@ How everything stays in sync:
 - If the design needs something the business spec lacks (a field, a filter, a message), it goes into the business
   spec first, then `sync`. Never only into the mockup: the checks would reject it.
 
-## 5. Why spec, wireframe and experience cannot drift apart
+## 6. Why spec, wireframe and experience cannot drift apart
 
 - One source of truth: capability, screen and entity front-matter. Module lists, role matrices, screen
   back-references, entity coverage, traceability, the wireframe and the data the mockups load (`spec.js`) are all
@@ -158,13 +184,13 @@ How everything stays in sync:
 - Closed loops: every entity transition is performed by some capability; every consumed event has an emitter; every
   flow step is a capability and every capability is in a flow; every screen action is a capability one of the
   screen's roles can perform; edited data on a screen is created or updated by one of its actions.
-- The experience layer realises exactly the dry page (section 4), and a business screen can't go to review in a
+- The experience layer realises exactly the dry page (section 5), and a business screen can't go to review in a
   change until its experience follows.
 - Handoff refuses anything with lint errors, any capability below `ready` (unless you say `--allow-draft`), and any
   screen whose experience is not ready, reviewed and finding-free. There is no override for the last one: developers
   only ever receive aligned screens.
 
-## 6. Changing an existing feature
+## 7. Changing an existing feature
 
 After the baseline, the main `spec/` is read-only for people. Direct edits are `direct-edit` errors.
 
@@ -186,7 +212,7 @@ Two changes in flight never get the same new ID. If one is applied and touches a
 second gets a conflict and must re-read the object and `change edit --rebase`. A change edited after approval has to
 be approved again.
 
-## 7. Creating a new feature
+## 8. Creating a new feature
 
 A new feature is a change proposal that mostly adds:
 
@@ -202,7 +228,7 @@ A new feature is a change proposal that mostly adds:
 
 Before the baseline, the same feature is simply created directly, without a change.
 
-## 8. Manual changes to the experience, and how they reach the spec
+## 9. Manual changes to the experience, and how they reach the spec
 
 Information flows one way: business spec → wireframe → experience. Nothing climbs back automatically. What
 alterspec does instead is notice every hand edit, classify it, and refuse to let business content live only in a
@@ -274,7 +300,7 @@ What cannot happen along the way: a page with business content the spec lacks re
 gate has no override), `rebuild --force` erasing a design without the person saying so, or an agent editing the
 business spec from inside a design session.
 
-## 9. Deterministic parts vs. model parts
+## 10. Deterministic parts vs. model parts
 
 | Deterministic (the CLI, same input → same output)                              | Model (Claude Code skills and agents)                                   |
 | ------------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
@@ -287,12 +313,12 @@ business spec from inside a design session.
 | Doctor, install, update                                                         | Optional polish of handoff wording (never content)                        |
 
 Rules that keep the two apart: the model never picks an ID, copies a template, edits a GENERATED block or runs
-`baseline` or `apply` on its own. Skills that change the spec run only when you type them; the model may
-run `validate`, `views` and `impact` by itself because they are read-only or regenerate derived output. Approval of a
-change is always your explicit word naming the change. Reviewer agents are read-only by construction (no Write or
+`baseline` or `apply` on its own. Claude may start an authoring skill from your words (that is how section 3 works);
+it may never start `init`, `baseline`, `apply` or `handoff` that way, those you type. Approval of a change is always
+your explicit word naming the change. Reviewer agents are read-only by construction (no Write or
 Edit tools). Everything deterministic can run in CI (`validate`, `views --check`) without Claude.
 
-## 10. Updating alterspec
+## 11. Updating alterspec
 
 ```bash
 npm install --save-dev @alterset/alterspec@latest

@@ -1,6 +1,6 @@
 ---
 name: alterspec-impact
-description: "Analyse the impact of an alterspec change proposal on flows, matrices, screens and acceptance criteria."
+description: "Use when the person asks what a change proposal affects or whether it is ready for review (CHG-…): flows, screens, roles, acceptance criteria, generated views, new and resolved findings. Read-only."
 argument-hint: "<CHG>"
 allowed-tools: Read Glob Grep Bash(npx @alterset/alterspec *)
 ---

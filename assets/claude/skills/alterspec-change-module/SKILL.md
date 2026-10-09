@@ -1,8 +1,7 @@
 ---
 name: alterspec-change-module
-description: "Change an existing alterspec module: its description, dependencies or module rules. Uses a change proposal once the spec is baselined."
+description: "Use when the person wants to change an existing business area (module, MOD-…): its description, dependencies or module rules: \"the pricing module also depends on catalog\", \"add a rule to ordering\". One module; after the baseline the edit goes into a change proposal."
 argument-hint: "<MOD>"
-disable-model-invocation: true
 allowed-tools: Read Write Edit Glob Grep Bash(npx @alterset/alterspec *)
 ---
 
