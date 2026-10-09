@@ -39,11 +39,14 @@ The first version was baselined (`alterspec baseline`), so every later edit goes
   The archive keeps the proposal, the edited objects and the impact report.
 - **[CHG-002 Article replacement on discontinuation](spec/changes/CHG-002/proposal.md)** — in review. It adds a
   replacement article to `ENT-ARTICLE` and changes `CAP-CAT-006`. See its [impact report](spec/changes/CHG-002/impact.md).
+- **CHG-003** and **CHG-004** — applied; they added the experience layer (next section). The experience layer is part
+  of the spec, so it went through the same proposals, impact reports and approvals.
 
 ## Wireframe and experience
 
 Every screen lists the data it shows in `fields`, so the spec renders as a clickable
-[generic wireframe](spec/_generated/wireframe/index.html) with made-up data, written by `alterspec views`.
+[generic wireframe](spec/_generated/wireframe/index.html) with made-up data, written by `alterspec views`. It is
+unstyled on purpose: it shows what the spec says and marks what it doesn't say yet.
 
 The applied **[CHG-003 Experience for sales price review](spec/changes/archive/CHG-003/proposal.md)** added the
 experience layer: the starter [design system](spec/experience/design-system.md) and
@@ -55,7 +58,8 @@ experience gate, while handing off the Catalog module is refused until its scree
 
 The applied **[CHG-004 Sales price review as a working app](spec/changes/archive/CHG-004/proposal.md)** moved the
 mockups onto the application runtime: open [the sign-in page](spec/experience/mockups/index.html), sign in as the
-pricing analyst and propose or approve a sales price.
+pricing analyst and propose or approve a sales price. The page is hand-designed, so `experience rebuild SCR-PRC-01`
+keeps it and only reports what a fresh render would change.
 
 ## Handoff
 
@@ -79,8 +83,11 @@ npx @alterset/alterspec impact CHG-002 -C examples/catalog
 npx @alterset/alterspec handoff MOD-CAT --target openspec --allow-draft -C examples/catalog   # refused: no experience yet
 ```
 
+In a browser, open `spec/_generated/wireframe/index.html` for the wireframe and `spec/experience/mockups/index.html`
+for the app (serve the `spec/` folder over HTTP; the pages load `spec.js` from `_generated/`).
+
 ## How it was built
 
 Every object was created with `alterspec new`, so its ID came from the tool. The content was then written in
-business language, the first version was baselined, and all three changes went through `change new`, `change edit`,
+business language, the first version was baselined, and all four changes went through `change new`, `change edit`,
 `impact`, `change status` and `apply`. The handoff folders are the unedited output of `alterspec handoff`.

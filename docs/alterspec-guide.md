@@ -158,10 +158,22 @@ Before the baseline, the same feature is simply created directly, without a chan
 | Doctor, install, update                                                         | Optional polish of handoff wording (never content)                        |
 
 Rules that keep the two apart: the model never picks an ID, copies a template, edits a GENERATED block or runs
-`baseline`, `apply` or `publish` on its own. Skills that change the spec run only when you type them; the model may
+`baseline` or `apply` on its own. Skills that change the spec run only when you type them; the model may
 run `validate`, `views` and `impact` by itself because they are read-only or regenerate derived output. Approval of a
 change is always your explicit word naming the change. Reviewer agents are read-only by construction (no Write or
 Edit tools). Everything deterministic can run in CI (`validate`, `views --check`) without Claude.
+
+## 8. Updating alterspec
+
+```bash
+npm install --save-dev @alterset/alterspec@latest
+npx alterspec update          # refreshes .alterspec/ and the .claude/ commands; never touches spec/, config.yaml or custom/
+npx alterspec views           # regenerates derived output; 0.6 moved the wireframe from _generated/prototype/ to _generated/wireframe/
+npx alterspec doctor
+```
+
+Commands you edited under `.claude/` are skipped by `update` unless you pass `--force`; customisations belong in
+`.alterspec/custom/` instead, where updates never reach.
 
 ## Quick reference
 
@@ -174,4 +186,5 @@ Freeze     npx alterspec baseline
 Change     /alterspec-change "title" | /alterspec-change-capability CAP   /alterspec-impact CHG   /alterspec-apply CHG
 Deliver    /alterspec-handoff CAP|MOD bundle|speckit|openspec|bmad|all
 Health     npx alterspec doctor     npx alterspec show ID
+Update     npm i -D @alterset/alterspec@latest && npx alterspec update && npx alterspec views
 ```
