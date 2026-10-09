@@ -16,8 +16,9 @@ roles, glossary, entities, shared rules, flows, events, integrations, quality re
 **Modules** (business areas, each with its own rules), and their **Capabilities** (one user goal reached in one
 session, with the roles allowed to perform it and testable acceptance criteria). Screens say what people see and
 do; entities say what the business things are and how they live. Nothing in it names a database, an endpoint, a
-framework or a library. Technology is decided downstream, in Spec Kit, OpenSpec, BMAD or wherever the team builds,
-and alterspec hands over to those tools without ever becoming one of them.
+framework or a library. Technology is decided by the development team. alterspec is a specification framework in
+the same family as Spec Kit, OpenSpec and BMAD: it delivers the spec to development teams, as its own bundle or in
+the format those tools read, and never acquires a technology layer of its own.
 
 **The principles that shape every command:**
 
