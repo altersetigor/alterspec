@@ -25,7 +25,8 @@ does that kind of change. Nothing below edits the spec itself.
 | asks a question: what, who, how, which, is it ready, what is open, show me                           | Answer from `show`, `validate`, the files. Product language; IDs only when asked. Never edit.           |
 | wants one existing entity, capability, screen or module to change                                    | Invoke `alterspec-change-entity`, `alterspec-change-capability`, `alterspec-change-screen` or `alterspec-change-module` with the ID, and pass the person's words as the first answer. |
 | wants a new entity, capability, screen or module with a clear home                                   | Invoke `alterspec-create-entity`, `alterspec-create-capability` or `alterspec-create-screen` (both need the module) or `alterspec-create-module`.    |
-| describes a feature or a change that touches several objects, or wants to continue a change proposal | Invoke `alterspec-change` with a short title made from their words, or the `CHG-…` ID.                   |
+| presents an idea or a feature to work out, in a sentence or a pasted brief                            | Invoke `alterspec-groom` with their words: it drafts the whole proposal, asks once, executes on their go. |
+| wants to continue a change proposal (`CHG-…`), or lists several known edits to steer one by one      | Invoke `alterspec-change` with the `CHG-…` ID or a short title made from their words.                    |
 | wants an object finished, completed, or asks what is missing in it                                   | Invoke `alterspec-refine` with the ID.                                                                   |
 | talks about looks, layout, labels, components, states, demo data, the mockups or the app             | Invoke `alterspec-experience` with the screen ID (or `init`, `review <SCR>`, `sync <SCR>` as fits).     |
 | asks whether the spec is correct, consistent or complete                                             | Invoke `alterspec-validate` (optionally scoped) and summarise.                                           |
@@ -35,8 +36,8 @@ does that kind of change. Nothing below edits the spec itself.
 
 Rules of thumb:
 - "Add X to Y" where Y exists is a change of Y, not a new object. "We need a Y" where Y doesn't exist is new.
-- One attribute, one action, one rule: the single-object skill. Two or more objects, or a new capability with its
-  screen: `alterspec-change`.
+- One attribute, one action, one rule: the single-object skill. An idea to work out (a feature, a goal, a brief):
+  `alterspec-groom`. A list of known edits across several objects, or an open `CHG-…`: `alterspec-change`.
 - When it is genuinely unclear whether the person wants a change or a new object, ask one line, then route.
 - After the baseline, the skill you invoke handles the change proposal; don't start one yourself here.
 - Never invoke a skill the person's words don't call for, and never invoke `alterspec-init`, `alterspec-apply` or

@@ -6,7 +6,7 @@ GENERATED blocks and `alterspec new` apply to you too.
 
 The only command you may run with Bash is `npx @alterset/alterspec ...` (`show`, `views`, `validate`, `new`).
 
-The brief says which mode to work in.
+The brief says which mode to work in: gap analysis, draft, or proposal.
 
 ## Gap analysis mode
 
@@ -44,3 +44,31 @@ Input: an object ID, its file, and the person's answers grouped by section.
 4. Leave front-matter alone unless the brief asks you to change it. Never touch GENERATED blocks.
 5. Run `npx @alterset/alterspec views`, then `npx @alterset/alterspec show <ID>`, and fix any error you caused.
 6. Return: a 3–5 line summary of what you wrote, the open questions, and any finding you could not fix.
+
+## Proposal mode (grooming)
+
+Input: a change ID, the path of its `groom.md`, the person's idea verbatim, and the IDs the skill found relevant.
+You write the proposal; you don't touch the spec.
+
+1. Read `spec/_generated/index.json`, `spec/application/glossary.md`, `personas-roles.md`, `application.md` (the
+   product profile), the modules, the entities and flows the idea touches, and `npx @alterset/alterspec show <ID>
+   --json` for the IDs you were given and any you find on the way.
+2. Fill every section of `groom.md` under its headings (keep the template's headings and order):
+   - **Where it lives:** an existing module unless the idea is a new business area with its own rules and roles; say
+     why either way.
+   - **Entities, capabilities, screens, rules, flows and events:** reuse existing IDs wherever they fit. One capability
+     per user goal reached in one session; a hand-over between roles is two capabilities joined by a flow step or an
+     event; several roles doing the same thing is one capability, each role with its own scope. A rule used by one
+     module is a module rule, a rule two modules share is an application rule. Screens carry fields (entity attributes
+     by their exact names), actions (the capability each performs) and who sees what. Sketch the acceptance criteria
+     of each capability as Given / When / Then.
+   - **Experience:** which screens will need a design or a re-alignment.
+   - **Not proposed, and why:** the alternatives you set aside (a new module, a new entity, one capability for the
+     whole feature, a new role…) with the reason, so the person can override.
+   - **Open questions:** what you cannot answer from the idea or the spec. Never guess.
+   - **To confirm:** every fact you proposed that is not in the idea or the spec, marked `(proposed)` where it appears
+     above and repeated here as one numbered list.
+3. No technology, no behaviour the product profile excludes, canonical glossary terms only, nothing that quietly
+   widens the product (that is an open question on `APP`).
+4. Return: a 5–10 line summary (where it lives, what is new, what changes), the "To confirm" list and the open
+   questions, verbatim.

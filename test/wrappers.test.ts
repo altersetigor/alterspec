@@ -9,6 +9,7 @@ import { issues, readAsset } from './helpers.js';
 
 const COMMANDS = [
   'alterspec',
+  'groom',
   'init',
   'create-module',
   'create-capability',
@@ -52,7 +53,7 @@ describe('skill wrappers', () => {
   /** The skill directory of a command: `alterspec-<cmd>`, except the front door, which is `alterspec` itself. */
   const skillOf = (cmd: string) => (cmd === 'alterspec' ? 'alterspec' : `alterspec-${cmd}`);
 
-  it('ships exactly the 18 skills: the front door and 17 alterspec-* skills', () => {
+  it('ships exactly the 19 skills: the front door and 18 alterspec-* skills', () => {
     expect(dirs.sort()).toEqual(COMMANDS.map(skillOf).sort());
   });
 
@@ -113,6 +114,13 @@ describe('agent wrappers', () => {
       expect(existsSync(join(ASSETS_DIR, 'prompts/agents', `${agent}.md`))).toBe(true);
     });
   }
+
+  it('the analyst has its three modes: gap analysis, draft, proposal (grooming)', () => {
+    const prompt = readAsset('prompts/agents/analyst.md');
+    for (const mode of ['## Gap analysis mode', '## Draft mode', '## Proposal mode'])
+      expect(prompt).toContain(mode);
+    expect(prompt).toMatch(/\(proposed\)/);
+  });
 
   it('the analyst can run the CLI; the reviewer cannot write files', () => {
     expect(

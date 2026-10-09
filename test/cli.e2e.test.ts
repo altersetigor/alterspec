@@ -129,7 +129,9 @@ describe('built CLI', () => {
       return r.stdout;
     };
     ok(['baseline', '-C', dir]);
-    expect(JSON.parse(ok(['change', 'new', '-C', dir, '--title', 'Probation', '--json'])).id).toBe('CHG-001');
+    const created = JSON.parse(ok(['change', 'new', '-C', dir, '--title', 'Probation', '--groom', '--json']));
+    expect(created.id).toBe('CHG-001');
+    expect(created.groom).toBe('spec/changes/CHG-001/groom.md');
     ok(['change', 'edit', 'CHG-001', 'CAP-HR-002', '-C', dir]);
     const file = join(dir, 'spec/changes/CHG-001/spec/modules/hr/capabilities/CAP-HR-002.md');
     writeFileSync(

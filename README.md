@@ -131,12 +131,14 @@ agents or settings.
 ## Claude Code commands
 
 You don't have to know these. Say what you want in Claude Code ("add gender to buyer", "what can a sales rep do with
-a price?", "buyers should see their order history") and Claude starts the matching skill, or `/alterspec` routes it.
-Only starting a spec, merging a change and handing off to developers are typed by you.
+a price?") and Claude starts the matching skill, or `/alterspec` routes it. An idea ("buyers should see their order
+history and reorder") is groomed: you get the whole proposal first, answer once, say go, and find the change ready
+for review. Only starting a spec, merging a change and handing off to developers are typed by you.
 
 | Command | What it does |
 | --- | --- |
 | `/alterspec [words]` | The front door: answers questions from the spec and routes a wish to the right skill below |
+| `/alterspec-groom <idea>` | From an idea to a change ready for review: the proposal first (module, entities, capabilities, screens, rules, what was not proposed, open questions), one round of answers, then executed on your go |
 | `/alterspec-init` | Interview → application, personas and roles, glossary and module list |
 | `/alterspec-create-module <CODE> <title>` | Create a module and its own business rules |
 | `/alterspec-create-entity <NAME> <title>` | Create a business entity with attributes and a lifecycle |
@@ -149,7 +151,7 @@ Only starting a spec, merging a change and handing off to developers are typed b
 | `/alterspec-refine <ID>` | Close the gaps in one object; moves it to `refined` when complete |
 | `/alterspec-validate [scope]` | Linter plus semantic review in one report (scope: module, IDs or change) |
 | `/alterspec-views` | Regenerate the generated views |
-| `/alterspec-change <title>` | Start or continue a change proposal spanning several objects |
+| `/alterspec-change <title>` | Continue a change proposal, or steer several known edits inside one |
 | `/alterspec-impact <CHG>` | Impact analysis of a change, for a business reader |
 | `/alterspec-apply <CHG>` | Approve, after your explicit word, and merge a change |
 | `/alterspec-handoff <ID>` | Export a self-contained bundle for the development team |
@@ -225,7 +227,7 @@ until a default is given. After the baseline both take `--change <CHG>`.
 | Command | Description |
 | --- | --- |
 | `alterspec baseline` | Record the agreed first version. |
-| `alterspec change new --title <t>` | Start a change proposal (`CHG-NNN`). |
+| `alterspec change new --title <t> [--groom]` | Start a change proposal (`CHG-NNN`); `--groom` also writes the grooming document `groom.md`. |
 | `alterspec change edit <CHG> <ID>` | Copy an object into the change so you can edit it there. |
 | `alterspec change remove <CHG> <ID>` | Mark an object for removal. |
 | `alterspec change sync <CHG>` | Make the experience layer follow the change: re-sync stale experience screens, draft missing ones, drop those of removed screens. |

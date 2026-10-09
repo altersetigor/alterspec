@@ -42,7 +42,9 @@ and `responsive` or `offline` where it matters) and `profile` (`tenancy`, `langu
   person correct it.
 - **Ask, don't invent.** Never fill a gap with a plausible guess. If the person doesn't know, record an open question:
   `alterspec new decision --title "<question>" --kind open_question --json`, add the object's ID to that item's
-  `affects` list, and add a line under the object's "Open questions" section.
+  `affects` list, and add a line under the object's "Open questions" section. In grooming (`/alterspec-groom`) the
+  analyst may propose: every proposed fact is marked `(proposed)` and listed to confirm, and nothing is written into
+  the spec before the person confirms and says go.
 - **Granularity.** One capability = one user goal, reached in one session, by the roles allowed to perform it (one or
   several, each with its own scope). Propose a split when a description covers two goals, or work that pauses for
   someone else (an approval, a reply from a partner). Each part becomes its own capability, and the hand-over between

@@ -6,7 +6,7 @@ import { stripItems } from '../src/install/skeleton.js';
 import { parseCollection } from '../src/lib/collection.js';
 import { parseFrontMatter } from '../src/lib/frontmatter.js';
 import { renderTemplate } from '../src/lib/template.js';
-import { PROSE_TEMPLATES, SPEC_TYPES, itemSchemaFor } from '../src/schemas/index.js';
+import { CHANGE_TEMPLATES, PROSE_TEMPLATES, SPEC_TYPES, itemSchemaFor } from '../src/schemas/index.js';
 import { issues, readAsset } from './helpers.js';
 
 const VARS: Record<string, string> = {
@@ -43,6 +43,7 @@ describe('templates', () => {
   const registered = new Set<string>([
     ...Object.values(SPEC_TYPES).map((t) => t.template),
     ...PROSE_TEMPLATES,
+    ...CHANGE_TEMPLATES,
   ]);
 
   it('every template file is registered, and every registered template exists', () => {

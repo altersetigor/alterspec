@@ -134,6 +134,8 @@ export type SpecTypeName = keyof typeof SPEC_TYPES;
 
 /** Prose-only templates (no schema): business-level text. */
 export const PROSE_TEMPLATES = ['integrations.md', 'nfr.md'] as const;
+/** Templates of documents that live next to a change proposal and are not spec objects. */
+export const CHANGE_TEMPLATES = ['groom.md'] as const;
 
 /** Schemas exported as JSON Schema into .alterspec/schemas/. */
 export const JSON_SCHEMAS: Record<string, z.ZodType> = {

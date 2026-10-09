@@ -51,6 +51,24 @@ describe('change new / edit / remove', () => {
     expect(runChangeEdit(dir, id, 'cap-hr-002').copied).toBe(false);
   });
 
+  it('new --groom writes the grooming document next to the proposal; it is ignored by the loader and archived with the change', () => {
+    const dir = copyFixture();
+    runBaseline(dir);
+    const r = runChangeNew(dir, 'Order history', { groom: true });
+    expect(r.groom).toBe(`spec/changes/${r.id}/groom.md`);
+    const groom = read(dir, r.groom!);
+    expect(groom).toContain(`change: ${r.id}`);
+    expect(groom).toContain('# Grooming: Order history');
+    expect(groom).toContain('## To confirm');
+    expect(runValidate(dir).findings).toEqual([]);
+    runChangeEdit(dir, r.id, 'CAP-HR-002');
+    edit(dir, overlay(r.id, HR2), 'title: Activate employee', 'title: Activate employee after probation');
+    runChangeStatus(dir, r.id, 'in_review');
+    runChangeStatus(dir, r.id, 'approved');
+    runApply(dir, r.id);
+    expect(existsSync(join(dir, 'spec/changes/archive', r.id, 'groom.md'))).toBe(true);
+  });
+
   it('copies single collection items, not whole files', () => {
     const { dir, id } = projectWithChange();
     runChangeEdit(dir, id, 'ROLE-ACCOUNTANT');

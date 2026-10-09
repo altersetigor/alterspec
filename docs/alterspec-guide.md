@@ -88,9 +88,11 @@ the product's own words. What happens depends on what you said, and you don't pi
   change proposal, and you'll be told its ID.
 - **Something new.** "We need a Supplier." "Buyers should be able to reorder." Claude creates the entity or the
   capability where it belongs, interviewing you first.
-- **A feature.** "Buyers should see their order history and reorder from it." Claude opens a change proposal and
-  works through every object it needs, asking as it goes. (A later version will draft the whole proposal first and
-  ask you once.)
+- **A feature, an idea.** "Buyers should see their order history and reorder from it." Claude reads the spec and
+  comes back with the whole proposal: where it lives, what is new, what changes, what it chose not to propose, and
+  the questions nobody can answer from the spec. You correct it in plain words, answer what you know, and say go.
+  It then makes every edit, aligns the experience, runs the checks and the reviewer, and tells you the change is
+  ready for review. Section 8 walks through it.
 - **Looks and behaviour.** "Make the order history a table, newest first." That is the experience layer; the
   business spec is not touched.
 
@@ -215,19 +217,31 @@ be approved again.
 
 ## 8. Creating a new feature
 
-A new feature is a change proposal that mostly adds:
+A new feature starts as an idea, and grooming turns it into a change ready for review. You speak twice: the idea,
+and your answers.
 
-1. `/alterspec-change "New feature"`; describe why and what, in business language.
-2. Inside it, the same commands as during initiation, all with `--change CHG-NNN` behind the scenes: new entity or
-   attributes, new capabilities (one goal, one session each), new or changed screens, rules, events, a
-   flow step that ties the feature into an existing journey.
-3. `/alterspec-refine` the new objects until they are `refined`; `/alterspec-experience` their screens.
-4. `/alterspec-impact`, review, `in_review`, `/alterspec-apply` with your explicit approval.
-5. When it is `ready` and its screens are reviewed: `/alterspec-handoff CAP-…` exports a self-contained bundle
-   (the spec it needs, the wireframe and the experience of its screens) into `handoff/bundle/<ID>/`, with a
-   manifest of the exact versions handed over.
+1. **Say the idea.** A sentence or a pasted brief: "Buyers should see their order history and reorder from it."
+   (Or `/alterspec-groom` followed by the idea.) Claude reads the spec first and asks nothing yet.
+2. **Read the proposal.** It comes back as one document, kept with the change: where the feature lives (an
+   existing module unless it is a new business area), the entities it adds or changes, one capability per user
+   goal with who may perform it, the screens with what they show and do, the rules and the flow step that ties it
+   in, which screens will need a design, and two lists that matter most: "Not proposed, and why" (a new module, a
+   new entity, one capability for the whole feature, each with the reason) and "To confirm", every fact the
+   analyst proposed that is neither in your idea nor in the spec. Open questions are what it could not decide.
+3. **Correct and answer, once.** In plain words: "one capability is enough", "sales reps too", "history goes back
+   two years". What you don't know stays an open question; nothing is guessed. Then say go. (Or no: the change is
+   marked rejected and the document stays as the record.)
+4. **It executes.** Entities, rules, screens, capabilities with their full body, flow steps, open questions, all
+   inside the change; the experience of every affected screen is aligned; the checks run until clean; the reviewer
+   agent reads it; the change goes to review. You get a report in your words, with what a designer must still
+   place and review.
+5. **Review, apply, hand off.** `/alterspec-apply CHG-…` with your approval merges it. When the capabilities are
+   `ready` and their screens reviewed, `/alterspec-handoff CAP-…` exports the bundle for the development team,
+   with a manifest of the exact versions handed over.
 
-Before the baseline, the same feature is simply created directly, without a change.
+Before the baseline the same flow writes straight into the spec instead of into a change; the proposal document is
+kept all the same. If you'd rather steer each edit yourself, `/alterspec-change` still interviews you object by
+object.
 
 ## 9. Manual changes to the experience, and how they reach the spec
 
@@ -308,7 +322,7 @@ business spec from inside a design session.
 | ------------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
 | IDs, file locations, templates (`new`)                                          | Interviewing you, three questions at a time                               |
 | Schema and the 45 lint rules (`validate`)                                       | Semantic review: contradictions, gaps, permission holes (reviewer agent) |
-| Generated blocks, matrices, traceability, wireframe, `spec.js` (`views`)        | Drafting body text from your answers (analyst agent)                      |
+| Generated blocks, matrices, traceability, wireframe, `spec.js` (`views`)        | Drafting body text from your answers, and a whole proposal from an idea (analyst agent) |
 | Fingerprints, baseline, conflicts, approval hash, merge, versions (`change`, `impact`, `apply`) | Writing the "Why" and "What changes" of a proposal                |
 | Experience drafts, sync, dry and review fingerprints, parity checks             | Shaping layout, components, labels, realistic data (UX designer agent)    |
 | Handoff rendering and the experience gate                                       | Parity table and developer questions (experience reviewer agent)          |

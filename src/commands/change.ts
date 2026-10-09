@@ -18,6 +18,11 @@ export interface ChangeOptions {
   spec?: string;
 }
 
+export interface ChangeNewOptions extends ChangeOptions {
+  /** Also write `groom.md`, the grooming document `/alterspec-groom` fills before anything enters the spec. */
+  groom?: boolean;
+}
+
 const specRootOf = (dir: string, opts: ChangeOptions) => join(resolve(dir), opts.spec ?? 'spec');
 
 /** Normalise an object key: IDs upper-case, `term:` / `file:` kept as given. */
@@ -27,8 +32,8 @@ export const normalizeKey = (key: string) =>
 export function runChangeNew(
   dir: string,
   title: string,
-  opts: ChangeOptions = {},
-): { id: string; file: string } {
+  opts: ChangeNewOptions = {},
+): { id: string; file: string; groom?: string } {
   if (!title?.trim()) throw new ChangeError('alterspec change new needs --title');
   const specRoot = specRootOf(dir, opts);
   const nnn = nextNumber(readSpecDir(specRoot), 'CHG-', 3);
@@ -40,7 +45,20 @@ export function runChangeNew(
   });
   mkdirSync(join(specRoot, 'changes', id, 'spec'), { recursive: true });
   writeFileSync(join(specRoot, 'changes', id, 'proposal.md'), proposal);
-  return { id, file: `${opts.spec ?? 'spec'}/changes/${id}/proposal.md` };
+  const result: { id: string; file: string; groom?: string } = {
+    id,
+    file: `${opts.spec ?? 'spec'}/changes/${id}/proposal.md`,
+  };
+  if (opts.groom) {
+    const groom = renderTemplate(readTemplate(resolve(dir), 'groom.md'), {
+      NNN: nnn,
+      title: title.replace(/\s+/g, ' ').trim(),
+      date: today(),
+    });
+    writeFileSync(join(specRoot, 'changes', id, 'groom.md'), groom);
+    result.groom = `${opts.spec ?? 'spec'}/changes/${id}/groom.md`;
+  }
+  return result;
 }
 
 function requireOpen(change: LoadedChange) {

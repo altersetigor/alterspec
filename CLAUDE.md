@@ -109,8 +109,10 @@ Statuses: `draft → refined → ready → approved → implemented`.
 - CLI: `init`, `update`, `doctor`, `validate [--json]`, `views [--check]`, `new <type>`, `show <ID>`,
   `profile set|show`, and later `impact <CHG>`, `apply <CHG>`. All deterministic work lives in the CLI (IDs, file locations, references); skills
   call it through Bash and prompts never pick IDs or copy templates themselves.
-- Skills (18): `/alterspec` (the front door: answers questions from the spec and routes plain-language requests to
-  the skill below that does that kind of change; `prompts/alterspec.md`); `/alterspec-init`;
+- Skills (19): `/alterspec` (the front door: answers questions from the spec and routes plain-language requests to
+  the skill below that does that kind of change; `prompts/alterspec.md`); `/alterspec-groom` (an idea → one
+  proposal in `spec/changes/CHG-NNN/groom.md`, drafted by the analyst's proposal mode, confirmed once, executed on
+  "go" up to `in_review`; `change new --groom` writes the document from `templates/groom.md`); `/alterspec-init`;
   `-create-module|capability|screen|entity`; `-change-module|capability|screen|entity` (edit one existing object, via
   a change proposal after the baseline; shared flow in `prompts/_change-object.md`); `-refine`, `-validate`, `-views`,
   `-change`, `-impact`, `-apply`, `-handoff`, `-experience`. The skill name minus `alterspec-` is the prompt file name in
@@ -192,10 +194,14 @@ Decided (don't reopen without the person's word):
   currencies, time zones) live in `application.md`; with several languages or currencies a default is mandatory;
   screens may name their channels. Audit and data residency stay out until they have a consumer.
 
+- **Who writes the spec** (2026-10-09): both. The single-object skills (`create-*`, `change-*`, `refine`) stay
+  interview-then-draft. Grooming (`/alterspec-groom`) is draft-then-confirm: the analyst drafts a whole proposal
+  from an idea, every fact not in the idea or the spec is marked `(proposed)` and listed to confirm, nothing is
+  written into the spec before the person says go, and `apply` still needs their approval by name.
+
 Open (ask before building anything that depends on it):
 
-- **Who writes the spec**: a business analyst with an AI interviewer, or AI drafts with human approval. The commands
-  are built interview-then-draft; a different answer changes command design.
+- None at the moment.
 
 ## Phases
 
@@ -213,8 +219,7 @@ Open (ask before building anything that depends on it):
     (b) `alterspec change sync <CHG>` (`src/commands/change-sync.ts`), done: re-syncs stale experience screens,
     drafts missing ones for screens the change touches, drops those of removed screens; `impact` reports an
     "Experience screens" section (`experienceImpact` in `src/changes/impact.ts`) and `change status in_review|approved`
-    refuses while a screen is stale, orphaned, or ready without an experience; (c) grooming: one proposal drafted from an idea (module, entities, capabilities,
-    screens, rules, flows, what was not proposed, open questions), asked once, executed on the person's "go" up to
-    `in_review`; this is the "AI drafts, human approves" mode of the open decision above, to be recorded as decided
-    for both modes when (c) is planned; (d) `apply` hands off every touched capability that passes the gate and
+    refuses while a screen is stale, orphaned, or ready without an experience; (c) grooming (`/alterspec-groom`, `prompts/groom.md`, the analyst's proposal mode, `templates/groom.md`,
+    `change new --groom`), done: one proposal drafted from an idea, asked once, executed on the person's "go" up to
+    `in_review`; the decision "who writes the spec" is recorded above; (d) `apply` hands off every touched capability that passes the gate and
     refreshes stale bundles. After each step, update the guide in the user's voice.

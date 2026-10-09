@@ -228,10 +228,18 @@ const changeOpts = (c: Command) =>
 
 changeOpts(change.command('new').description('Start a change proposal'))
   .requiredOption('--title <title>', 'what the change is about')
-  .option('--json', 'print { id, file } as JSON')
-  .action((opts: { dir: string; spec: string; title: string; json?: boolean }) => {
+  .option(
+    '--groom',
+    'also write groom.md, the proposal /alterspec-groom drafts from an idea before anything enters the spec',
+  )
+  .option('--json', 'print { id, file, groom? } as JSON')
+  .action((opts: { dir: string; spec: string; title: string; groom?: boolean; json?: boolean }) => {
     const r = runChangeNew(opts.dir, opts.title, opts);
-    console.log(opts.json ? JSON.stringify(r) : `created ${r.id} in ${r.file}`);
+    console.log(
+      opts.json
+        ? JSON.stringify(r)
+        : `created ${r.id} in ${r.file}${r.groom ? ` (grooming document: ${r.groom})` : ''}`,
+    );
   });
 
 changeOpts(change.command('edit').description('Copy an object into a change so it can be edited there'))

@@ -40,7 +40,7 @@ export function isIgnored(path: string): boolean {
     path.startsWith('_generated/') ||
     path.startsWith('changes/archive/') ||
     /^changes\/[^/]+\/spec\//.test(path) ||
-    /^changes\/[^/]+\/impact\.md$/.test(path) ||
+    /^changes\/[^/]+\/(impact|groom)\.md$/.test(path) ||
     posix.basename(path).toLowerCase() === 'readme.md' ||
     !path.endsWith('.md')
   );
