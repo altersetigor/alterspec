@@ -7,16 +7,14 @@ It keeps a tech-agnostic product spec (**Application → Module → Capability**
 evolves it through reviewed change proposals (deltas). It sits upstream of Spec Kit, OpenSpec and BMAD, and
 hands off to them via `/alterspec-handoff`.
 
-The full build brief, with every decision made so far, is in [docs/HANDOVER.md](docs/HANDOVER.md). Read it
-before starting a phase or changing the content model, IDs, validation rules or install layout.
+This file is the build brief: every decision made so far is recorded here. Read it before starting a phase or
+changing the content model, IDs, validation rules or install layout.
 
 ## Working rules
 
-- **Plan first.** Before each phase (see HANDOVER §9), enter plan mode, present the plan and wait for approval.
+- **Plan first.** Before each phase (see Phases below), enter plan mode, present the plan and wait for approval.
   Stop for user review when a phase is done.
-- **Ask about open decisions** (HANDOVER §10) before you build anything that depends on them: capability
-  granularity, where rules live, SR/EN bilingual scope and who writes the spec. (Decided: mockups and the UI-only
-  experience layer, see Prototype and experience below; there is still no backend or architecture tech layer.)
+- **Ask about open decisions** (see Open decisions below) before you build anything that depends on them.
 - **Check current Claude Code docs** (code.claude.com/docs) before you build or change the `.claude/` files that
   alterspec installs into user projects (skill `SKILL.md` front-matter, invocation control, subagent format).
   Commands are now skills; `.claude/commands/` is legacy. Don't rely on memory for these formats.
@@ -152,6 +150,24 @@ Statuses: `draft → refined → ready → approved → implemented`.
   `node dist/cli.js handoff MOD-PRC --date 2026-10-07 -C examples/catalog`.
 - Decided: interview-then-draft; one capability = one goal, one acting role, one session; `refine` moves status to
   `refined` at most, anything beyond needs the person's explicit word.
+
+## Open decisions
+
+Ask before deciding; record the answer here when it is made.
+
+1. **Capability granularity**: working rule is one user goal, one acting role, one session (see Decided below), but
+   it has not been confirmed as the final rule.
+2. **Where rules live**: today application-level `RULE-NNN` plus module-level `RULE-<MOD>-NNN`, with
+   `foreign-module-rule` warning when a capability uses another module's rule. Not confirmed as final.
+3. **Bilingual SR/EN**: `config.language` is `en` only; whether the glossary and templates get SR/EN pairs in v1 is
+   open.
+4. **Who writes the spec**: a business analyst with an AI interviewer, or AI drafts with human approval. The
+   commands are built interview-then-draft; a different answer changes command design.
+
+Decided: mockups are a generic HTML prototype generated from the spec plus the experience layer (2026-10-07,
+revised 2026-10-08); the experience layer is UI-only and must match the business spec exactly before handoff, and
+backend, data and architecture design stay outside alterspec (2026-10-08); install prefix `alterspec-` and
+front-matter parsed without `gray-matter` (0.2.0).
 
 ## Phases
 
