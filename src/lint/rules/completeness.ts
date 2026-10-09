@@ -8,7 +8,7 @@ export const incompleteSection: LintRule = {
   severity: 'warn',
   description:
     'Capabilities, screens, entities and experience screens that are refined or later have every template section filled in.',
-  check: ({ model }) => {
+  check: ({ model, root }) => {
     const out: RawFinding[] = [];
     const groups: [
       SectionedType,
@@ -29,7 +29,7 @@ export const incompleteSection: LintRule = {
     for (const [type, objects] of groups) {
       for (const o of objects) {
         if (!REFINED.has(o.data.status)) continue;
-        for (const s of sectionStatus(type, o.body)) {
+        for (const s of sectionStatus(type, o.body, root)) {
           if (!s.empty) continue;
           out.push({
             file: o.file,

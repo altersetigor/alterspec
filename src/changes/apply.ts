@@ -8,6 +8,7 @@ import { readBaseline, today, writeBaseline } from './baseline.js';
 import { ChangeError, changeHash, updateProposal } from './change.js';
 import { fingerprint, specObjects } from './fingerprint.js';
 import { computeImpact, mergedFiles } from './impact.js';
+import { overlayObjects } from './merge.js';
 
 export interface ApplyResult {
   id: string;
@@ -39,7 +40,7 @@ export function runApply(dir: string, changeId: string, opts: { spec?: string } 
   const root = resolve(dir);
   const specDir = opts.spec ?? 'spec';
   const specRoot = join(root, specDir);
-  const { change, current, merged } = mergedFiles(specRoot, changeId);
+  const { change, current, merged } = mergedFiles(specRoot, changeId, root);
 
   if (change.proposal.status !== 'approved') {
     throw new ChangeError(
@@ -93,7 +94,13 @@ export function runApply(dir: string, changeId: string, opts: { spec?: string } 
   const baseline = readBaseline(specRoot);
   if (baseline) {
     const now = specObjects(readSpecDir(specRoot));
-    for (const key of [...impact.added, ...impact.modified].map((o) => o.key)) {
+    // Every object the overlay holds, not only those the impact lists as modified: an edit the impact doesn't
+    // count (whitespace, a comment) still changes the fingerprint, and must not read as a direct edit afterwards.
+    const touched = new Set([
+      ...overlayObjects(change).keys(),
+      ...[...impact.added, ...impact.modified].map((o) => o.key),
+    ]);
+    for (const key of touched) {
       const o = now.get(key);
       if (o) baseline.objects[key] = { hash: fingerprint(o), file: o.file };
     }

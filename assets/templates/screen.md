@@ -12,11 +12,11 @@ fields: []
 #   mode: list                   # list (many records) | view (one record) | edit (one record being entered)
 #   roles: []                    # optional: only these screen roles see this data
 entry_points: []
-# - SCR-GLB-01              # screens or situations that lead here
+# - SCR-GLB-NN              # screens or situations that lead here
 actions: []
 # - id: A01
 #   label: Approve request
-#   capability: CAP-{{MOD}}-001
+#   capability: CAP-{{MOD}}-NNN
 #   roles: []               # optional: only these screen roles see the action
 mockups: []
 # - type: figma             # figma | image | html | other

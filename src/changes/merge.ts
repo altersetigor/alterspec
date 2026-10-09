@@ -1,9 +1,7 @@
-import { readFileSync } from 'node:fs';
-import { join } from 'node:path';
-import { ASSETS_DIR } from '../assets.js';
 import { stripItems } from '../install/skeleton.js';
 import { splitItems } from '../lib/collection.js';
 import { renderTemplate } from '../lib/template.js';
+import { readTemplate } from '../lib/templates.js';
 import { SPEC_TYPES } from '../schemas/index.js';
 import type { SpecFile } from '../spec/files.js';
 import { classify } from '../spec/load.js';
@@ -15,9 +13,9 @@ const COLLECTIONS = new Set(['personas-roles', 'glossary', 'rules', 'module-rule
 const tidy = (s: string) => s.replace(/\n{3,}/g, '\n\n').trimEnd() + '\n';
 
 /** Empty collection file for a path, from its template (module rules get their module code). */
-function emptyCollection(type: string, path: string): string {
+function emptyCollection(type: string, path: string, root?: string): string {
   const def = SPEC_TYPES[type as keyof typeof SPEC_TYPES];
-  const tpl = readFileSync(join(ASSETS_DIR, 'templates', def.template), 'utf8');
+  const tpl = readTemplate(root, def.template);
   const code = /^modules\/([^/]+)\//.exec(path)?.[1]?.toUpperCase() ?? '';
   return renderTemplate(stripItems(tpl), { MOD: code });
 }
@@ -45,13 +43,16 @@ export function overlayObjects(change: LoadedChange): Map<string, SpecObject> {
   return specObjects(change.overlay);
 }
 
-/** The spec files as they would be after applying the change (other files unchanged). */
-export function mergeChange(files: SpecFile[], change: LoadedChange): SpecFile[] {
+/**
+ * The spec files as they would be after applying the change (other files unchanged). With the project root, a
+ * collection file the change creates starts from the project's template override when there is one.
+ */
+export function mergeChange(files: SpecFile[], change: LoadedChange, root?: string): SpecFile[] {
   const out = new Map(files.map((f) => [f.path, f.content]));
   for (const f of change.overlay) {
     const { type } = classify(f);
     if (type && COLLECTIONS.has(type)) {
-      let content = out.get(f.path) ?? emptyCollection(type, f.path);
+      let content = out.get(f.path) ?? emptyCollection(type, f.path, root);
       for (const item of splitItems(f.content)) {
         content = upsertItem(content, type, { key: itemKey(type, item), text: item.text });
       }

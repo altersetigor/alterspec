@@ -8,12 +8,17 @@ import { runHandoff } from '../src/commands/handoff.js';
 import {
   runExperienceInit,
   runExperienceNew,
+  runExperienceRebuild,
   runExperienceReviewed,
   runExperienceSync,
 } from '../src/commands/experience.js';
 import { runValidate } from '../src/commands/validate.js';
-import { elementText, tags } from '../src/experience/html.js';
+import { runInit } from '../src/commands/init.js';
+import { runNew } from '../src/commands/new.js';
+import { computeImpact } from '../src/changes/impact.js';
+import { elementText, tags, withAttr } from '../src/experience/html.js';
 import { copyFixture } from './fixture.js';
+import { tmpProject } from './helpers.js';
 
 const read = (dir: string, p: string) => readFileSync(join(dir, 'spec', p), 'utf8');
 const write = (dir: string, p: string, from: string, to: string) => {
@@ -126,6 +131,105 @@ describe('experience commands', () => {
     expect(read(dir, 'experience/mockups/SCR-HR-01.html')).toContain('Added by sync: place these');
   });
 
+  it('sync gives a new screen role its default view and updates who sees each element', () => {
+    const dir = copyFixture();
+    write(
+      dir,
+      'modules/hr/screens/SCR-HR-01.md',
+      '  - role: ROLE-HR-MANAGER\n',
+      '  - role: ROLE-ACCOUNTANT\n  - role: ROLE-HR-MANAGER\n',
+    );
+    const r = runExperienceSync(dir, 'SCR-HR-01');
+    expect(r.states).toEqual(['default-accountant']);
+    expect(r.roles).toEqual(['SCR-HR-01.A01', 'SCR-HR-01.A02', 'SCR-HR-01.A03']);
+    const page = read(dir, 'experience/mockups/SCR-HR-01.html');
+    expect(page).toMatch(/<body[^>]* data-roles="ROLE-ACCOUNTANT ROLE-HR-MANAGER"/);
+    expect(page).toMatch(/data-src="SCR-HR-01.A01"[^>]* data-roles="ROLE-HR-MANAGER"/);
+    expect(
+      runValidate(dir)
+        .findings.map((f) => f.rule)
+        .filter((r) => r !== 'views-stale'),
+    ).toEqual(['experience-unreviewed']);
+    // Back to one role: the narrowing goes away again.
+    write(dir, 'modules/hr/screens/SCR-HR-01.md', '  - role: ROLE-ACCOUNTANT\n', '');
+    expect(runExperienceSync(dir, 'SCR-HR-01').roles).toEqual([
+      'SCR-HR-01.A01',
+      'SCR-HR-01.A02',
+      'SCR-HR-01.A03',
+    ]);
+    expect(read(dir, 'experience/mockups/SCR-HR-01.html')).not.toMatch(
+      /data-src="SCR-HR-01.A01"[^>]* data-roles=/,
+    );
+  });
+
+  it('rebuild replaces only an untouched draft and records the page fingerprint', () => {
+    const dir = copyFixture();
+    runExperienceNew(dir, 'SCR-PAY-01');
+    expect(read(dir, 'experience/screens/UX-SCR-PAY-01.md')).toMatch(/^page: [0-9a-f]{12}$/m);
+    const r = runExperienceRebuild(dir, 'SCR-PAY-01');
+    expect(r.kept).toBe(false);
+    expect(r.files).toEqual(['experience/mockups/SCR-PAY-01.html', 'experience/screens/UX-SCR-PAY-01.md']);
+    expect(runValidate(dir).findings).toEqual([]);
+  });
+
+  it('rebuild keeps a hand-edited page, writes the fresh render aside and analyses the difference', () => {
+    const dir = copyFixture();
+    runExperienceNew(dir, 'SCR-PAY-01');
+    const mock = 'experience/mockups/SCR-PAY-01.html';
+    write(dir, mock, '<h1 class="ux-page-title">', '<h1 class="ux-page-title ux-big">');
+    const design = runExperienceRebuild(dir, 'SCR-PAY-01');
+    expect(design).toMatchObject({
+      kept: true,
+      files: [],
+      businessChange: [],
+      findings: [],
+      kitOutdated: false,
+    });
+    expect(design.reference).toBe('_generated/experience/rebuild/SCR-PAY-01.html');
+    expect(existsSync(join(dir, 'spec', design.reference!))).toBe(true);
+    expect(read(dir, mock)).toContain('ux-big');
+    expect(runValidate(dir).findings).toEqual([]);
+
+    write(dir, mock, '</main>', '<div data-src="SCR-PAY-01.ENT-PAYSLIP.Discount">Discount</div></main>');
+    const business = runExperienceRebuild(dir, 'SCR-PAY-01');
+    expect(business.kept).toBe(true);
+    expect(business.businessChange).toEqual(['SCR-PAY-01.ENT-PAYSLIP.Discount']);
+    expect(business.findings.map((f) => f.rule)).toEqual(['experience-mockup']);
+    expect(read(dir, mock)).toContain('Discount');
+
+    const forced = runExperienceRebuild(dir, 'SCR-PAY-01', { force: true });
+    expect(forced.kept).toBe(false);
+    expect(read(dir, mock)).not.toMatch(/ux-big|Discount/);
+  });
+
+  it('rebuild treats a page without a recorded fingerprint as hand-made', () => {
+    const dir = copyFixture();
+    const before = read(dir, 'experience/mockups/SCR-HR-01.html');
+    expect(runExperienceRebuild(dir, 'SCR-HR-01').kept).toBe(true);
+    expect(read(dir, 'experience/mockups/SCR-HR-01.html')).toBe(before);
+  });
+
+  it('init writes the spec data the pages load; inside a change, a preview copy goes into the overlay', () => {
+    const fresh = tmpProject();
+    runInit(fresh, { name: 'Demo' });
+    runNew(fresh, 'role', { name: 'admin', title: 'Admin' });
+    runNew(fresh, 'module', { code: 'HR', title: 'HR' });
+    runNew(fresh, 'screen', { module: 'HR', title: 'People' });
+    runExperienceInit(fresh);
+    expect(existsSync(join(fresh, 'spec/_generated/experience/spec.js'))).toBe(true);
+
+    const dir = copyFixture();
+    runBaseline(dir);
+    const { id } = runChangeNew(dir, 'Design payslips');
+    runExperienceNew(dir, 'SCR-PAY-01', { change: id });
+    const preview = join(dir, 'spec/changes', id, 'spec/_generated/experience/spec.js');
+    expect(existsSync(preview)).toBe(true);
+    expect(computeImpact(dir, id).added.map((o) => o.key)).toEqual([
+      'UX-SCR-PAY-01',
+      'file:experience/mockups/SCR-PAY-01.html',
+    ]);
+  });
+
   it('after the baseline, works only inside a change, and change edit takes the mockup along', () => {
     const dir = copyFixture();
     runBaseline(dir);
@@ -181,5 +285,14 @@ describe('mockup reader', () => {
         t.find((x) => x.attrs['data-src'] === 'B')!,
       ),
     ).toBe('Typed');
+  });
+
+  it('sets, replaces and removes an attribute on an opening tag', () => {
+    const html = '<div data-src="A" data-roles="R1">x</div><input data-src="B">';
+    const a = () => tags(html).find((x) => x.attrs['data-src'] === 'A')!;
+    expect(withAttr(html, a(), 'data-roles', 'R2 R3')).toContain('<div data-src="A" data-roles="R2 R3">');
+    expect(withAttr(html, a(), 'data-roles', undefined)).toContain('<div data-src="A">');
+    const b = tags(html).find((x) => x.attrs['data-src'] === 'B')!;
+    expect(withAttr(html, b, 'data-roles', 'R1')).toContain('<input data-src="B" data-roles="R1">');
   });
 });

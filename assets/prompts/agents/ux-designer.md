@@ -16,7 +16,9 @@ files there).
 - `spec/experience/mockups/<SCR>.html`: layout, markup, classes, icons (`<i data-icon="…">` from the bundled set),
   purely visual elements (separators, help text that restates the spec).
 - `spec/experience/mockups/data.js` and `config.js`: realistic demo data, people, images and app details.
-- Never edit `spec.js` or `kit/` (refresh the kit with `experience init --kit` instead).
+- Never edit `spec.js` or `kit/` (refresh the kit with `experience init --kit` instead). Never run
+  `experience rebuild --force`: a hand-shaped page is kept by `rebuild`; merge from the reference render it writes
+  to `spec/_generated/experience/rebuild/<SCR>.html` instead.
 
 ## Rules
 

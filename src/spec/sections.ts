@@ -1,8 +1,7 @@
 import { readFileSync } from 'node:fs';
-import { join } from 'node:path';
-import { ASSETS_DIR } from '../assets.js';
 import { blankComments } from '../lib/collection.js';
 import { splitFrontMatter } from '../lib/frontmatter.js';
+import { templatePath } from '../lib/templates.js';
 
 export interface Section {
   heading: string;
@@ -45,17 +44,19 @@ const TEMPLATE_FOR = {
 } as const;
 export type SectionedType = keyof typeof TEMPLATE_FOR;
 
-const cache = new Map<SectionedType, Section[]>();
+const cache = new Map<string, Section[]>();
 
-/** The body sections a template defines, excluding sections that only hold a GENERATED block. */
-export function templateSections(type: SectionedType): Section[] {
-  let s = cache.get(type);
+/**
+ * The body sections a template defines, excluding sections that only hold a GENERATED block. With a project root,
+ * the project's template override (`.alterspec/custom/templates/`) is used when there is one.
+ */
+export function templateSections(type: SectionedType, root?: string): Section[] {
+  const path = templatePath(root, TEMPLATE_FOR[type]);
+  let s = cache.get(path);
   if (!s) {
-    const { body } = splitFrontMatter(
-      readFileSync(join(ASSETS_DIR, 'templates', TEMPLATE_FOR[type]), 'utf8'),
-    );
+    const { body } = splitFrontMatter(readFileSync(path, 'utf8'));
     s = sections(body).filter((x) => !x.text.includes('GENERATED:start'));
-    cache.set(type, s);
+    cache.set(path, s);
   }
   return s;
 }
@@ -69,9 +70,9 @@ export interface SectionStatus {
 }
 
 /** Which template sections are missing or still empty (unchanged from the template scaffold) in a body. */
-export function sectionStatus(type: SectionedType, body: string): SectionStatus[] {
+export function sectionStatus(type: SectionedType, body: string, root?: string): SectionStatus[] {
   const own = sections(body);
-  return templateSections(type).map((t) => {
+  return templateSections(type, root).map((t) => {
     const found = own.find((s) => s.heading.toLowerCase() === t.heading.toLowerCase());
     if (!found) return { heading: t.heading, line: undefined, empty: true, missing: true };
     const text = normalizeSection(found.text);

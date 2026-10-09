@@ -41,6 +41,7 @@ function find(model: SpecModel, id: string): Located<unknown> | undefined {
     model.screens,
     model.entities,
     model.flows,
+    model.experiences,
     model.changes,
     model.rules,
     model.events,
@@ -100,17 +101,19 @@ export function runShow(dir: string, rawId: string, opts: { spec?: string } = {}
         (d) => d.data.kind === 'open_question' && d.data.status === 'open' && d.data.affects.includes(id),
       )
       .map((d) => ({ id: d.id, title: d.data.title })),
-    findings: lint(load, loadConfig(root)).filter(
+    findings: lint(load, loadConfig(root), root).filter(
       (f) => f.id === id || (f.file === obj.file && !f.id && 'body' in obj),
     ),
   };
-  if (kind === 'capability' || kind === 'screen' || kind === 'entity') {
+  if (kind === 'capability' || kind === 'screen' || kind === 'entity' || kind === 'experience') {
     const doc = obj as LocatedDoc<unknown>;
-    result.sections = sectionStatus(kind as SectionedType, doc.body).map(({ heading, empty, missing }) => ({
-      heading,
-      empty,
-      missing,
-    }));
+    result.sections = sectionStatus(kind as SectionedType, doc.body, root).map(
+      ({ heading, empty, missing }) => ({
+        heading,
+        empty,
+        missing,
+      }),
+    );
     if (kind === 'capability') result.acceptanceCriteria = acceptanceCriteria(doc.body).map((a) => a.id);
   }
   return result;

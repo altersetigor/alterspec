@@ -148,12 +148,16 @@ agents or settings.
 | `/alterspec-handoff <ID> [target]` | Export to Spec Kit, OpenSpec, BMAD or a bundle |
 | `/alterspec-experience [init \| <SCR> \| review <SCR> \| sync <SCR> \| rebuild <SCR>]` | The future app as working mockups, with a UX contract per screen kept fully aligned with the spec |
 
-Two agents work behind these commands:
+Four agents work behind these commands:
 
 - **`alterspec-analyst`** finds gaps and drafts body text from answers you already gave. It never interviews you and never
   invents business facts.
 - **`alterspec-reviewer`** is read-only. It looks for contradictions, data nobody produces, permission holes, untestable
   acceptance criteria, missing exception flows and glossary drift.
+- **`alterspec-ux-designer`** shapes one screen's experience contract and mockup from your answers. It never touches the
+  business spec; when the design needs something the spec lacks, it says so.
+- **`alterspec-experience-reviewer`** is read-only. It checks a screen's contract and mockup against the business screen
+  element by element and reports a parity table.
 
 The `change-*` commands edit one existing object and check everything that depends on it. Before the baseline they edit
 the spec directly; after it they put the edit in a change proposal (an open one you choose, or a new one), so it still
@@ -229,7 +233,7 @@ alterspec show CAP-CAT-001        # references both ways, empty sections, open q
 | `alterspec experience init [--kit]` | Add the design system, patterns and the mockup app to `spec/experience/`. Never overwrites; `--kit` refreshes the kit. |
 | `alterspec experience seed` | Rewrite the demo data from the spec and add missing demo people. |
 | `alterspec experience new <SCR>` | Draft a screen's experience contract and working page; both pass every check. |
-| `alterspec experience rebuild <SCR>` | Render a page again from its experience contract on the current kit. |
+| `alterspec experience rebuild <SCR> [--force]` | Render a page again from its experience contract on the current kit. A page with hand edits is kept and analysed; only `--force` replaces it. |
 | `alterspec experience sync <SCR>` | Align them with a changed business screen. |
 | `alterspec experience reviewed <SCR>` | Record a clean parity review; refused while anything is out of line. |
 
@@ -487,15 +491,18 @@ lint:
     - microservice
 ```
 
-To change how a command behaves, copy its prompt into `.alterspec/custom/` and edit the copy:
+To change how a command behaves, copy its prompt or template into `.alterspec/custom/` and edit the copy:
 
 ```text
-.alterspec/custom/prompts/create-capability.md          replaces .alterspec/prompts/create-capability.md
+.alterspec/custom/prompts/create-capability.md   replaces .alterspec/prompts/create-capability.md
 .alterspec/custom/prompts/agents/reviewer.md     replaces the reviewer's instructions
 .alterspec/custom/templates/capability.md        replaces the capability template
 ```
 
-The `.claude/` files are thin wrappers that read these prompts, so your customisations survive updates.
+The `.claude/` files are thin wrappers that read these prompts, so your customisations survive updates. Template
+overrides are used by `alterspec new`, `change new` and `experience new`, and by the `incomplete-section` check, which
+expects the sections of your template. Keep the front-matter and the GENERATED blocks of the original;
+`alterspec doctor` reports an override whose name matches no shipped template.
 
 ## Using alterspec in CI
 
@@ -535,10 +542,10 @@ After an update, run `npx alterspec views` once: new versions can add generated 
 ## Example project
 
 [`examples/catalog`](https://github.com/altersetigor/alterspec/blob/main/examples/catalog/README.md) is a complete product catalog spec:
-- 4 modules, 16 capabilities and 5 cross-module flows
-- a baseline, one applied change and one change in review
+- 4 modules, 16 capabilities, 6 screens and 5 cross-module flows
+- a baseline, three applied changes and one change in review
 - handoff output for every target
-- an experience layer with the sales price review designed, reviewed and handed off
+- an experience layer with the sales price review designed, reviewed and handed off, running as a small app
 
 It's the quickest way to see what a finished alterspec project looks like.
 

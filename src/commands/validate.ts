@@ -26,8 +26,8 @@ export function runValidate(dir: string, opts: ValidateOptions = {}): ValidateRe
   const root = resolve(dir);
   const specRoot = join(root, opts.spec ?? 'spec');
   const findings = opts.change
-    ? lintMerged(root, mergedFiles(specRoot, opts.change).merged)
-    : lint(loadSpec(readSpecDir(specRoot)), loadConfig(root));
+    ? lintMerged(root, mergedFiles(specRoot, opts.change, root).merged)
+    : lint(loadSpec(readSpecDir(specRoot)), loadConfig(root), root);
   const result = { version: packageVersion(), summary: summarize(findings), findings };
   if (opts.report) {
     mkdirSync(join(specRoot, '_generated'), { recursive: true });

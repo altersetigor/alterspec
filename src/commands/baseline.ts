@@ -14,7 +14,7 @@ export function runBaseline(dir: string, opts: { spec?: string; force?: boolean 
     );
   }
   const files = readSpecDir(specRoot);
-  const errors = lint(loadSpec(files), loadConfig(root)).filter(
+  const errors = lint(loadSpec(files), loadConfig(root), root).filter(
     (f) => f.severity === 'error' && f.rule !== 'direct-edit',
   );
   if (errors.length)

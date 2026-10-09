@@ -299,14 +299,14 @@ experienceOpts(
     .description(
       'Add the starter design system, patterns and the mockup app. Never overwrites, except with --kit',
     )
-    .option('--kit', 'refresh the mockup kit, spec.js and the sign-in page to this version'),
+    .option('--kit', 'refresh the mockup kit and the sign-in page to this version'),
 ).action((opts: ExperienceCliOpts & { kit?: boolean }) => {
   const r = runExperienceInit(opts.dir, opts);
   if (opts.json) console.log(JSON.stringify(r, null, 2));
   else {
-    for (const f of r.created) console.log(`created spec/${f}`);
-    for (const f of r.updated) console.log(`updated spec/${f}`);
-    if (!opts.kit) for (const f of r.skipped) console.log(`kept spec/${f} (exists)`);
+    for (const f of r.created) console.log(`created ${opts.spec}/${f}`);
+    for (const f of r.updated) console.log(`updated ${opts.spec}/${f}`);
+    if (!opts.kit) for (const f of r.skipped) console.log(`kept ${opts.spec}/${f} (exists)`);
   }
 });
 
@@ -315,18 +315,40 @@ experienceOpts(
 ).action((opts: ExperienceCliOpts) => {
   const r = runExperienceSeed(opts.dir, opts);
   if (opts.json) console.log(JSON.stringify(r, null, 2));
-  else console.log(`seeded ${r.records} records (${r.files.map((f) => `spec/${f}`).join(', ')})`);
+  else console.log(`seeded ${r.records} records (${r.files.map((f) => `${opts.spec}/${f}`).join(', ')})`);
 });
 
 experienceOpts(
   experience
     .command('rebuild')
-    .description("Render a screen's mockup again from its experience screen on the current kit")
-    .argument('<SCR>'),
-).action((id: string, opts: ExperienceCliOpts) => {
+    .description(
+      "Render a screen's mockup again from its experience screen on the current kit. A page with hand edits is kept and analysed instead",
+    )
+    .argument('<SCR>')
+    .option('--force', 'replace the page even though it has hand edits (they are lost)'),
+).action((id: string, opts: ExperienceCliOpts & { force?: boolean }) => {
   const r = runExperienceRebuild(opts.dir, id, opts);
-  if (opts.json) console.log(JSON.stringify(r));
-  else for (const f of r.files) console.log(`wrote spec/${f}`);
+  if (opts.json) console.log(JSON.stringify(r, null, 2));
+  else if (!r.kept) for (const f of r.files) console.log(`wrote ${opts.spec}/${f}`);
+  else {
+    console.log(
+      `${r.screen}: the page has hand edits and was kept. Fresh render: ${opts.spec}/${r.reference}`,
+    );
+    if (r.businessChange.length)
+      console.log(
+        `  business content the spec lacks: ${r.businessChange.join(', ')}; put it into the business spec (/alterspec-change-screen, -entity), then \`alterspec experience sync ${r.screen}\`, or take it off the page`,
+      );
+    for (const f of r.findings) console.log(`  ${f.file}:${f.line ?? ''}  ${f.rule}  ${f.message}`);
+    if (r.kitOutdated)
+      console.log(
+        '  the page does not load the current kit; merge the head and scripts from the fresh render',
+      );
+    if (!r.businessChange.length && !r.findings.length && !r.kitOutdated)
+      console.log(
+        '  design edits only; nothing to do unless you want the fresh render (--force replaces the page)',
+      );
+  }
+  if (r.kept) process.exitCode = 1;
 });
 
 experienceOpts(
@@ -337,7 +359,7 @@ experienceOpts(
 ).action((id: string, opts: ExperienceCliOpts) => {
   const r = runExperienceNew(opts.dir, id, opts);
   if (opts.json) console.log(JSON.stringify(r));
-  else for (const f of r.files) console.log(`wrote spec/${f}`);
+  else for (const f of r.files) console.log(`wrote ${opts.spec}/${f}`);
 });
 
 experienceOpts(
@@ -365,7 +387,9 @@ experienceOpts(
     for (const s of r.added) console.log(`added ${s} (place it in the mockup)`);
     for (const s of r.removed) console.log(`removed ${s}`);
     for (const s of r.states) console.log(`added state ${s}`);
-    if (!r.added.length && !r.removed.length && !r.states.length) console.log(`${r.screen} is aligned.`);
+    for (const s of r.roles) console.log(`updated who sees ${s}`);
+    if (!r.added.length && !r.removed.length && !r.states.length && !r.roles.length)
+      console.log(`${r.screen} is aligned.`);
   }
 });
 

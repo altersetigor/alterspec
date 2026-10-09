@@ -126,6 +126,7 @@ export function exists(model: SpecModel, id: string): boolean {
     model.screens.has(id) ||
     model.entities.has(id) ||
     model.flows.has(id) ||
+    model.experiences.has(id) ||
     model.changes.has(id) ||
     model.rules.has(id) ||
     model.events.has(id) ||

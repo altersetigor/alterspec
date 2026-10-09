@@ -93,6 +93,13 @@ describe('alterspec show', () => {
     expect(formatShow(r)).toMatch(/RULE-999 \(missing\)/);
   });
 
+  it('experience screen: its business screen and its template sections', () => {
+    const r = runShow(FIXTURE, 'UX-SCR-HR-01');
+    expect(r).toMatchObject({ id: 'UX-SCR-HR-01', kind: 'experience' });
+    expect(r.references.map((x) => x.id)).toContain('SCR-HR-01');
+    expect(r.sections?.map((s) => s.heading)).toContain('Interactions');
+  });
+
   it('fails clearly for unknown IDs', () => {
     expect(() => runShow(FIXTURE, 'CAP-HR-999')).toThrow(/CAP-HR-999 not found/);
   });

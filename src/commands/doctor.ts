@@ -65,6 +65,19 @@ export function runDoctor(dir: string): Check[] {
     }
   }
 
+  const customTemplates = join(root, '.alterspec/custom/templates');
+  if (existsSync(customTemplates)) {
+    const shipped = new Set(readdirSync(join(ASSETS_DIR, 'templates')));
+    for (const name of readdirSync(customTemplates)) {
+      if (name.endsWith('.md') && !shipped.has(name)) {
+        checks.push({
+          ok: false,
+          message: `.alterspec/custom/templates/${name} overrides no template (renamed in this version?); it is not used`,
+        });
+      }
+    }
+  }
+
   const manifest = readManifest(root);
   if (!manifest) {
     checks.push({ ok: false, message: '.alterspec/manifest.json is missing. Run `alterspec update`.' });

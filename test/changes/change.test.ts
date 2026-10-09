@@ -3,6 +3,7 @@ import { join } from 'node:path';
 import { parse } from 'yaml';
 import { describe, expect, it } from 'vitest';
 import { runApply } from '../../src/changes/apply.js';
+import { computeImpact } from '../../src/changes/impact.js';
 import { runBaseline } from '../../src/commands/baseline.js';
 import { runChangeEdit, runChangeNew, runChangeRemove, runChangeStatus } from '../../src/commands/change.js';
 import { runNew } from '../../src/commands/new.js';
@@ -117,6 +118,16 @@ describe('change new / edit / remove', () => {
       ]),
     );
     expect(() => runChangeEdit(dir, id, 'CAP-HR-003')).toThrow(/removed by/);
+  });
+
+  it('removing an experience screen removes its mockup page too', () => {
+    const { dir, id } = projectWithChange();
+    runChangeRemove(dir, id, 'UX-SCR-HR-01');
+    expect(proposal(dir, id).removes).toEqual(['UX-SCR-HR-01', 'file:experience/mockups/SCR-HR-01.html']);
+    expect(computeImpact(dir, id).removed.map((o) => o.key)).toEqual([
+      'UX-SCR-HR-01',
+      'file:experience/mockups/SCR-HR-01.html',
+    ]);
   });
 
   it('refuses unknown objects and changes', () => {

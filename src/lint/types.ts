@@ -25,6 +25,8 @@ export interface LintContext {
   invalidIds: Set<string>;
   /** What `alterspec views` would write now. */
   views: ViewsPlan;
+  /** Project root, when known: lets rules read the project's template overrides. */
+  root?: string;
 }
 
 export interface LintRule {

@@ -35,8 +35,9 @@ Once a baseline exists, every command below needs `--change <CHG>`: ask which op
 ## `init` — the app and its design
 
 1. Run `npx @alterset/alterspec experience init --json`. It adds the design system, patterns, the kit, `config.js`,
-   `spec.js`, seeded `data.js` and the sign-in page, and never overwrites. On an existing layer, `--kit` refreshes the
-   kit, `spec.js` and the sign-in page to this version.
+   seeded `data.js` and the sign-in page, writes `spec.js` (through `views`; inside a change, a preview copy goes into
+   the change folder) and never overwrites. On an existing layer, `--kit` refreshes the kit and the sign-in page to
+   this version.
 2. Interview, at most 3 questions at a time:
    - The product as people will see it: its name, logo (URL or a file to put in `mockups/assets/`), currency and
      locale. Write them into `config.js`.
@@ -94,8 +95,18 @@ real product, based on the application's vision, glossary and entities:
    ones as drafts in an "Added by sync" block of the page, adds missing states and records the new alignment.
 2. Place the added elements properly (designer agent), then `validate`, then `review <SCR>`.
 
-## `rebuild <SCR>` — a fresh page from the contract
+## `rebuild <SCR>` — a fresh page from the contract, never over hand edits
 
-`npx @alterset/alterspec experience rebuild <SCR>` renders the page again from the experience screen on the current
-kit: labels, regions, components and states are kept; hand edits to the page are replaced. Use it after upgrading the
-kit, or when a page has drifted too far to repair. Tell the person first if the page has hand edits.
+`npx @alterset/alterspec experience rebuild <SCR> --json` renders the page again from the experience screen on the
+current kit. It replaces the page only when the page is still exactly what the CLI last rendered. A page with hand
+edits is **kept** (`kept: true`); the fresh render goes to `spec/_generated/experience/rebuild/<SCR>.html` and the
+result says what differs. Then:
+
+- `businessChange` lists `data-src` values on the page that the business spec doesn't have. That is business content,
+  not design: run the spec change flow (`/alterspec-change-screen`, `/alterspec-change-entity`…), then
+  `experience sync <SCR>`, or take it off the page. Never answer it by rebuilding.
+- `findings`: fix them in the contract or the page, as the designer agent would.
+- `kitOutdated`: merge the head and the scripts from the fresh render into the page; keep the person's layout.
+- Nothing listed: the page has design edits only. Leave it.
+
+Never pass `--force`. It throws the person's design away; only they may decide that, by saying so explicitly.

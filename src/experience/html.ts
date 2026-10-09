@@ -63,6 +63,16 @@ function blank(html: string): string {
     );
 }
 
+/** The page with one attribute of an opening tag set (or removed, with an undefined value). */
+export function withAttr(html: string, tag: Tag, name: string, value: string | undefined): string {
+  const open = html.slice(tag.start, tag.end);
+  const re = new RegExp(`\\s+${name}(?:\\s*=\\s*(?:"[^"]*"|'[^']*'|[^\\s>]+))?`, 'i');
+  const escaped = value === undefined ? '' : value.replace(/&/g, '&amp;').replace(/"/g, '&quot;');
+  const attr = value === undefined ? '' : ` ${name}="${escaped}"`;
+  const next = re.test(open) ? open.replace(re, attr) : open.replace(/\s*\/?>$/, (end) => `${attr}${end}`);
+  return html.slice(0, tag.start) + next + html.slice(tag.end);
+}
+
 /** Offset just after the element's closing tag, or undefined if it can't be found. */
 export function elementEnd(html: string, tag: Tag): { inner: number; end: number } | undefined {
   if (VOID.has(tag.name)) return { inner: tag.end, end: tag.end };

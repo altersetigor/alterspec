@@ -4,12 +4,13 @@ import { planViews } from '../views/plan.js';
 import { RULES } from './rules/index.js';
 import type { Finding, LintContext } from './types.js';
 
-export function lint(load: LoadResult, config: Config): Finding[] {
+export function lint(load: LoadResult, config: Config, root?: string): Finding[] {
   const ctx: LintContext = {
     model: load.model,
     config,
     invalidIds: load.invalidIds,
     views: planViews(load.model),
+    ...(root ? { root } : {}),
   };
   const severityOf = (rule: string) => {
     const override = config.lint.rules[rule];

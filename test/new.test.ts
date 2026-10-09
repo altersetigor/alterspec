@@ -1,9 +1,12 @@
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
+import { runInit } from '../src/commands/init.js';
 import { runNew, type NewOptions, type NewType } from '../src/commands/new.js';
+import { runShow } from '../src/commands/show.js';
 import { runValidate } from '../src/commands/validate.js';
 import { copyFixture } from './fixture.js';
+import { readAsset, tmpProject } from './helpers.js';
 
 const errors = (dir: string) => runValidate(dir).findings.filter((f) => f.severity === 'error');
 const read = (dir: string, p: string) => readFileSync(join(dir, p), 'utf8');
@@ -118,6 +121,42 @@ describe('alterspec new', () => {
       'CAP-HR-008',
     );
     expect(runNew(dir, 'flow', { title: 'Y', capability: 'CAP-HR-001' }).id).toBe('FLOW-010');
+  });
+
+  it('a fresh project hands out 001 / 01 first: template examples never burn an ID', () => {
+    const root = tmpProject();
+    runInit(root, { name: 'Demo' });
+    runNew(root, 'role', { name: 'admin', title: 'Admin' });
+    runNew(root, 'module', { code: 'GLB', title: 'Shared' });
+    runNew(root, 'module', { code: 'HR', title: 'HR' });
+    expect(runNew(root, 'screen', { module: 'HR', title: 'People' }).id).toBe('SCR-HR-01');
+    expect(runNew(root, 'screen', { module: 'GLB', title: 'Home' }).id).toBe('SCR-GLB-01');
+    expect(runNew(root, 'capability', { module: 'HR', title: 'Hire', role: 'admin' }).id).toBe('CAP-HR-001');
+  });
+
+  it("uses the project's template overrides from .alterspec/custom/templates/", () => {
+    const dir = copyFixture();
+    const custom = join(dir, '.alterspec/custom/templates');
+    mkdirSync(custom, { recursive: true });
+    writeFileSync(
+      join(custom, 'capability.md'),
+      readAsset('templates/capability.md').replace('## Out of scope', '## Risks\n\n## Out of scope'),
+    );
+    writeFileSync(
+      join(custom, 'rules.md'),
+      readAsset('templates/rules.md').replace('<!-- The rule, stated', '**Rule:** <!-- The rule, stated'),
+    );
+    const cap = runNew(dir, 'capability', { module: 'HR', title: 'Hire', role: 'HR-MANAGER' });
+    expect(read(dir, cap.file)).toContain('## Risks');
+    runNew(dir, 'rule', { title: 'Custom rule' });
+    expect(read(dir, 'spec/application/rules.md')).toContain('**Rule:**');
+    // the section check follows the override: a refined capability without "Risks" is incomplete
+    writeFileSync(join(dir, cap.file), read(dir, cap.file).replace('## Risks\n', ''));
+    const messages = runShow(dir, cap.id).sections?.map((s) => s.heading);
+    expect(messages).toContain('Risks');
+    expect(runShow(dir, 'CAP-HR-002').sections?.find((s) => s.heading === 'Risks')).toMatchObject({
+      missing: true,
+    });
   });
 
   it('puts personas above the roles heading', () => {

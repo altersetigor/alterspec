@@ -118,7 +118,7 @@ export function runHandoff(dir: string, rawId: string, opts: HandoffOptions = {}
   const bundle = buildBundle(load.model, files, rawId);
   const sourceIds = new Set(bundle.sources.map((s) => s.id));
 
-  const findings = lint(load, loadConfig(root));
+  const findings = lint(load, loadConfig(root), root);
   const errors = findings.filter((f) => f.severity === 'error' && f.id && sourceIds.has(f.id));
   if (errors.length) {
     throw new HandoffError(

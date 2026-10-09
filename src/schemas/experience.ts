@@ -43,6 +43,8 @@ export const ExperienceScreenSchema = z
     dry: z.string().optional(),
     /** Fingerprint of this screen and its mockup at the last clean parity review. Written by the CLI. */
     reviewed: z.string().optional(),
+    /** Fingerprint of the mockup page as the CLI last rendered it; `rebuild` replaces only an untouched page. */
+    page: z.string().optional(),
     elements: list(ExperienceElementSchema),
     states: list(ExperienceStateSchema),
   })

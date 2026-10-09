@@ -3,9 +3,9 @@ id: UX-{{SCREEN}}
 screen: {{SCREEN}}
 status: draft
 archetype: {{archetype}}
-# dry / reviewed are written by `alterspec experience`; don't edit them.
+# dry / reviewed / page are written by `alterspec experience`; don't edit them.
 elements: []
-# - src: SCR-XX-01.A01           # a business element of the screen (data-src in the prototype)
+# - src: SCR-XX-NN.A01           # a business element of the screen (data-src in the prototype)
 #   region: actions              # a region of the archetype (experience/patterns.md)
 #   component: button-primary    # a component of the design system (experience/design-system.md)
 #   label: "Approve"             # the exact text people see

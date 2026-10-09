@@ -22,6 +22,9 @@ Similar in spirit to BMAD-METHOD, GitHub Spec Kit and OpenSpec, but positioned *
 
 ## 2. Naming & distribution (decided)
 
+> Superseded since 0.2.0: the installed skills and agents are prefixed `alterspec-` (not `alter-`), and front-matter is
+> parsed without `gray-matter`. [CLAUDE.md](../CLAUDE.md) holds the current rules; this brief keeps the history.
+
 - Name: **alterspec**
 - npm: `@alterset/alterspec` (published as 0.0.1 placeholder). Unscoped `alterspec` was free — reserve it too.
 - Install UX target: `npx alterspec init` (or `npx @alterset/alterspec init`)

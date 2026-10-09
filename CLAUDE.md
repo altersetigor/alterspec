@@ -37,7 +37,8 @@ via the built-in `z.toJSONSchema`). Dev: `tsup`, `vitest`, `eslint` + `typescrip
 - `npm test` · `npm run typecheck` · `npm run lint` · `npm run build` · `npx prettier --check .`
 - `src/schemas/ids.ts` is the single source for ID formats; `src/schemas/index.ts` registers every spec type.
 - Shipped content lives in `assets/` (templates, prompts, `.claude/` wrappers, default config).
-  `src/install/manifest.ts` maps it to install paths and ownership policies.
+  `src/install/manifest.ts` maps it to install paths and ownership policies. Templates are always read through
+  `src/lib/templates.ts`, which prefers a project's `.alterspec/custom/templates/<name>` override.
 - Lint rules live in `src/lint/rules/` and are registered in `src/lint/rules/index.ts`. Every rule needs a
   passing and a failing case in `test/lint/rules.test.ts`; the test fails when a rule has no case.
 - `test/fixtures/valid/` must stay at zero findings. After editing it, run
@@ -138,7 +139,10 @@ Statuses: `draft → refined → ready → approved → implemented`.
   subset, ISC). `src/experience/app.ts` builds `spec.js` (written by `views` to `_generated/experience/`), the default
   `config.js` (demo people from personas, neutral English defaults) and seeded `data.js`; `scaffold.ts` renders pages
   bound to the store, with `data-effect` derived from the capability (create / transition / update / archive /
-  delete, `own` scope). No reviewer chrome on pages (`experience-chrome`); states by URL only. Binary assets go
+  delete, `own` scope). No reviewer chrome on pages (`experience-chrome`); states by URL only. `experience rebuild`
+  never overwrites a hand-edited page: the contract's `page:` fingerprint says whether the page is still the CLI's
+  render; otherwise the fresh render goes to `_generated/experience/rebuild/` with an analysis (`--force` only by the
+  person's word). Binary assets go
   through `encodingOf` (latin1) in `src/spec/files.ts`. Keep defaults neutral: nothing product- or locale-specific.
 - `examples/catalog/` is the reference example and a golden fixture: tests require 0 findings, current views, and that
   re-running its handoffs (`--date 2026-10-07`) reproduces `examples/catalog/handoff/` byte for byte. Its applied

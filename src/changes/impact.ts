@@ -57,16 +57,17 @@ export interface Impact {
 
 /** Lint a set of files as a change's merged spec would be linted. */
 export function lintMerged(root: string, files: SpecFile[]): Finding[] {
-  return lint(loadSpec(files), loadConfig(root)).filter((f) => !SKIP_FOR_CHANGES.has(f.rule));
+  return lint(loadSpec(files), loadConfig(root), root).filter((f) => !SKIP_FOR_CHANGES.has(f.rule));
 }
 
 export function mergedFiles(
   specRoot: string,
   changeId: string,
+  root?: string,
 ): { change: LoadedChange; current: SpecFile[]; merged: SpecFile[] } {
   const change = loadChange(specRoot, changeId);
   const current = readSpecDir(specRoot);
-  return { change, current, merged: mergeChange(current, change) };
+  return { change, current, merged: mergeChange(current, change, root) };
 }
 
 const yamlOf = (o: SpecObject): Record<string, unknown> => {
@@ -155,7 +156,7 @@ function viewChanges(before: SpecModel, after: SpecModel): Impact['views'] {
 export function computeImpact(dir: string, changeId: string, opts: { spec?: string } = {}): Impact {
   const root = resolve(dir);
   const specRoot = join(root, opts.spec ?? 'spec');
-  const { change, current, merged } = mergedFiles(specRoot, changeId);
+  const { change, current, merged } = mergedFiles(specRoot, changeId, root);
   const before = specObjects(current);
   const after = specObjects(merged);
   const touched = overlayObjects(change);

@@ -1,11 +1,11 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { isSeq, parseDocument } from 'yaml';
-import { ASSETS_DIR } from '../assets.js';
 import { nextNumber } from '../authoring/ids.js';
 import { extractItems } from '../install/skeleton.js';
 import { splitFrontMatter } from '../lib/frontmatter.js';
 import { renderTemplate } from '../lib/template.js';
+import { readTemplate } from '../lib/templates.js';
 import { ID_REGEX, Scope, moduleCode } from '../schemas/index.js';
 import { readSpecDir } from '../spec/files.js';
 import { loadSpec } from '../spec/load.js';
@@ -68,8 +68,6 @@ const REQUIRED: Record<NewType, (keyof NewOptions)[]> = {
   term: ['term'],
 };
 
-const template = (name: string) => readFileSync(join(ASSETS_DIR, 'templates', name), 'utf8');
-
 /** Normalise `HR`, `hr` or `MOD-HR` to the module code `HR`. */
 const codeOf = (m: string) => moduleCode(m.trim().toUpperCase());
 /** Normalise `HR-MANAGER` or `ROLE-HR-MANAGER` to the full ID. */
@@ -99,8 +97,9 @@ export function runNew(dir: string, type: NewType, opts: NewOptions): NewResult 
     if (change.proposal.status !== 'draft' && change.proposal.status !== 'in_review') {
       throw new NewError(`${change.id} is ${change.proposal.status} and can't be edited`);
     }
-    const { model } = loadSpec(mergeChange(files, change));
+    const { model } = loadSpec(mergeChange(files, change, root));
     const ctx: Ctx = {
+      root,
       specRoot: change.overlayRoot,
       files,
       model,
@@ -115,6 +114,7 @@ export function runNew(dir: string, type: NewType, opts: NewOptions): NewResult 
 
   const { model } = loadSpec(files);
   const result = create(type, opts, {
+    root,
     specRoot,
     files,
     model,
@@ -127,6 +127,8 @@ export function runNew(dir: string, type: NewType, opts: NewOptions): NewResult 
 }
 
 interface Ctx {
+  /** Project root: templates come from its `.alterspec/custom/templates/` when overridden there. */
+  root: string;
   /** Where files are written: spec/, or a change's overlay. */
   specRoot: string;
   /** Raw spec files (including open changes), for ID allocation. */
@@ -160,8 +162,8 @@ function appendItem(ctx: Ctx, path: string, item: string, createFrom?: string): 
   return base.split('\n').length;
 }
 
-function itemOf(templateName: string, prefix: string, vars: Record<string, string>): string {
-  const item = extractItems(template(templateName)).find((i) => i.startsWith(`## ${prefix}`));
+function itemOf(ctx: Ctx, templateName: string, prefix: string, vars: Record<string, string>): string {
+  const item = extractItems(readTemplate(ctx.root, templateName)).find((i) => i.startsWith(`## ${prefix}`));
   if (!item) throw new Error(`template ${templateName} has no ${prefix} item`);
   return renderTemplate(item, vars);
 }
@@ -183,6 +185,7 @@ function requireNew(ctx: Ctx, id: string, kind: keyof typeof ID_REGEX) {
 
 function create(type: NewType, o: NewOptions, ctx: Ctx): NewResult {
   const title = o.title ?? '';
+  const template = (name: string) => readTemplate(ctx.root, name);
   switch (type) {
     case 'module': {
       const code = codeOf(o.code!);
@@ -278,7 +281,7 @@ function create(type: NewType, o: NewOptions, ctx: Ctx): NewResult {
           template('module-rules.md').split('\n## ')[0]!.trimEnd() + '\n',
           vars,
         );
-        const line = appendItem(ctx, file, itemOf('module-rules.md', 'RULE-', vars), skeleton);
+        const line = appendItem(ctx, file, itemOf(ctx, 'module-rules.md', 'RULE-', vars), skeleton);
         return { id, file, line };
       }
       const nnn = nextNumber(ctx.files, 'RULE-', 3);
@@ -286,7 +289,7 @@ function create(type: NewType, o: NewOptions, ctx: Ctx): NewResult {
       const line = appendItem(
         ctx,
         'application/rules.md',
-        itemOf('rules.md', 'RULE-', { NNN: nnn, title: quoteless(title) }),
+        itemOf(ctx, 'rules.md', 'RULE-', { NNN: nnn, title: quoteless(title) }),
       );
       return { id, file: 'application/rules.md', line };
     }
@@ -297,7 +300,7 @@ function create(type: NewType, o: NewOptions, ctx: Ctx): NewResult {
       return {
         id,
         file: 'application/events.md',
-        line: appendItem(ctx, 'application/events.md', itemOf('events.md', 'EVT-', vars)),
+        line: appendItem(ctx, 'application/events.md', itemOf(ctx, 'events.md', 'EVT-', vars)),
       };
     }
     case 'persona': {
@@ -310,7 +313,7 @@ function create(type: NewType, o: NewOptions, ctx: Ctx): NewResult {
       return {
         id,
         file,
-        line: insertBefore(ctx, file, '# Roles', itemOf('personas-roles.md', 'PER-', vars)),
+        line: insertBefore(ctx, file, '# Roles', itemOf(ctx, 'personas-roles.md', 'PER-', vars)),
       };
     }
     case 'role': {
@@ -318,7 +321,7 @@ function create(type: NewType, o: NewOptions, ctx: Ctx): NewResult {
       requireNew(ctx, id, 'role');
       const vars = { role: id.slice(5), role_title: quoteless(title) };
       const file = 'application/personas-roles.md';
-      return { id, file, line: appendItem(ctx, file, itemOf('personas-roles.md', 'ROLE-', vars)) };
+      return { id, file, line: appendItem(ctx, file, itemOf(ctx, 'personas-roles.md', 'ROLE-', vars)) };
     }
     case 'decision': {
       const kind = o.kind ?? 'open_question';
@@ -331,7 +334,7 @@ function create(type: NewType, o: NewOptions, ctx: Ctx): NewResult {
       return {
         id,
         file: 'application/decisions.md',
-        line: appendItem(ctx, 'application/decisions.md', itemOf('decisions.md', 'DEC-', vars)),
+        line: appendItem(ctx, 'application/decisions.md', itemOf(ctx, 'decisions.md', 'DEC-', vars)),
       };
     }
     case 'term': {
@@ -345,7 +348,7 @@ function create(type: NewType, o: NewOptions, ctx: Ctx): NewResult {
         .filter(Boolean)
         .map(quote)
         .join(', ');
-      const item = itemOf('glossary.md', '', { term: quoteless(term), forbidden });
+      const item = itemOf(ctx, 'glossary.md', '', { term: quoteless(term), forbidden });
       return {
         id: term,
         file: 'application/glossary.md',

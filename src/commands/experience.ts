@@ -2,13 +2,15 @@ import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { parseDocument } from 'yaml';
 import { ASSETS_DIR } from '../assets.js';
+import { readTemplate } from '../lib/templates.js';
+import { runViews } from './views.js';
 import { readBaseline } from '../changes/baseline.js';
 import { loadChange, type LoadedChange } from '../changes/change.js';
 import { SKIP_FOR_CHANGES } from '../changes/impact.js';
 import { mergeChange, overlayObjects } from '../changes/merge.js';
 import { loadConfig } from '../config.js';
 import { PATTERNS_FILE } from '../experience/catalog.js';
-import { elementEnd, tags } from '../experience/html.js';
+import { elementEnd, tags, withAttr } from '../experience/html.js';
 import {
   EXPERIENCE_DIR,
   contentOf,
@@ -16,11 +18,14 @@ import {
   dryPage,
   experiencePath,
   mockupPath,
+  narrowedRoles,
   reviewHash,
   uxElements,
 } from '../experience/index.js';
-import { draftDoc, draftElements, draftMockup, draftStates } from '../experience/scaffold.js';
+import { draftDoc, draftElements, draftMockup, draftStates, pageHash } from '../experience/scaffold.js';
 import {
+  SCRIPTS,
+  SPEC_JS,
   configJs,
   dataJs,
   defaultConfig,
@@ -28,6 +33,7 @@ import {
   mergeConfig,
   parseConfig,
   seedData,
+  specJs,
 } from '../experience/app.js';
 import { lint } from '../lint/lint.js';
 import { esc } from '../prototype/render.js';
@@ -62,9 +68,10 @@ function workspace(dir: string, opts: ExperienceOptions) {
   } else if (readBaseline(specRoot)) {
     throw new ExperienceError('the spec has a baseline: work inside a change proposal with --change <CHG>');
   }
-  const merged = change ? mergeChange(files, change) : files;
+  const merged = change ? mergeChange(files, change, root) : files;
   const load = loadSpec(merged);
   const inSpec = new Set(files.map((f) => f.path));
+  const specDir = opts.spec ?? 'spec';
 
   /** Write a spec file; in a change, copy or register the object first. */
   const put = (path: string, content: string) => {
@@ -83,7 +90,19 @@ function workspace(dir: string, opts: ExperienceOptions) {
     mkdirSync(dirname(full), { recursive: true });
     writeFileSync(full, content);
   };
-  return { root, specRoot, model: load.model, load, change, put };
+  /**
+   * Make the pages openable in a browser: the spec data they load (`_generated/experience/spec.js`) is written by
+   * `views`; inside a change it doesn't exist yet, so a preview copy built from the merged spec goes into the overlay
+   * (generated output: never merged, never fingerprinted).
+   */
+  const preview = () => {
+    if (change) {
+      const full = join(change.overlayRoot, SPEC_JS);
+      mkdirSync(dirname(full), { recursive: true });
+      writeFileSync(full, specJs(load.model));
+    } else runViews(root, { spec: specDir });
+  };
+  return { root, specRoot, model: load.model, load, change, put, preview };
 }
 
 const kitFiles = (): [string, string][] =>
@@ -140,6 +159,7 @@ export function runExperienceInit(
       result.updated.push(path);
     } else result.skipped.push(path);
   }
+  ws.preview();
   return result;
 }
 
@@ -182,28 +202,84 @@ export function runExperienceNew(
   if (!page) throw new ExperienceError(`${id} is not a screen in the spec`);
   const doc = experiencePath(id);
   if (contentOf(ws.model, doc) !== undefined) throw new ExperienceError(`${doc} already exists`);
-  const template = readFileSync(join(ASSETS_DIR, 'templates/experience-screen.md'), 'utf8');
-  ws.put(doc, draftDoc(template, page));
-  ws.put(mockupPath(id), draftMockup(ws.model, page));
+  const template = readTemplate(ws.root, 'experience-screen.md');
+  const html = draftMockup(ws.model, page);
+  ws.put(doc, draftDoc(template, page, html));
+  ws.put(mockupPath(id), html);
+  if (ws.change) ws.preview();
   return { screen: id, files: [doc, mockupPath(id)] };
+}
+
+/** Where `rebuild` leaves the reference render of a page it kept, relative to spec/. */
+export const REBUILD_DIR = '_generated/experience/rebuild';
+
+export interface ExperienceRebuildResult {
+  screen: string;
+  /** Files written into the spec (the page, and the contract's `page:` line) when the page was replaced. */
+  files: string[];
+  /** True when the page has hand edits and was kept. */
+  kept: boolean;
+  /** The fresh render, written next to the generated views for the designer to merge from (kept pages only). */
+  reference?: string;
+  /** `data-src` values on the page that the business spec doesn't have: content for the spec change flow. */
+  businessChange: string[];
+  /** Deterministic findings of this screen's contract and page. */
+  findings: { rule: string; file: string; line?: number; message: string }[];
+  /** The page doesn't load the current kit the way a fresh render does. */
+  kitOutdated: boolean;
 }
 
 /**
  * Render a screen's mockup again from its experience screen (archetype, regions, components, labels, states) on
- * the current kit. Hand edits to the page are replaced; the contract is kept.
+ * the current kit. The page is replaced only when it is still exactly what the CLI last rendered. A page with hand
+ * edits is kept: the fresh render goes to `_generated/experience/rebuild/<SCR>.html` as a reference, and the result
+ * says what differs: business content the spec lacks (which goes through the spec change flow), check findings, and
+ * whether the kit markup is outdated. `force` replaces the page anyway; only a person decides that.
  */
 export function runExperienceRebuild(
   dir: string,
   screenId: string,
-  opts: ExperienceOptions = {},
-): ExperienceNewResult {
+  opts: ExperienceOptions & { force?: boolean } = {},
+): ExperienceRebuildResult {
   const ws = workspace(dir, opts);
   const id = screenId.trim().toUpperCase();
   const x = experienceOf(ws.model, id);
   const page = dryPage(ws.model, id);
   if (!page) throw new ExperienceError(`${id} is not a screen in the spec`);
-  ws.put(mockupPath(id), draftMockup(ws.model, page, x.data));
-  return { screen: id, files: [mockupPath(id)] };
+  const mockup = mockupPath(id);
+  const current = contentOf(ws.model, mockup);
+  const fresh = draftMockup(ws.model, page, x.data);
+  const untouched = current === undefined || (x.data.page !== undefined && pageHash(current) === x.data.page);
+
+  if (untouched || opts.force) {
+    ws.put(mockup, fresh);
+    ws.put(x.file, setLine(contentOf(ws.model, x.file)!, 'page', pageHash(fresh)));
+    if (ws.change) ws.preview();
+    return {
+      screen: id,
+      files: [mockup, x.file],
+      kept: false,
+      businessChange: [],
+      findings: [],
+      kitOutdated: false,
+    };
+  }
+
+  const expected = new Set(uxElements(page));
+  const srcs = (html: string) =>
+    tags(html).flatMap((t) => (t.attrs['data-src'] ? [t.attrs['data-src']] : []));
+  const businessChange = [...new Set(srcs(current).filter((s) => !expected.has(s)))].sort();
+  const mine = new Set([x.file, mockup]);
+  const findings = lint(ws.load, loadConfig(ws.root), ws.root)
+    .filter((f) => !(ws.change && SKIP_FOR_CHANGES.has(f.rule)))
+    .filter((f) => (mine.has(f.file) || f.id === x.id) && f.rule !== 'experience-unreviewed')
+    .map(({ rule, file, line, message }) => ({ rule, file, ...(line ? { line } : {}), message }));
+  const kitOutdated = SCRIPTS.some((s) => !current.includes(s)) || !current.includes('kit/components.css');
+  const reference = `${REBUILD_DIR}/${id}.html`;
+  const full = join(ws.change ? ws.change.overlayRoot : ws.specRoot, reference);
+  mkdirSync(dirname(full), { recursive: true });
+  writeFileSync(full, fresh);
+  return { screen: id, files: [], kept: true, reference, businessChange, findings, kitOutdated };
 }
 
 function experienceOf(model: SpecModel, id: string) {
@@ -231,7 +307,7 @@ export function runExperienceReviewed(
   const id = screenId.trim().toUpperCase();
   const x = experienceOf(ws.model, id);
   const mine = new Set([x.file, mockupPath(id)]);
-  const findings = lint(ws.load, loadConfig(ws.root))
+  const findings = lint(ws.load, loadConfig(ws.root), ws.root)
     .filter((f) => !(ws.change && SKIP_FOR_CHANGES.has(f.rule)))
     .filter((f) => (mine.has(f.file) || f.id === x.id) && f.rule !== 'experience-unreviewed')
     .map(({ rule, file, line, message }) => ({ rule, file, ...(line ? { line } : {}), message }));
@@ -258,11 +334,17 @@ export interface ExperienceSyncResult {
   added: string[];
   removed: string[];
   states: string[];
+  /** Elements whose audience (`data-roles`) changed in the mockup. */
+  roles: string[];
 }
+
+/** Lower-case role name for a state id: ROLE-HR-MANAGER → hr-manager. */
+const roleSlug = (role: string) => role.replace(/^ROLE-/, '').toLowerCase();
 
 /**
  * Bring an experience screen and its mockup in line with a changed business screen: drop elements the screen no
- * longer has, add drafts of new ones (to be placed by the designer), add missing states, record the new alignment.
+ * longer has, add drafts of new ones (to be placed by the designer), add missing states and default views for new
+ * roles, update who sees each element, record the new alignment.
  */
 export function runExperienceSync(
   dir: string,
@@ -282,9 +364,23 @@ export function runExperienceSync(
   const removed = x.data.elements.filter((e) => !expected.has(e.src)).map((e) => e.src);
   const stateIds = new Set(x.data.states.map((s) => s.id));
   const shownAs = new Set(x.data.states.map((s) => s.as));
-  const newStates = draftStates(page).filter(
-    (s) => !stateIds.has(s.id) && (page.states.some((b) => b.key === s.id) || (s.as && !shownAs.has(s.as))),
-  );
+  const newStates: ExperienceScreen['states'] = [];
+  // Business states the screen gained.
+  for (const s of draftStates(page)) {
+    if (!stateIds.has(s.id) && page.states.some((b) => b.key === s.id)) {
+      newStates.push(s);
+      stateIds.add(s.id);
+    }
+  }
+  // A default view for every role nobody is shown as yet (the first role may have changed, so never reuse `default`).
+  for (const r of page.roles) {
+    if (shownAs.has(r.id)) continue;
+    let id = stateIds.has('default') ? `default-${roleSlug(r.id)}` : 'default';
+    for (let n = 2; stateIds.has(id); n++) id = `default-${roleSlug(r.id)}-${n}`;
+    newStates.push({ id, as: r.id });
+    stateIds.add(id);
+    shownAs.add(r.id);
+  }
 
   const text = contentOf(ws.model, x.file)!;
   const end = text.indexOf('\n---', 3);
@@ -302,6 +398,23 @@ export function runExperienceSync(
     const range = tag && elementEnd(html, tag);
     if (tag && range) html = html.slice(0, tag.start) + html.slice(range.end);
   }
+  // Who sees each group and action: narrowed elements carry data-roles, the others none.
+  const narrowed = narrowedRoles(page);
+  const roles: string[] = [];
+  for (const src of [...page.groups.map((g) => g.src), ...page.actions.map((a) => a.src)]) {
+    const tag = tags(html).find((t) => t.attrs['data-src'] === src);
+    if (!tag) continue;
+    const want = narrowed.get(src)?.join(' ');
+    const have = tag.attrs['data-roles']?.split(/\s+/).filter(Boolean).sort().join(' ');
+    if (want === have) continue;
+    html = withAttr(html, tag, 'data-roles', want);
+    roles.push(src);
+  }
+  // The screen's roles on <body>, for the runtime.
+  html = html.replace(
+    /(<body\b[^>]*\sdata-roles=")([^"]*)(")/,
+    (_m, a: string, _b, c: string) => `${a}${esc(page.roles.map((r) => r.id).join(' '))}${c}`,
+  );
   if (added.length) {
     const block = [
       '<section class="ux-card" data-sync>',
@@ -322,5 +435,6 @@ export function runExperienceSync(
       (_m, s: string) => `data-states="${[s, ...newStates.map((n) => n.id)].join(' ').trim()}"`,
     );
   ws.put(mockup, html);
-  return { screen: id, added: added.map((e) => e.src), removed, states: newStates.map((s) => s.id) };
+  if (ws.change) ws.preview();
+  return { screen: id, added: added.map((e) => e.src), removed, states: newStates.map((s) => s.id), roles };
 }

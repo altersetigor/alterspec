@@ -3,6 +3,7 @@ import { esc } from '../prototype/render.js';
 import type { FieldGroup, ScreenPage } from '../prototype/model.js';
 import type { ExperienceScreen } from '../schemas/experience.js';
 import type { SpecModel } from '../spec/model.js';
+import { blockHash } from '../views/blocks.js';
 import { SCRIPTS } from './app.js';
 import { dryHash, dryModel, narrowedRoles } from './index.js';
 
@@ -113,8 +114,11 @@ export function draftStates(page: ScreenPage): ExperienceScreen['states'] {
   return out;
 }
 
-/** The experience screen markdown for a business screen. */
-export function draftDoc(template: string, page: ScreenPage): string {
+/** Fingerprint of a rendered page, recorded in the contract as `page:`. */
+export const pageHash = (html: string) => blockHash(html);
+
+/** The experience screen markdown for a business screen; `mockup` is the page rendered for it. */
+export function draftDoc(template: string, page: ScreenPage, mockup?: string): string {
   const archetype = archetypeFor(page);
   const doc = new Document({
     id: `UX-${page.id}`,
@@ -122,6 +126,7 @@ export function draftDoc(template: string, page: ScreenPage): string {
     status: 'draft',
     archetype,
     dry: dryHash(page),
+    ...(mockup === undefined ? {} : { page: pageHash(mockup) }),
     elements: draftElements(page, archetype),
     states: draftStates(page),
   });

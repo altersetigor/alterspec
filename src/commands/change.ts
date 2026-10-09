@@ -1,13 +1,13 @@
 import { idKind } from '../schemas/ids.js';
 import { mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
-import { ASSETS_DIR } from '../assets.js';
 import { nextNumber } from '../authoring/ids.js';
 import { today } from '../changes/baseline.js';
 import { ChangeError, changeHash, loadChange, updateProposal, type LoadedChange } from '../changes/change.js';
 import { fingerprint, specObjects } from '../changes/fingerprint.js';
 import { overlayObjects, removeItem, upsertItem } from '../changes/merge.js';
 import { renderTemplate } from '../lib/template.js';
+import { readTemplate } from '../lib/templates.js';
 import { ChangeStatus } from '../schemas/change.js';
 import { encodingOf, readSpecDir } from '../spec/files.js';
 import { classify } from '../spec/load.js';
@@ -32,7 +32,7 @@ export function runChangeNew(
   const specRoot = specRootOf(dir, opts);
   const nnn = nextNumber(readSpecDir(specRoot), 'CHG-', 3);
   const id = `CHG-${nnn}`;
-  const proposal = renderTemplate(readFileSync(join(ASSETS_DIR, 'templates/change-proposal.md'), 'utf8'), {
+  const proposal = renderTemplate(readTemplate(resolve(dir), 'change-proposal.md'), {
     NNN: nnn,
     title: title.replace(/\s+/g, ' ').trim().replace(/\\/g, '\\\\').replace(/"/g, '\\"'),
     date: today(),
@@ -146,6 +146,12 @@ export function runChangeRemove(dir: string, changeId: string, rawKey: string, o
     doc.setIn(['base', key], fingerprint(current));
     if (!change.proposal.removes.includes(key)) doc.addIn(['removes'], key);
   });
+  // An experience screen and its mockup page go together: removing one removes the other.
+  const mockup = `file:experience/mockups/${key.replace(/^UX-/, '')}.html`;
+  if (idKind(key) === 'experience' && specObjects(readSpecDir(specRoot)).has(mockup)) {
+    const after = loadChange(specRoot, changeId);
+    if (!after.proposal.removes.includes(mockup)) runChangeRemove(dir, changeId, mockup, opts);
+  }
   return { key };
 }
 

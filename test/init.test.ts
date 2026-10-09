@@ -204,6 +204,17 @@ describe('alterspec doctor', () => {
     expect(failed).toEqual([expect.stringContaining('custom/prompts/module.md overrides no prompt')]);
   });
 
+  it('reports custom template overrides that match no shipped template', () => {
+    const root = tmpProject();
+    runInit(root);
+    put(root, '.alterspec/custom/templates/story.md', 'old name');
+    put(root, '.alterspec/custom/templates/capability.md', 'current name');
+    const failed = runDoctor(root)
+      .filter((c) => !c.ok)
+      .map((c) => c.message);
+    expect(failed).toEqual([expect.stringContaining('custom/templates/story.md overrides no template')]);
+  });
+
   it('update replaces old alter-* wrappers with alterspec-* ones', () => {
     const root = tmpProject();
     runInit(root);

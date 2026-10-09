@@ -90,6 +90,17 @@ describe('apply', () => {
     expect(runNew(dir, 'decision', { title: 'x', change: undefined }).id).toBe('DEC-002');
   });
 
+  it('an overlay edit the impact does not count (whitespace) is still baselined, not a direct edit', () => {
+    const { dir, id } = projectWithChange();
+    runChangeEdit(dir, id, 'CAP-HR-001');
+    edit(dir, overlay(id, 'modules/hr/capabilities/CAP-HR-001.md'), '## Out of scope', '## Out of scope\n');
+    runChangeStatus(dir, id, 'in_review');
+    runChangeStatus(dir, id, 'approved');
+    const r = runApply(dir, id);
+    expect(r.written).toContain('modules/hr/capabilities/CAP-HR-001.md');
+    expect(runValidate(dir).findings.filter((f) => f.rule === 'direct-edit')).toEqual([]);
+  });
+
   it('applies a removal together with the references it breaks', () => {
     const { dir, id } = projectWithChange();
     runChangeRemove(dir, id, 'CAP-HR-003');
