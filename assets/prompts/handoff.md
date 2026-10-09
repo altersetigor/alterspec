@@ -18,7 +18,7 @@ sources changed. This command is for the rest: a whole module as one bundle, an 
 
 1. Run `npx @alterset/alterspec show <ID>` for a capability, or `npx @alterset/alterspec validate` for a module.
    Handoff refuses objects with lint errors, and capabilities below `ready`.
-   - If capabilities are still `draft` or `refined`, suggest `/alterspec-refine` first. Only use `--allow-draft` when the
+   - If capabilities are still `draft` or `refined`, suggest finishing them (`/alterspec-groom <CAP>`) first. Only use `--allow-draft` when the
      person explicitly wants a draft export.
    - Open questions in scope are exported as clarification points; mention them.
    - With an experience layer (`spec/experience/`), handoff also refuses until every screen in scope has an
@@ -43,5 +43,5 @@ changed. Re-running the export overwrites the polish, so suggest polishing as th
 Use `handoff/bundle/<ID>/README.md` as the input for the technical design; `wireframe/` shows the screens and,
 with an experience layer, `experience/mockups/` is the app as designed.
 
-Remind the person that the alterspec spec stays the source of truth: product changes go through `/alterspec-change`, then
+Remind the person that the alterspec spec stays the source of truth: product changes go through `/alterspec-groom`, then
 a new handoff. The manifest shows which version was handed over.

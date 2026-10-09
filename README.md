@@ -2,9 +2,8 @@
 
 **The spec changes with the product.**
 
-[![npm](https://img.shields.io/npm/v/@alterset/alterspec)](https://www.npmjs.com/package/@alterset/alterspec)
-[![license](https://img.shields.io/npm/l/@alterset/alterspec)](https://github.com/altersetigor/alterspec/blob/main/LICENSE)
-![node](https://img.shields.io/node/v/@alterset/alterspec)
+[![license](https://img.shields.io/github/license/altersetigor/alterspec)](https://github.com/altersetigor/alterspec/blob/main/LICENSE)
+![node](https://img.shields.io/badge/node-%3E%3D20-brightgreen)
 
 alterspec is a product specification framework for AI-assisted software delivery. It keeps your product spec as
 plain Markdown in your repository and gives [Claude Code](https://code.claude.com) the commands to write it with you,
@@ -53,33 +52,39 @@ check it, change it and hand it over to development.
 
 ## Quick start
 
-In the root of your project:
+alterspec is a private package: it is not published to npm, you install it from this repository. In the root of
+your project:
 
 ```bash
-npm install --save-dev @alterset/alterspec
+npm install --save-dev github:altersetigor/alterspec
 npx alterspec init --name "My Product"
 ```
 
-Then open Claude Code in the project and start the interview:
+npm clones the repository and builds the CLI on install, so Node 20+ and git are all you need.
+
+Then open Claude Code in the project and describe the product:
 
 ```text
-/alterspec-init
+/alterspec-init A B2B catalog where suppliers publish articles and buyers order them
 ```
 
-Claude asks about your product, its users, the apps people use and the main business areas, then writes the
-application skeleton. From there:
+Claude reads nothing yet, drafts the application skeleton (the product and its profile, personas and roles, the
+business areas, the first terms), marks everything it proposed, and asks you once. Say go and it is written. From
+there you just talk:
 
 ```text
-/alterspec-create-entity ARTICLE Article
-/alterspec-create-capability CAT "Create article"
-/alterspec-refine CAP-CAT-001
-/alterspec-validate
+We need an Article with a name, a price and a supplier
+Buyers should be able to order an article
+What is still missing in "Order article"?
 ```
 
-> **Prefer not to install?** `npx @alterset/alterspec init` works too. The Claude Code commands call the CLI as
-> `npx @alterset/alterspec`, which uses your local install when there is one and downloads it otherwise.
-> The short form `npx alterspec …` used in this README needs the local install; without it, always use the scoped
-> name.
+Each sentence becomes a proposal at its own size, confirmed once, then written. `/alterspec-validate` whenever you
+want the full report.
+
+> **The local install is required.** The Claude Code commands call the CLI as `npx @alterset/alterspec`, which
+> resolves to the package installed in your project. Without it, npx would download an old public release from
+> npm (0.6.0, no longer maintained). The short form `npx alterspec …` used in this README also needs the local
+> install.
 
 ## What gets installed
 
@@ -106,22 +111,25 @@ agents or settings.
    └──────────── before baseline ─────┘     every later edit ─┘
 ```
 
-1. **Author.** `/alterspec-init`, then `/alterspec-create-module`, `-entity`, `-capability` and `-screen`. Claude
-   interviews you, at most three questions at a time, and writes the files. The CLI picks every ID and file location,
-   so nothing is guessed. `init` also records the **product profile**: the channels (and whether a web channel is
-   responsive), one company or many, languages, currencies and time zones. Every later interview reads it and skips
-   what it settles; the linter flags spec content the profile rules out.
-2. **Refine.** `/alterspec-refine <ID>` finds the gaps in one object and asks about them until the object is complete.
-   Only then does it move the object to `refined`. Moving to `ready` or `approved` always needs your explicit word.
+1. **Author.** `/alterspec-init` with a description of the product, then plain sentences. Everything is a grooming
+   proposal (`/alterspec-groom`, which the front door invokes for you): Claude reads the spec, drafts the whole thing
+   at the size of your sentence, marks every fact you didn't give as `(proposed)`, asks once, and writes on your go.
+   The CLI picks every ID and file location, so nothing is guessed. The skeleton records the **product profile**:
+   the channels (and whether a web channel is responsive), one company or many, languages, currencies and time
+   zones. Every later proposal reads it and never asks what it settles; the linter flags spec content the profile
+   rules out.
+2. **Refine.** "Finish the order capability" or "what is missing in the buyer entity?" is a proposal too: the gaps,
+   each with a proposed answer or an open question. When nothing is open and you agree, the object moves to
+   `refined`. Moving to `ready` or `approved` always needs your explicit word.
 3. **Validate.** `/alterspec-validate` runs the deterministic linter and a semantic review, and gives you one report.
    **Look at it.** `spec/_generated/wireframe/index.html` is a clickable wireframe generated from the spec.
    **Design it.** `/alterspec-experience` adds the experience layer: a UX contract and a realistic mockup per screen,
    checked element by element against the spec.
 4. **Baseline.** When the first version is agreed, run `npx alterspec baseline`. From that moment on, every edit goes
    through a change proposal. Direct edits are reported as errors.
-5. **Change.** `/alterspec-change-capability CAP-CAT-001` (or `-module`, `-screen`, `-entity`) changes one object;
-   `/alterspec-change "<title>"` collects the edits for a larger product change. Neither touches the main spec until
-   the change is applied.
+5. **Change.** The same sentences, now inside a change proposal: "add gender to buyer", "buyers should see their
+   order history and reorder", "we need a returns area". The proposal is drafted, confirmed once and executed into
+   `spec/changes/CHG-NNN/`; the main spec is untouched until the change is applied.
 6. **Impact.** `/alterspec-impact CHG-001` shows what the change affects: flows, screens, roles, acceptance criteria and
    generated views.
 7. **Apply.** `/alterspec-apply CHG-001` asks for your explicit approval ("approve CHG-001"), then merges the change,
@@ -139,24 +147,14 @@ for review. Only starting a spec, merging a change and handing off to developers
 | Command | What it does |
 | --- | --- |
 | `/alterspec [words]` | The front door: answers questions from the spec and routes a wish to the right skill below |
-| `/alterspec-groom <idea>` | From an idea to a change ready for review: the proposal first (module, entities, capabilities, screens, rules, what was not proposed, open questions), one round of answers, then executed on your go |
-| `/alterspec-init` | Interview → application, personas and roles, glossary and module list |
-| `/alterspec-create-module <CODE> <title>` | Create a module and its own business rules |
-| `/alterspec-create-entity <NAME> <title>` | Create a business entity with attributes and a lifecycle |
-| `/alterspec-create-capability <MOD> <title>` | Interview through the 13 capability sections, then draft it |
-| `/alterspec-create-screen <MOD> <title>` | Describe a screen: data shown, actions, per-role differences |
-| `/alterspec-change-module <MOD>` | Change a module's description, dependencies or module rules |
-| `/alterspec-change-capability <CAP>` | Change a capability's behaviour, roles, rules, data or acceptance criteria |
-| `/alterspec-change-screen <SCR>` | Change a screen's data, actions or per-role differences |
-| `/alterspec-change-entity <ENT>` | Change an entity's attributes, relationships or lifecycle |
-| `/alterspec-refine <ID>` | Close the gaps in one object; moves it to `refined` when complete |
+| `/alterspec-groom <idea \| ID \| CHG>` | The one way the spec is written: one attribute, a new screen, a feature, a new business area, an object to finish, a change to continue. The proposal first, at the size of the idea (what is new, what changes, what was not proposed, what to confirm, open questions), one round of answers, then executed on your go; a change proposal after the baseline |
+| `/alterspec-init [description]` | Start from nothing: installs if needed, then grooms the application skeleton (product and profile, personas and roles, modules, glossary) from your description |
 | `/alterspec-validate [scope]` | Linter plus semantic review in one report (scope: module, IDs or change) |
 | `/alterspec-views` | Regenerate the generated views |
-| `/alterspec-change <title>` | Continue a change proposal, or steer several known edits inside one |
 | `/alterspec-impact <CHG>` | Impact analysis of a change, for a business reader |
 | `/alterspec-apply <CHG>` | Approve, after your explicit word, and merge a change |
 | `/alterspec-handoff <ID>` | Export a self-contained bundle for the development team |
-| `/alterspec-experience [init \| <SCR> \| review <SCR> \| sync <SCR> \| rebuild <SCR>]` | The future app as working mockups, with a UX contract per screen kept fully aligned with the spec |
+| `/alterspec-experience [init \| <SCR> \| review <SCR> \| sync <SCR> \| rebuild <SCR> \| lift <SCR>]` | The future app as working mockups, with a UX contract per screen kept fully aligned with the spec; `lift` carries what a mockup shows and the spec lacks into the spec as a proposal to confirm |
 
 Four agents work behind these commands:
 
@@ -169,9 +167,11 @@ Four agents work behind these commands:
 - **`alterspec-experience-reviewer`** is read-only. It checks a screen's contract and mockup against the business screen
   element by element and reports a parity table.
 
-The `change-*` commands edit one existing object and check everything that depends on it. Before the baseline they edit
-the spec directly; after it they put the edit in a change proposal (an open one you choose, or a new one), so it still
-goes through impact and approval.
+Grooming sizes itself to what it finds: on an empty spec the proposal is the skeleton; for one object it is a few
+lines plus the knock-on edits of everything that references it; for a feature it is the full proposal; for a mockup
+that shows something the spec lacks, `experience lift` writes the proposal from the page's markers. Before the
+baseline it writes into the spec directly on your go; after it, into a change proposal that still goes through impact
+and approval. The proposal document stays with the change as the record of what was considered and why.
 
 Commands that change the spec only run when you type them. Claude can run read-only commands such as validate,
 views and impact on its own.
@@ -252,6 +252,7 @@ until a default is given. After the baseline both take `--change <CHG>`.
 | `alterspec experience new <SCR>` | Draft a screen's experience contract and working page; both pass every check. |
 | `alterspec experience rebuild <SCR> [--force]` | Render a page again from its experience contract on the current kit. A page with hand edits is kept and analysed; only `--force` replaces it. |
 | `alterspec experience sync <SCR>` | Align them with a changed business screen. |
+| `alterspec experience lift <SCR>` | The way back up: for every marker a page or contract carries that the spec lacks, the path up the spec tree (which objects, at which levels, which check fires while one is missing) and what to confirm. Inside a change it writes a grooming document; it never edits the spec. |
 | `alterspec experience reviewed <SCR>` | Record a clean parity review; refused while anything is out of line. |
 
 Each takes `--change <CHG>`, which is required once a baseline exists.
@@ -555,7 +556,8 @@ lint:
 To change how a command behaves, copy its prompt or template into `.alterspec/custom/` and edit the copy:
 
 ```text
-.alterspec/custom/prompts/create-capability.md   replaces .alterspec/prompts/create-capability.md
+.alterspec/custom/prompts/groom.md               replaces .alterspec/prompts/groom.md
+.alterspec/custom/prompts/_capability.md         replaces what grooming reads about capabilities
 .alterspec/custom/prompts/agents/reviewer.md     replaces the reviewer's instructions
 .alterspec/custom/templates/capability.md        replaces the capability template
 ```
@@ -590,14 +592,19 @@ jobs:
 ## Updating
 
 ```bash
-npm install --save-dev @alterset/alterspec@latest
+npm install --save-dev github:altersetigor/alterspec
 npx alterspec update
 npx alterspec doctor
 ```
 
+The first line fetches the current `main` and rebuilds the CLI; pin a commit or a tag with `github:altersetigor/alterspec#<ref>` if you
+want every developer on the same version (tags before the package went private do not build on install).
+
 After an update, run `npx alterspec views` once: new versions can add or rename generated views, such as the wireframe (0.6 renamed `_generated/prototype/` to `_generated/wireframe/`; `views` removes the old folder).
 
 0.7 adds the `/alterspec` front door and `/alterspec-groom`, lets Claude start the authoring skills from plain language, makes the experience follow a change (`change sync`), and hands off at `apply`. `npx alterspec update` installs the new skills and prompts; nothing in `spec/` changes.
+
+0.8 makes grooming the one way the spec is written and removes the ten single-object skills (`/alterspec-create-*`, `/alterspec-change-*`, `/alterspec-change`, `/alterspec-refine`); `/alterspec-init` now grooms the skeleton from your description, and `experience lift` carries mockup content up into a proposal. `npx alterspec update` deletes the old wrappers (unless you edited them) and installs the new prompts; nothing in `spec/` changes.
 
 `update` refreshes `.alterspec/` and the `.claude/` commands. It never touches `spec/`, `config.yaml` or
 `.alterspec/custom/`, and it skips any command file you edited by hand (use `--force` to overwrite).

@@ -1,4 +1,4 @@
-import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { parse } from 'yaml';
 import { describe, expect, it } from 'vitest';
@@ -29,7 +29,8 @@ describe('alterspec init', () => {
       '.alterspec/version',
       '.alterspec/custom/README.md',
       '.alterspec/templates/capability.md',
-      '.alterspec/prompts/create-capability.md',
+      '.alterspec/prompts/groom.md',
+      '.alterspec/prompts/_capability.md',
       '.alterspec/prompts/agents/reviewer.md',
       '.alterspec/schemas/capability.schema.json',
       '.claude/skills/alterspec-init/SKILL.md',
@@ -91,13 +92,13 @@ describe('alterspec init', () => {
     runInit(root);
     put(root, 'spec/application/glossary.md', 'edited glossary');
     put(root, '.alterspec/config.yaml', 'version: "0.0.1"\nlanguage: en\n');
-    put(root, '.alterspec/custom/prompts/create-capability.md', 'my prompt');
+    put(root, '.alterspec/custom/prompts/groom.md', 'my prompt');
     rmSync(join(root, 'spec/application/nfr.md'));
 
     const again = runInit(root);
     expect(read(root, 'spec/application/glossary.md')).toBe('edited glossary');
     expect(read(root, '.alterspec/config.yaml')).toBe('version: "0.0.1"\nlanguage: en\n');
-    expect(read(root, '.alterspec/custom/prompts/create-capability.md')).toBe('my prompt');
+    expect(read(root, '.alterspec/custom/prompts/groom.md')).toBe('my prompt');
     expect(read(root, '.claude/skills/my-own/SKILL.md')).toBe('mine');
     expect(read(root, '.claude/settings.json')).toBe('{}');
     // missing user files are filled in again
@@ -136,7 +137,7 @@ describe('alterspec update', () => {
   it('skips a wrapper the user modified, unless --force', () => {
     const root = tmpProject();
     runInit(root);
-    const wrapper = '.claude/skills/alterspec-create-capability/SKILL.md';
+    const wrapper = '.claude/skills/alterspec-groom/SKILL.md';
     const original = read(root, wrapper);
     put(root, wrapper, 'my wrapper');
 
@@ -155,7 +156,7 @@ describe('alterspec update', () => {
   it('replaces an unmodified wrapper that a new version changed', () => {
     const root = tmpProject();
     runInit(root);
-    const wrapper = '.claude/skills/alterspec-create-capability/SKILL.md';
+    const wrapper = '.claude/skills/alterspec-groom/SKILL.md';
     // Simulate an older shipped version: file and manifest agree on old content.
     put(root, wrapper, 'old shipped wrapper');
     const manifest = readManifest(root)!;
@@ -197,7 +198,7 @@ describe('alterspec doctor', () => {
     const root = tmpProject();
     runInit(root);
     put(root, '.alterspec/custom/prompts/module.md', 'old name');
-    put(root, '.alterspec/custom/prompts/create-module.md', 'current name');
+    put(root, '.alterspec/custom/prompts/groom.md', 'current name');
     const failed = runDoctor(root)
       .filter((c) => !c.ok)
       .map((c) => c.message);
@@ -225,7 +226,45 @@ describe('alterspec doctor', () => {
     writeFileSync(join(root, MANIFEST_PATH), JSON.stringify(manifest));
     const result = runUpdate(root);
     expect(result.removed).toEqual([old]);
-    expect(existsSync(join(root, '.claude/skills/alterspec-create-module/SKILL.md'))).toBe(true);
+    expect(existsSync(join(root, '.claude/skills/alterspec-groom/SKILL.md'))).toBe(true);
+  });
+
+  it('update removes the single-object wrappers of 0.7 (grooming is the one way in since 0.8)', () => {
+    const root = tmpProject();
+    runInit(root);
+    const manifest = readManifest(root)!;
+    const gone = [
+      '.claude/skills/alterspec-create-capability/SKILL.md',
+      '.claude/skills/alterspec-change-entity/SKILL.md',
+      '.claude/skills/alterspec-refine/SKILL.md',
+      '.alterspec/prompts/create-capability.md',
+    ];
+    for (const p of gone) {
+      put(root, p, `shipped by 0.7: ${p}`);
+      manifest.files[p] = sha256(`shipped by 0.7: ${p}`);
+    }
+    const edited = '.claude/skills/alterspec-change/SKILL.md';
+    put(root, edited, 'edited by the user');
+    manifest.files[edited] = sha256('shipped by 0.7');
+    writeFileSync(join(root, MANIFEST_PATH), JSON.stringify(manifest));
+
+    const result = runUpdate(root);
+    expect(result.removed.sort()).toEqual([...gone].sort());
+    for (const p of gone) expect(existsSync(join(root, p))).toBe(false);
+    // A wrapper the user changed is never deleted silently.
+    expect(result.conflicts).toEqual([edited]);
+    expect(readdirSync(join(root, '.claude/skills')).sort()).toEqual([
+      'alterspec',
+      'alterspec-apply',
+      'alterspec-change',
+      'alterspec-experience',
+      'alterspec-groom',
+      'alterspec-handoff',
+      'alterspec-impact',
+      'alterspec-init',
+      'alterspec-validate',
+      'alterspec-views',
+    ]);
   });
 
   it('reports modified and missing wrappers, and an invalid config', () => {

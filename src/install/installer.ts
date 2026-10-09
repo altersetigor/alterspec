@@ -1,4 +1,4 @@
-import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { sha256 } from './hash.js';
 import type { PlannedFile } from './manifest.js';
@@ -113,6 +113,10 @@ export function install(root: string, plan: PlannedFile[], opts: InstallOptions)
       if (sha256(readFileSync(full, 'utf8')) === hash) {
         rmSync(full);
         result.removed.push(path);
+        // A skill folder of a wrapper this version no longer ships: drop it once it is empty.
+        const folder = dirname(full);
+        if (/\.claude\/skills\/[^/]+$/.test(folder) && readdirSync(folder).length === 0)
+          rmSync(folder, { recursive: true });
       } else {
         result.conflicts.push(path);
       }

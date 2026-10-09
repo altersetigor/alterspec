@@ -7,6 +7,7 @@ import { runApply } from '../src/changes/apply.js';
 import { runHandoff } from '../src/commands/handoff.js';
 import {
   runExperienceInit,
+  runExperienceLift,
   runExperienceNew,
   runExperienceRebuild,
   runExperienceReviewed,
@@ -240,6 +241,161 @@ describe('experience commands', () => {
     runExperienceNew(dir, 'SCR-PAY-01', { change: id });
     expect(read(dir, `changes/${id}/proposal.md`)).toContain('UX-SCR-PAY-01: null');
     expect(existsSync(join(dir, 'spec/experience/screens/UX-SCR-PAY-01.md'))).toBe(false);
+  });
+});
+
+describe('experience lift', () => {
+  const mock = 'experience/mockups/SCR-PAY-01.html';
+  const add = (dir: string, markup: string, page = mock) => write(dir, page, '</main>', `${markup}</main>`);
+
+  it('finds nothing on a page that shows only what the spec has', () => {
+    const dir = copyFixture();
+    runExperienceNew(dir, 'SCR-PAY-01');
+    expect(runExperienceLift(dir, 'SCR-PAY-01')).toEqual({
+      screen: 'SCR-PAY-01',
+      title: 'Payslip run',
+      items: [],
+      brief: '',
+    });
+  });
+
+  it('a field: entity level when the attribute is missing, screen level only when the entity has it', () => {
+    const dir = copyFixture();
+    write(
+      dir,
+      'application/entities/ENT-PAYSLIP.md',
+      '  - name: Net amount\n',
+      '  - name: Gross amount\n    kind: amount\n  - name: Net amount\n',
+    );
+    runExperienceNew(dir, 'SCR-PAY-01');
+    add(
+      dir,
+      '<div data-src="SCR-PAY-01.ENT-PAYSLIP.Discount">Discount</div>' +
+        '<div data-src="SCR-PAY-01.ENT-PAYSLIP.Gross amount">Gross</div>' +
+        '<div data-src="SCR-PAY-01.ENT-PAYSLIP.net Amount">Net</div>',
+    );
+    const r = runExperienceLift(dir, 'SCR-PAY-01');
+    const [discount, gross, net] = r.items;
+    expect(discount).toMatchObject({
+      src: 'SCR-PAY-01.ENT-PAYSLIP.Discount',
+      kind: 'field',
+      label: 'Discount',
+      where: 'page',
+    });
+    expect(discount!.steps.map((s) => [s.level, s.object, s.check])).toEqual([
+      ['screen', 'SCR-PAY-01', 'experience-mockup'],
+      ['entity', 'ENT-PAYSLIP', 'screen-field-attribute'],
+    ]);
+    expect(discount!.confirm[0]).toMatch(/business kind of "Discount"/);
+    expect(gross!.steps.map((s) => s.level)).toEqual(['screen']);
+    expect(gross!.confirm).toEqual([]);
+    expect(net!.candidates).toEqual(['ENT-PAYSLIP attribute "Net amount"']);
+    expect(net!.confirm[0]).toMatch(/spelled differently/);
+    expect(r.brief).toBe(
+      'The mockup of SCR-PAY-01 (Payslip run) shows, and the spec lacks: a field "Discount" of Payslip (ENT-PAYSLIP has no such attribute); a field "Gross" of Payslip (ENT-PAYSLIP has it; the screen doesn\'t show it); a field "Net" of Payslip (ENT-PAYSLIP has no such attribute).',
+    );
+  });
+
+  it('an action: screen, then an existing capability of the module or a new one with its flow step', () => {
+    const dir = copyFixture();
+    runExperienceNew(dir, 'SCR-PAY-01');
+    add(dir, '<button data-src="SCR-PAY-01.A03">Reject</button>');
+    const fresh = runExperienceLift(dir, 'SCR-PAY-01').items[0]!;
+    expect(fresh.kind).toBe('action');
+    expect(fresh.candidates).toBeUndefined();
+    expect(fresh.steps.map((s) => [s.level, s.check])).toEqual([
+      ['screen', 'screen-role-action'],
+      ['capability', 'unknown-reference'],
+      ['application', 'capability-without-flow'],
+    ]);
+    // A capability of the module the screen's role may perform, not yet an action here: a candidate.
+    write(
+      dir,
+      'modules/pay/screens/SCR-PAY-01.md',
+      '  - id: A02\n    label: Issue\n    capability: CAP-PAY-002\n',
+      '',
+    );
+    const r = runExperienceLift(dir, 'SCR-PAY-01');
+    const action = r.items.find((i) => i.src === 'SCR-PAY-01.A03')!;
+    expect(action.candidates).toEqual(['CAP-PAY-002 Issue payslip']);
+    expect(action.confirm[0]).toBe(
+      'which capability A03 "Reject" performs: CAP-PAY-002 Issue payslip, or a new one',
+    );
+  });
+
+  it('roles, entry points, states and foreign markers', () => {
+    const dir = copyFixture();
+    runExperienceNew(dir, 'SCR-PAY-01');
+    add(
+      dir,
+      '<div data-src="SCR-PAY-01.role.ROLE-EMPLOYEE">me</div><div data-src="SCR-PAY-01.role.ROLE-CFO">cfo</div>' +
+        '<div data-src="SCR-PAY-01.entry.1">From home</div><div data-src="SCR-PAY-01.state.loading">…</div>' +
+        '<div data-src="SCR-HR-01.A01">x</div><div data-src="SCR-PAY-01.ENT-BONUS">Bonus</div>',
+    );
+    const r = runExperienceLift(dir, 'SCR-PAY-01');
+    const by = (src: string) => r.items.find((i) => i.src === src)!;
+    expect(by('SCR-PAY-01.role.ROLE-EMPLOYEE').steps.map((s) => s.level)).toEqual(['screen']);
+    expect(by('SCR-PAY-01.role.ROLE-CFO').steps.map((s) => [s.level, s.object])).toEqual([
+      ['screen', 'SCR-PAY-01'],
+      ['application', 'personas-roles.md'],
+    ]);
+    expect(by('SCR-PAY-01.entry.1')).toMatchObject({ kind: 'entry', label: 'From home' });
+    expect(by('SCR-PAY-01.ENT-BONUS').steps.map((s) => [s.level, s.object])).toEqual([
+      ['screen', 'SCR-PAY-01'],
+      ['entity', 'new entity ENT-BONUS'],
+    ]);
+    expect(by('SCR-PAY-01.state.loading')).toMatchObject({
+      kind: 'unknown',
+      note: expect.stringMatching(/data-show-in/),
+    });
+    expect(by('SCR-HR-01.A01')).toMatchObject({
+      kind: 'unknown',
+      note: expect.stringMatching(/starts with "SCR-PAY-01\."/),
+    });
+    expect(r.brief).not.toContain('loading');
+  });
+
+  it('a marker only in the contract is found too, and the contract label wins', () => {
+    const dir = copyFixture();
+    runExperienceNew(dir, 'SCR-PAY-01');
+    write(
+      dir,
+      'experience/screens/UX-SCR-PAY-01.md',
+      'elements:\n',
+      'elements:\n  - src: SCR-PAY-01.ENT-PAYSLIP.Discount\n    region: main\n    component: text-field\n    label: Discount applied\n',
+    );
+    const [item] = runExperienceLift(dir, 'SCR-PAY-01').items;
+    expect(item).toMatchObject({
+      src: 'SCR-PAY-01.ENT-PAYSLIP.Discount',
+      where: 'contract',
+      label: 'Discount applied',
+    });
+  });
+
+  it('inside a change it writes a grooming document and touches nothing else', () => {
+    const dir = copyFixture();
+    runExperienceNew(dir, 'SCR-PAY-01');
+    runBaseline(dir);
+    expect(() => runExperienceLift(dir, 'SCR-PAY-01')).toThrow(/--change/);
+    const { id } = runChangeNew(dir, 'Reject payslips');
+    runChangeEdit(dir, id, 'UX-SCR-PAY-01');
+    add(dir, '<button data-src="SCR-PAY-01.A03">Reject</button>', `changes/${id}/spec/${mock}`);
+    const r = runExperienceLift(dir, 'SCR-PAY-01', { change: id });
+    expect(r.document).toBe(`spec/changes/${id}/groom.md`);
+    const groom = read(dir, `changes/${id}/groom.md`);
+    expect(groom).toContain('# Grooming: Payslip run: what the mockup needs');
+    expect(groom).toContain(
+      '## The idea\n\nThe mockup of SCR-PAY-01 (Payslip run) shows, and the spec lacks: an action A03 "Reject"',
+    );
+    expect(groom).toContain('| `SCR-PAY-01.A03` | action "Reject" |');
+    // Only the page the person edited changed; the business spec is untouched.
+    expect(computeImpact(dir, id).modified.map((o) => o.key)).toEqual([`file:${mock}`]);
+    expect(runValidate(dir, { change: id }).findings.map((f) => f.rule)).toEqual(['experience-mockup']);
+    // A change that came from grooming keeps its document; the lift gets its own.
+    expect(runExperienceLift(dir, 'SCR-PAY-01', { change: id }).document).toBe(
+      `spec/changes/${id}/groom-SCR-PAY-01.md`,
+    );
+    expect(runValidate(dir, { change: id }).findings.map((f) => f.rule)).toEqual(['experience-mockup']);
   });
 });
 

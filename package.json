@@ -1,6 +1,7 @@
 {
   "name": "@alterset/alterspec",
   "version": "0.7.0",
+  "private": true,
   "description": "alterspec - the spec changes with the product. Product spec framework for AI-assisted delivery.",
   "license": "MIT",
   "author": "Alterset d.o.o.",
@@ -33,6 +34,7 @@
   },
   "scripts": {
     "build": "tsup",
+    "prepare": "tsup",
     "dev": "tsup --watch",
     "test": "vitest run",
     "test:watch": "vitest",

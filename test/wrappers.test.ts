@@ -11,23 +11,16 @@ const COMMANDS = [
   'alterspec',
   'groom',
   'init',
-  'create-module',
-  'create-capability',
-  'create-screen',
-  'create-entity',
-  'change-module',
-  'change-capability',
-  'change-screen',
-  'change-entity',
-  'refine',
   'validate',
   'views',
-  'change',
   'impact',
   'apply',
   'handoff',
   'experience',
 ];
+
+/** The references grooming reads for each object type and for an empty spec; not skills. */
+const REFERENCES = ['_shared', '_skeleton', '_module', '_entity', '_capability', '_screen'];
 
 const SkillFrontMatter = z
   .object({
@@ -53,7 +46,7 @@ describe('skill wrappers', () => {
   /** The skill directory of a command: `alterspec-<cmd>`, except the front door, which is `alterspec` itself. */
   const skillOf = (cmd: string) => (cmd === 'alterspec' ? 'alterspec' : `alterspec-${cmd}`);
 
-  it('ships exactly the 19 skills: the front door and 18 alterspec-* skills', () => {
+  it('ships exactly the 9 skills: the front door, grooming, init, the checks, the gates and experience', () => {
     expect(dirs.sort()).toEqual(COMMANDS.map(skillOf).sort());
   });
 
@@ -101,6 +94,20 @@ describe('skill wrappers', () => {
     for (const cmd of COMMANDS) {
       expect(readAsset(`claude/skills/${skillOf(cmd)}/SKILL.md`)).not.toMatch(/npx alterspec/);
     }
+  });
+
+  it('grooming is the one way in: no wrapper or prompt names a single-object skill of 0.7', () => {
+    const removed = /alterspec-(create|change)-\w+|\/alterspec-refine|\/alterspec-change\b/;
+    for (const cmd of COMMANDS)
+      expect(readAsset(`claude/skills/${skillOf(cmd)}/SKILL.md`), skillOf(cmd)).not.toMatch(removed);
+    for (const p of readdirSync(join(ASSETS_DIR, 'prompts'), { recursive: true }).map(String))
+      if (p.endsWith('.md')) expect(readAsset(`prompts/${p}`), p).not.toMatch(removed);
+    const groom = readAsset('prompts/groom.md');
+    for (const ref of REFERENCES) {
+      expect(existsSync(join(ASSETS_DIR, 'prompts', `${ref}.md`)), ref).toBe(true);
+      expect(groom, `groom.md reads ${ref}.md`).toContain(`${ref}.md`);
+    }
+    expect(readAsset('prompts/init.md')).toContain('groom.md');
   });
 });
 

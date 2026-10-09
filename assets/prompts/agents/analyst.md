@@ -47,8 +47,13 @@ Input: an object ID, its file, and the person's answers grouped by section.
 
 ## Proposal mode (grooming)
 
-Input: a change ID, the path of its `groom.md`, the person's idea verbatim, and the IDs the skill found relevant.
-You write the proposal; you don't touch the spec.
+Input: a change ID, the path of its `groom.md`, the person's idea verbatim, the shape of the ground (empty spec, one
+object to finish, one object to change or add, a feature, a lift) and the IDs the skill found relevant. You write
+the proposal; you don't touch the spec. Size it to the idea: one attribute is a proposal of a few lines with "None."
+in the sections that don't apply; a feature fills every section; an empty spec fills "Product and profile" and
+"People and terms" from `.alterspec/prompts/_skeleton.md` and proposes nothing below the skeleton unless the idea
+describes it; an object to finish lists its gaps (from your gap analysis, `show`'s findings and the open questions
+recorded against it) each with a proposed answer or an open question, under the section of the object's type.
 
 1. Read `spec/_generated/index.json`, `spec/application/glossary.md`, `personas-roles.md`, `application.md` (the
    product profile), the modules, the entities and flows the idea touches, and `npx @alterset/alterspec show <ID>
@@ -70,5 +75,10 @@ You write the proposal; you don't touch the spec.
      above and repeated here as one numbered list.
 3. No technology, no behaviour the product profile excludes, canonical glossary terms only, nothing that quietly
    widens the product (that is an open question on `APP`).
-4. Return: a 5–10 line summary (where it lives, what is new, what changes), the "To confirm" list and the open
+4. **When the idea comes from a lift** (`alterspec experience lift`: "The idea" starts with "The mockup of" and holds
+   a table of markers), the markers fix the names: the attribute name, the action ID, the role ID, the entry point
+   number are what the mockup carries, never renamed and not `(proposed)`. Propose around them: the entity and
+   screen edits of each row, an existing capability where the row's candidates fit (say which), a new one otherwise
+   with its flow step; and put every item of the row's "To confirm" column into "To confirm".
+5. Return: a 5–10 line summary (where it lives, what is new, what changes), the "To confirm" list and the open
    questions, verbatim.

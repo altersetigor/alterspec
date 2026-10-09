@@ -1,5 +1,5 @@
 import { idKind } from '../schemas/ids.js';
-import { mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { nextNumber } from '../authoring/ids.js';
 import { today } from '../changes/baseline.js';
@@ -19,7 +19,7 @@ export interface ChangeOptions {
 }
 
 export interface ChangeNewOptions extends ChangeOptions {
-  /** Also write `groom.md`, the grooming document `/alterspec-groom` fills before anything enters the spec. */
+  /** Also write `groom.md`, the proposal `/alterspec-groom` drafts before anything enters the spec. */
   groom?: boolean;
 }
 
@@ -49,16 +49,34 @@ export function runChangeNew(
     id,
     file: `${opts.spec ?? 'spec'}/changes/${id}/proposal.md`,
   };
-  if (opts.groom) {
-    const groom = renderTemplate(readTemplate(resolve(dir), 'groom.md'), {
-      NNN: nnn,
-      title: title.replace(/\s+/g, ' ').trim(),
-      date: today(),
-    });
-    writeFileSync(join(specRoot, 'changes', id, 'groom.md'), groom);
-    result.groom = `${opts.spec ?? 'spec'}/changes/${id}/groom.md`;
-  }
+  if (opts.groom) result.groom = writeGroom(dir, id, title.replace(/\s+/g, ' ').trim(), opts);
   return result;
+}
+
+/**
+ * Write a grooming document into a change from `templates/groom.md`: `groom.md`, or `groom-<name>.md` when the
+ * change already has one (a change that came from an idea and then gets a lift from a mockup). `idea` fills
+ * "The idea" section. Returns the path relative to the project.
+ */
+export function writeGroom(
+  dir: string,
+  changeId: string,
+  title: string,
+  opts: ChangeOptions & { idea?: string; name?: string } = {},
+): string {
+  const specRoot = specRootOf(dir, opts);
+  const folder = join(specRoot, 'changes', changeId);
+  if (!existsSync(join(folder, 'proposal.md'))) throw new ChangeError(`${changeId} is not a change proposal`);
+  let groom = renderTemplate(readTemplate(resolve(dir), 'groom.md'), {
+    NNN: changeId.slice('CHG-'.length),
+    title,
+    date: today(),
+  });
+  if (opts.idea)
+    groom = groom.replace(/(## The idea\n\n)<!--[^]*?-->/, (_m, h: string) => `${h}${opts.idea}`);
+  const file = opts.name && existsSync(join(folder, 'groom.md')) ? `groom-${opts.name}.md` : 'groom.md';
+  writeFileSync(join(folder, file), groom);
+  return `${opts.spec ?? 'spec'}/changes/${changeId}/${file}`;
 }
 
 function requireOpen(change: LoadedChange) {

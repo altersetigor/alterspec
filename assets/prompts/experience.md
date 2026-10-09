@@ -21,8 +21,8 @@ interaction details. It never changes what the product does.
 **Zero deviation.** Business screen, experience screen and mockup must agree completely: every field, action and
 business state of the screen appears with its `data-src`, nothing else is added, labels match, every role and state
 is shown. If the design needs something the business spec lacks (a field, an action, a filter, a message, a rule), stop
-and say so: it goes into the business spec first (`/alterspec-change-screen`, `/alterspec-change-entity`…), then
-`alterspec experience sync`. Never add it only to the mockup.
+and say so: it goes into the business spec first, then `alterspec experience sync`. Never add it only to the mockup.
+`lift <SCR>` (below) computes where in the spec each such element goes and turns it into one proposal to confirm.
 
 **It must look like the real app.** Nothing on a page may be something a real user wouldn't see: no notes about the
 mockup, no spec IDs, no state switches, no explanations of what a button would do. States are reached through links
@@ -30,7 +30,7 @@ in the experience screen and the handoff, never through controls on the page. Th
 violations.
 
 Once a baseline exists, every command below needs `--change <CHG>`: ask which open change to use, or start one with
-`/alterspec-change`.
+`npx @alterset/alterspec change new --title "<why>"`.
 
 ## `init` — the app and its design
 
@@ -69,7 +69,7 @@ real product, based on the application's vision, glossary and entities:
 ## `<SCR>` — design one screen
 
 1. Run `npx @alterset/alterspec show <SCR>`. If the business screen still has gaps (missing purpose, states, fields),
-   close them first with `/alterspec-refine <SCR>`: an experience screen can't be ready on top of gaps.
+   close them first (`/alterspec-groom <SCR>`): an experience screen can't be ready on top of gaps.
 2. If there is no experience screen yet, run `npx @alterset/alterspec experience new <SCR> --json`. It drafts the
    experience screen and a working page; both already pass every check.
 3. Interview about what the draft can't know: which archetype; what goes where; component per field and action;
@@ -106,10 +106,38 @@ edits is **kept** (`kept: true`); the fresh render goes to `spec/_generated/expe
 result says what differs. Then:
 
 - `businessChange` lists `data-src` values on the page that the business spec doesn't have. That is business content,
-  not design: run the spec change flow (`/alterspec-change-screen`, `/alterspec-change-entity`…), then
-  `experience sync <SCR>`, or take it off the page. Never answer it by rebuilding.
+  not design: run `lift <SCR>` (below), or take it off the page. Never answer it by rebuilding.
 - `findings`: fix them in the contract or the page, as the designer agent would.
 - `kitOutdated`: merge the head and the scripts from the fresh render into the page; keep the person's layout.
 - Nothing listed: the page has design edits only. Leave it.
 
 Never pass `--force`. It throws the person's design away; only they may decide that, by saying so explicitly.
+
+## `lift <SCR>` — the mockup shows something the spec lacks
+
+Nothing climbs from the experience into the business spec on its own. `lift` computes the way up for every marker the
+spec lacks, from the marker itself (`SCR.ENT-X.Attr` is a field of entity X, `SCR.A03` an action, `SCR.role.ROLE-Y` a
+role, `SCR.entry.N` an entry point): which objects, at which levels, under which names, and the check that fires while
+a level is missing. Names and IDs are fixed by the markers. What each object must say (a business kind, which
+capability, a scope) is the person's decision: it is listed to confirm, asked once, and nothing is written into the
+spec before they say go. The pattern is grooming with a mockup diff as the idea.
+
+1. Run `npx @alterset/alterspec experience lift <SCR> --json` (with `--change <CHG>`: ask which open change, or
+   start one with `change new`; without a baseline no change is needed). It never edits the spec.
+   - `items` empty: say the page and contract show only what the spec has, and stop.
+   - `kind: unknown` items can't be lifted (a marker of another screen, a design state written as a `data-src`, a
+     shape the wireframe never produces): ask what was meant, or have the page fixed, before going on.
+   - `document`: the grooming document it wrote into the change, "The idea" prefilled with the brief and a table of
+     every marker, its path up the tree and what to confirm. Without a change, carry `brief` and the items in the
+     conversation instead.
+2. Delegate the document to the `alterspec-analyst` agent in **proposal mode**: give it the change ID, the file, the
+   `brief` as the idea and the item table. It proposes around the fixed names (never renames an attribute, action,
+   role or entry point the marker fixes), reuses existing objects where the `candidates` fit, and puts every `confirm`
+   entry into "To confirm".
+3. Read `.alterspec/prompts/groom.md` and follow its sections 4 to 6 with this document: ask once, wait for the
+   person's go, execute inside the change in the order given there, `change sync <CHG>`, `validate --change`, impact,
+   reviewer, `in_review`, report. (Or invoke `alterspec-groom` with the `CHG-…`: it continues from the document.) After `sync` the elements the designer already placed keep their markers, so nothing
+   lands in "Added by sync" for them; only what the person added beyond the mockup does. Then `review <SCR>`.
+
+When the person answers an item with "take it off the page" instead, remove the element from the page and the contract
+and leave the business spec alone.

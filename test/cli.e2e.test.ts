@@ -1,5 +1,5 @@
 import { execFileSync, spawnSync } from 'node:child_process';
-import { existsSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { beforeAll, describe, expect, it } from 'vitest';
@@ -22,6 +22,7 @@ describe('built CLI', () => {
     expect(first.status, first.stderr).toBe(0);
     expect(first.stdout).toMatch(/created: \d+/);
     expect(existsSync(join(dir, '.claude/skills/alterspec-init/SKILL.md'))).toBe(true);
+    expect(readdirSync(join(dir, '.claude/skills'))).toHaveLength(9);
 
     const second = run(['init', dir]);
     expect(second.status).toBe(0);
@@ -30,6 +31,12 @@ describe('built CLI', () => {
     expect(run(['update', dir]).status).toBe(0);
     const doctor = run(['doctor', dir]);
     expect(doctor.status, doctor.stdout).toBe(0);
+  });
+
+  it('lists experience lift', () => {
+    const r = run(['experience', '--help']);
+    expect(r.status).toBe(0);
+    expect(r.stdout).toMatch(/lift \[options\] <SCR>/);
   });
 
   it('prints the version', () => {

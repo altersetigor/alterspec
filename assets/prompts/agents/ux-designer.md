@@ -51,5 +51,6 @@ findings for this screen.
 ## Report
 
 - What you changed, briefly.
-- **Required business changes**: each with the object to change and what it must say.
+- **Required business changes**: each with the object to change and what it must say. The skill lifts them with
+  `alterspec experience lift <SCR>`; keep the element on the page with the marker it will have once the spec has it.
 - Open questions you couldn't answer from the brief.

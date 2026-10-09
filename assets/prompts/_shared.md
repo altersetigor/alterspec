@@ -33,26 +33,25 @@ and `responsive` or `offline` where it matters) and `profile` (`tenancy`, `langu
 ## How you work with the person
 
 - **Starting from plain language.** The person may just say what they want; Claude Code then starts the matching
-  alterspec skill from their words, or `/alterspec` routes them. That is fine for every authoring skill: the
-  interview and the summary before writing are the guard against a misread sentence. Never start `/alterspec-init`,
-  `alterspec baseline`, `/alterspec-apply` or `/alterspec-handoff` from your own reading of a sentence: the person
-  types those.
-- **Interview, then draft.** Ask at most 3 questions at a time. When the spec already suggests answers (existing roles,
-  entities, rules), offer them as choices. Before writing, summarise what you understood in a few lines and let the
-  person correct it.
+  alterspec skill from their words, or `/alterspec` routes them. Never start `/alterspec-init`, `alterspec baseline`,
+  `/alterspec-apply` or `/alterspec-handoff` from your own reading of a sentence: the person types those.
+- **One authoring mode: draft, mark, confirm once, execute.** Every business change, from an empty spec to one
+  attribute, is a grooming proposal (`/alterspec-groom`): read the ground without asking, draft the whole thing,
+  mark every fact that is neither in the idea nor in the spec as `(proposed)` and list it to confirm, ask once, and
+  write nothing into the spec before the person says go. The interview happens inside the proposal, for what cannot
+  be proposed. Only the experience skill still interviews, at most 3 questions at a time, because a design is
+  confirmed by looking at it.
 - **Ask, don't invent.** Never fill a gap with a plausible guess. If the person doesn't know, record an open question:
   `alterspec new decision --title "<question>" --kind open_question --json`, add the object's ID to that item's
-  `affects` list, and add a line under the object's "Open questions" section. In grooming (`/alterspec-groom`) the
-  analyst may propose: every proposed fact is marked `(proposed)` and listed to confirm, and nothing is written into
-  the spec before the person confirms and says go.
+  `affects` list, and add a line under the object's "Open questions" section.
 - **Granularity.** One capability = one user goal, reached in one session, by the roles allowed to perform it (one or
   several, each with its own scope). Propose a split when a description covers two goals, or work that pauses for
   someone else (an approval, a reply from a partner). Each part becomes its own capability, and the hand-over between
   them becomes a flow step or an event. Several roles doing the same thing is one capability; one role handing over to
   another is two.
-- **Status.** New objects start as `draft`. Only `/alterspec-refine` moves an object to `refined`, and only when it has no
-  open gaps. Moving to `ready`, `approved` or `implemented` needs the person to say so explicitly; then raise
-  `version` by 1.
+- **Status.** New objects start as `draft`. Only grooming an object to finish it moves it to `refined`, and only
+  when it has no open gaps. Moving to `ready`, `approved` or `implemented` needs the person to say so explicitly;
+  then raise `version` by 1.
 
 ## Baseline: changes go through change proposals
 
@@ -63,13 +62,11 @@ Check whether `spec/_generated/baseline.json` exists.
 - **Baseline exists:** every edit, including new objects, goes through a change proposal. Never edit `spec/` directly;
   `alterspec validate` reports direct edits as `direct-edit` errors.
   - Ask which open change to use (`spec/changes/CHG-*/proposal.md` with status `draft` or `in_review`), or start one
-    with `/alterspec-change`.
+    (`alterspec change new --title "<why>"`; grooming does it with `--groom`).
   - Existing object: `alterspec change edit <CHG> <ID> --json`, then edit the copy it reports, under
     `spec/changes/<CHG>/spec/`. Glossary terms are `term:<Term>`; prose files are `file:<path>`.
   - New object: add `--change <CHG>` to `alterspec new`.
   - Removal: `alterspec change remove <CHG> <ID>`.
-  - To change one existing object, the person can also use `/alterspec-change-module`, `-capability`, `-screen` or
-    `-entity`; they follow these same rules.
   - Check with `alterspec validate --change <CHG>` instead of `alterspec show`.
 
 ## How you change files

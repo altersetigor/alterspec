@@ -16,6 +16,15 @@ idea or in the spec is marked (proposed) and repeated under "To confirm". The pe
 
 <!-- The person's words, verbatim. -->
 
+## Product and profile
+
+<!-- Empty spec only: the product in two sentences, channels, tenancy, languages, currencies, time zones (see
+_skeleton.md). Otherwise "None." -->
+
+## People and terms
+
+<!-- Empty spec only: personas, roles, and the first glossary terms with their forbidden synonyms. Otherwise "None." -->
+
 ## What the spec already covers
 
 <!-- Existing objects the idea touches or partly covers, by ID and title, and what they already do. -->

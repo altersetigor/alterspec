@@ -1,7 +1,8 @@
 # alterspec
 
 The spec changes with the product. alterspec is a product specification framework for AI-assisted delivery,
-published as `@alterset/alterspec` by Alterset d.o.o. (MIT).
+packaged as `@alterset/alterspec` by Alterset d.o.o. (MIT). The package is private (`"private": true` in
+`package.json`, decided 2026-10-10): it is not published to npm and is used from this repo or a git URL.
 
 It keeps a tech-agnostic product spec (**Application → Module → Capability**) as the single source of truth and
 evolves it through reviewed change proposals (deltas). It is a spec-driven framework that covers only the product
@@ -43,15 +44,22 @@ via the built-in `z.toJSONSchema`). Dev: `tsup`, `vitest`, `eslint` + `typescrip
 - `test/fixtures/valid/` must stay at zero findings. After editing it, run
   `node dist/cli.js views test/fixtures/valid` so its generated blocks stay current.
 - Skills reference the CLI as `npx @alterset/alterspec`, never `npx alterspec`: the unscoped name isn't ours yet,
-  and npx would download whatever package holds it.
+  and npx would download whatever package holds it. While the package is private, npx resolves that name to the
+  stale public 0.6.0; a user project links the CLI from this repo (`npm link` or a git URL) so the name resolves
+  locally.
 
 ## npm and registry
 
 - The user's global `~/.npmrc` points to a corporate Artifactory. **Never read, edit or rely on `~/.npmrc`.**
 - The project `.npmrc` must keep `registry=https://registry.npmjs.org/`.
-- `package.json` must keep `publishConfig: { registry: "https://registry.npmjs.org/", access: "public" }`.
+- `package.json` keeps `"private": true`, so `npm publish` is refused. Its `prepare` script runs `tsup`, so
+  `npm install github:altersetigor/alterspec` builds `dist/` in the user project; keep it. Never remove the flag, and never run
+  `npm publish`, `npm unpublish` or `npm deprecate` unless the user asks for it in chat.
+- Versions 0.0.0-stage to 0.6.0 remain public on npm from before the package went private; 0.7.0 was unpublished
+  on 2026-10-10. They are not maintained and must not be referenced as the current release.
+- `publishConfig` (`registry: https://registry.npmjs.org/`, `access: "public"`) stays as a record for a later
+  decision to publish again; it has no effect while the package is private.
 - Never commit auth tokens. Any `.npmrc` containing `_authToken` stays out of git.
-- Never run `npm publish` unless the user asks for it in chat.
 
 ## Two different `.claude/` folders
 
@@ -109,19 +117,20 @@ Statuses: `draft → refined → ready → approved → implemented`.
 - CLI: `init`, `update`, `doctor`, `validate [--json]`, `views [--check]`, `new <type>`, `show <ID>`,
   `profile set|show`, and later `impact <CHG>`, `apply <CHG>`. All deterministic work lives in the CLI (IDs, file locations, references); skills
   call it through Bash and prompts never pick IDs or copy templates themselves.
-- Skills (19): `/alterspec` (the front door: answers questions from the spec and routes plain-language requests to
-  the skill below that does that kind of change; `prompts/alterspec.md`); `/alterspec-groom` (an idea → one
-  proposal in `spec/changes/CHG-NNN/groom.md`, drafted by the analyst's proposal mode, confirmed once, executed on
-  "go" up to `in_review`; `change new --groom` writes the document from `templates/groom.md`); `/alterspec-init`;
-  `-create-module|capability|screen|entity`; `-change-module|capability|screen|entity` (edit one existing object, via
-  a change proposal after the baseline; shared flow in `prompts/_change-object.md`); `-refine`, `-validate`, `-views`,
-  `-change`, `-impact`, `-apply`, `-handoff`, `-experience`. The skill name minus `alterspec-` is the prompt file name in
-  `assets/prompts/`.
-- Invocation (decided 2026-10-09): every skill's `description` is written as a trigger (what the person says, the
-  object type and ID prefix, an example), so Claude Code may start it from plain language. Only `init`, `apply` and
-  `handoff` keep `disable-model-invocation: true`; `_shared.md` forbids starting those, or `baseline`, from a
-  sentence. The person never needs to know a skill name; the guard is the interview, the summary before writing
-  and the change proposal, not the slash command.
+- Skills (9, since Phase 10f): `/alterspec` (the front door: answers questions from the spec and routes a wish to
+  grooming; `prompts/alterspec.md`); `/alterspec-groom` (the one way the spec is written: ground + idea → one
+  proposal in `spec/changes/CHG-NNN/groom.md`, drafted by the analyst's proposal mode at the size of the idea,
+  confirmed once, executed on "go" up to `in_review`; `change new --groom` writes the document from
+  `templates/groom.md`; the per-type references `prompts/_module.md`, `_entity.md`, `_capability.md`, `_screen.md`
+  and `_skeleton.md` say what a proposal covers and how each object is written and checked); `/alterspec-init`
+  (typed; installs if needed and grooms the skeleton on an empty spec); `-validate`, `-views`, `-impact`, `-apply`,
+  `-handoff`, `-experience`. The skill name minus `alterspec-` is the prompt file name in `assets/prompts/`;
+  `_`-prefixed prompts are references, not skills. The ten single-object skills of 0.7 (`create-*`, `change-*`,
+  `change`, `refine`) are gone; `update` deletes their wrappers from user projects (and the emptied skill folders).
+- Invocation (decided 2026-10-09): every skill's `description` is written as a trigger (what the person says, an
+  example), so Claude Code may start it from plain language. Only `init`, `apply` and `handoff` keep
+  `disable-model-invocation: true`; `_shared.md` forbids starting those, or `baseline`, from a sentence. The person
+  never needs to know a skill name; the guard is the proposal and its "To confirm" list, not the slash command.
 - Agents: `alterspec-analyst` (gap analysis and drafting; it does not interview, the skill in the main conversation does),
   `alterspec-reviewer` (read-only; reports findings with severity and never edits the spec), `alterspec-ux-designer`
   (edits only experience screens and mockups) and `alterspec-experience-reviewer` (read-only parity table).
@@ -146,7 +155,8 @@ Statuses: `draft → refined → ready → approved → implemented`.
   catalogue (`patterns.md` archetypes, `design-system.md` components), a small HTML reader, `dryHash` (only what an
   experience screen realises), `reviewHash`, and the scaffold behind `experience new|sync`. The `experience-*` lint
   rules in `src/lint/rules/experience.ts` enforce zero deviation; handoff refuses screens whose experience isn't
-  ready, reviewed and finding-free (no override). Mockup files are spec objects (`file:experience/mockups/…`) and
+  ready, reviewed and finding-free (no override). `experience lift <SCR>` (Phase 10e) is the way back up: it turns
+  the markers the spec lacks into a proposal to confirm. Mockup files are spec objects (`file:experience/mockups/…`) and
   `change edit UX-SCR-…` copies the mockup along. The starter kit lives in `assets/experience/` (plain CSS, no CDN).
 - Living mockups (Phase 8): mockups are the future app. `assets/experience/mockups/kit/` is a vanilla runtime
   (`app.js` sign-in/shell/binding/actions, `store.js` demo data in localStorage, `ui.js`, `icons.js` = bundled Lucide
@@ -174,8 +184,8 @@ Statuses: `draft → refined → ready → approved → implemented`.
   (`profile-missing`, `screen-channel`, `profile-excluded` with `lint.profile_terms`, `tenant-visibility`), and
   `defaultConfig` in `src/experience/app.ts` (currency and locale). Every profile field has a consumer; don't add
   fields nobody reads. Audit and data residency were deferred (2026-10-09).
-- Decided: interview-then-draft; `refine` moves status to `refined` at most, anything beyond needs the person's
-  explicit word. Granularity and rule placement: see Decisions below.
+- Decided: draft-then-confirm, always (see Decisions); grooming an object to finish it moves its status to
+  `refined` at most, anything beyond needs the person's explicit word. Granularity and rule placement: see below.
 
 ## Decisions
 
@@ -193,14 +203,22 @@ Decided (don't reopen without the person's word):
   architecture design stay outside alterspec.
 - **Naming** (0.2.0): installed skills and agents are prefixed `alterspec-`; front-matter is parsed without
   `gray-matter`.
+- **Private package** (2026-10-10): `package.json` carries `"private": true`; 0.7.0 was unpublished and nothing is
+  published to npm from now on. Users install from this repo (`npm link` or a git URL). See "npm and registry".
 - **Product profile** (2026-10-09): the core five dimensions (channels with responsive/offline, tenancy, languages,
   currencies, time zones) live in `application.md`; with several languages or currencies a default is mandatory;
   screens may name their channels. Audit and data residency stay out until they have a consumer.
 
-- **Who writes the spec** (2026-10-09): both. The single-object skills (`create-*`, `change-*`, `refine`) stay
-  interview-then-draft. Grooming (`/alterspec-groom`) is draft-then-confirm: the analyst drafts a whole proposal
-  from an idea, every fact not in the idea or the spec is marked `(proposed)` and listed to confirm, nothing is
-  written into the spec before the person says go, and `apply` still needs their approval by name.
+- **Upward flow from the experience** (2026-10-10): business content found in a mockup never climbs into the spec
+  silently. `experience lift` computes the path up the tree and writes the proposal; the person confirms once; the
+  skill executes through the same CLI commands as grooming. Nothing enters the business spec before "go".
+- **One authoring mode** (2026-10-10, replaces "who writes the spec: both" of 2026-10-09): draft-then-confirm,
+  always. Every business change, from an empty spec to one attribute, is a grooming proposal: drafted from the
+  ground by the analyst, every fact not in the idea or the spec marked `(proposed)` and listed to confirm, confirmed
+  once, executed by the CLI. The interview happens inside the proposal, for what cannot be proposed; only the
+  experience skill still interviews, because a design is confirmed by looking. Typed by the person, because they
+  are decisions and not drafts: installing the framework, `/alterspec-init`, `baseline`, approval by name at
+  `apply`, module handoff.
 
 Open (ask before building anything that depends on it):
 
@@ -225,4 +243,19 @@ Open (ask before building anything that depends on it):
     refuses while a screen is stale, orphaned, or ready without an experience; (c) grooming (`/alterspec-groom`, `prompts/groom.md`, the analyst's proposal mode, `templates/groom.md`,
     `change new --groom`), done: one proposal drafted from an idea, asked once, executed on the person's "go" up to
     `in_review`; the decision "who writes the spec" is recorded above; (d) `apply` hands off every touched capability that passes the gate and refreshes stale bundles
-    (`handoffImpact`, `src/handoff/stale.ts`), done. After each step, update the guide in the user's voice.
+    (`handoffImpact`, `src/handoff/stale.ts`), done; (e) lifting (2026-10-10): `alterspec experience lift <SCR>`
+    (`src/experience/lift.ts`, `runExperienceLift`) computes, for every `data-src` a page or contract carries that the
+    business spec lacks, the path up the spec tree from the marker grammar (screen → entity / capability → flow or
+    role at application level), the check that fires while a level is missing, candidates (an attribute spelled
+    differently, a module capability the screen's roles may perform) and what only the person can confirm; inside a
+    change it writes a grooming document (`writeGroom` in `src/commands/change.ts`; `groom-<SCR>.md` when `groom.md`
+    exists) prefilled with the brief and the item table, and never edits the spec. `/alterspec-experience lift`
+    hands it to the analyst's proposal mode and then follows `groom.md` sections 4–6: asked once, executed on "go".
+    The markers fix names and IDs; the person decides content; (f) one authoring mode (2026-10-10): grooming is
+    the only way the spec is written. `groom.md` sizes the proposal to the shape of the ground (empty spec, one
+    object to finish, one object to change or add, a feature, a `CHG` to continue, a lift document); the ten
+    single-object skills and their prompts were removed and their content merged into the per-type references
+    (`_module.md`, `_entity.md`, `_capability.md`, `_screen.md`) and `_skeleton.md` (the former init interview);
+    `init.md` is thin and grooms the skeleton; `templates/groom.md` gained "Product and profile" and "People and
+    terms"; the installer removes emptied skill folders on `update`. After each step, update the docs in the user's
+    voice.

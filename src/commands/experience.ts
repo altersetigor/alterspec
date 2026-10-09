@@ -41,7 +41,8 @@ import type { ExperienceScreen } from '../schemas/experience.js';
 import { readSpecDir } from '../spec/files.js';
 import { loadSpec } from '../spec/load.js';
 import type { SpecModel } from '../spec/model.js';
-import { changeEdit, recordNew } from './change.js';
+import { changeEdit, recordNew, writeGroom } from './change.js';
+import { liftOf, liftTable, type Lift } from '../experience/lift.js';
 
 export class ExperienceError extends Error {}
 
@@ -280,6 +281,37 @@ export function runExperienceRebuild(
   mkdirSync(dirname(full), { recursive: true });
   writeFileSync(full, fresh);
   return { screen: id, files: [], kept: true, reference, businessChange, findings, kitOutdated };
+}
+
+export interface ExperienceLiftResult extends Lift {
+  /** The grooming document written into the change, prefilled with the lift (only with a change and items). */
+  document?: string;
+}
+
+/**
+ * What a hand-edited experience needs from the business spec: for every marker the spec lacks, the path up the
+ * tree (which objects, at which levels, under which names, and the check that fires while a level is missing) and
+ * the facts only the person can give. Inside a change it writes a grooming document prefilled with the lift, so the
+ * analyst can draft the proposal and the person confirms once. It never edits the business spec.
+ */
+export function runExperienceLift(
+  dir: string,
+  screenId: string,
+  opts: ExperienceOptions = {},
+): ExperienceLiftResult {
+  const ws = workspace(dir, opts);
+  const id = screenId.trim().toUpperCase();
+  const x = experienceOf(ws.model, id);
+  const page = dryPage(ws.model, id);
+  if (!page) throw new ExperienceError(`${id} is not a screen in the spec`);
+  const lift = liftOf(ws.model, page, x.data, contentOf(ws.model, mockupPath(id)) ?? '');
+  if (!lift.items.length || !ws.change) return lift;
+  const document = writeGroom(ws.root, ws.change.id, `${page.title}: what the mockup needs`, {
+    ...(opts.spec ? { spec: opts.spec } : {}),
+    idea: `${lift.brief}\n\n${liftTable(lift)}`.trim(),
+    name: id,
+  });
+  return { ...lift, document };
 }
 
 function experienceOf(model: SpecModel, id: string) {

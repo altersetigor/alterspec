@@ -8,8 +8,8 @@ Arguments: `<CHG>`.
 
 Read `spec/changes/<CHG>/proposal.md` and run `npx @alterset/alterspec impact <CHG> --json`.
 
-- `draft`: it hasn't been reviewed. Suggest finishing it with `/alterspec-change <CHG>`, and stop.
-- conflicts or errors: show them and stop. Suggest `/alterspec-change <CHG>` to fix them.
+- `draft`: it hasn't been reviewed. Suggest finishing it with `/alterspec-groom <CHG>`, and stop.
+- conflicts or errors: show them and stop. Suggest `/alterspec-groom <CHG>` to fix them.
 - `in_review`: continue with approval.
 - `approved`: continue with apply.
 
@@ -33,6 +33,6 @@ scope, every screen's experience ready, reviewed and finding-free) is exported t
 existing bundle whose sources changed is refreshed. What doesn't pass is listed with the reason.
 
 Report: files written and deleted, the new versions, where the change was archived, what was handed off and what was
-not, each with its reason and next step (`/alterspec-refine <CAP>` for a draft, `/alterspec-experience review <SCR>`
+not, each with its reason and next step (`/alterspec-groom <CAP>` to finish a draft, `/alterspec-experience review <SCR>`
 for an unreviewed screen). `/alterspec-handoff` is only needed for a whole module, an early look with `--allow-draft`,
 or a re-export on demand. Then run `npx @alterset/alterspec validate` and mention any warnings.

@@ -18,6 +18,7 @@ import { formatHuman, listRules, runValidate } from './commands/validate.js';
 import { runViews } from './commands/views.js';
 import {
   runExperienceInit,
+  runExperienceLift,
   runExperienceNew,
   runExperienceRebuild,
   runExperienceSeed,
@@ -216,7 +217,7 @@ program
   .action((opts: { dir: string; spec: string; force?: boolean }) => {
     const r = runBaseline(opts.dir, opts);
     console.log(
-      `Baseline recorded: ${r.objects} objects. From now on, change the spec through /alterspec-change.`,
+      `Baseline recorded: ${r.objects} objects. From now on, every change is a grooming proposal (/alterspec-groom).`,
     );
   });
 
@@ -425,7 +426,7 @@ experienceOpts(
     );
     if (r.businessChange.length)
       console.log(
-        `  business content the spec lacks: ${r.businessChange.join(', ')}; put it into the business spec (/alterspec-change-screen, -entity), then \`alterspec experience sync ${r.screen}\`, or take it off the page`,
+        `  business content the spec lacks: ${r.businessChange.join(', ')}; lift it into the business spec (\`alterspec experience lift ${r.screen}\`), or take it off the page`,
       );
     for (const f of r.findings) console.log(`  ${f.file}:${f.line ?? ''}  ${f.rule}  ${f.message}`);
     if (r.kitOutdated)
@@ -438,6 +439,32 @@ experienceOpts(
       );
   }
   if (r.kept) process.exitCode = 1;
+});
+
+experienceOpts(
+  experience
+    .command('lift')
+    .description(
+      'What a hand-edited page or contract needs from the business spec: the path of every unknown marker up the spec tree, and what to confirm. Inside a change it writes a grooming document; it never edits the spec',
+    )
+    .argument('<SCR>'),
+).action((id: string, opts: ExperienceCliOpts) => {
+  const r = runExperienceLift(opts.dir, id, opts);
+  if (opts.json) console.log(JSON.stringify(r, null, 2));
+  else if (!r.items.length)
+    console.log(`${r.screen}: nothing to lift; the page and contract show only what the spec has`);
+  else {
+    for (const i of r.items) {
+      console.log(`${i.src}  ${i.kind}${i.label ? ` "${i.label}"` : ''}  (${i.where})`);
+      if (i.note) console.log(`  cannot lift: ${i.note}`);
+      for (const s of i.steps) console.log(`  → ${s.level} ${s.object}: ${s.edit}  [${s.check}]`);
+      if (i.candidates?.length) console.log(`  candidates: ${i.candidates.join(', ')}`);
+      for (const c of i.confirm) console.log(`  confirm: ${c}`);
+    }
+    if (r.document) console.log(`grooming document: ${r.document}`);
+    else console.log('no change given: nothing written; carry the proposal in the conversation');
+  }
+  if (r.items.some((i) => i.kind === 'unknown')) process.exitCode = 1;
 });
 
 experienceOpts(
