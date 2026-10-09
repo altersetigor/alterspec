@@ -16,9 +16,9 @@ roles, glossary, entities, shared rules, flows, events, integrations, quality re
 **Modules** (business areas, each with its own rules), and their **Capabilities** (one user goal reached in one
 session, with the roles allowed to perform it and testable acceptance criteria). Screens say what people see and
 do; entities say what the business things are and how they live. Nothing in it names a database, an endpoint, a
-framework or a library. Technology is decided by the development team. alterspec is a specification framework in
-the same family as Spec Kit, OpenSpec and BMAD: it delivers the spec to development teams, as its own bundle or in
-the format those tools read, and never acquires a technology layer of its own.
+framework or a library. alterspec is a spec-driven framework that covers only the product spec; the technical plan
+and tasks belong to the development team. It delivers the spec to that team as a self-contained bundle, and never
+acquires a technology layer of its own.
 
 **The principles that shape every command:**
 
@@ -190,9 +190,9 @@ A new feature is a change proposal that mostly adds:
    flow step that ties the feature into an existing journey.
 3. `/alterspec-refine` the new objects until they are `refined`; `/alterspec-experience` their screens.
 4. `/alterspec-impact`, review, `in_review`, `/alterspec-apply` with your explicit approval.
-5. When it is `ready` and its screens are reviewed: `/alterspec-handoff CAP-… <target>` exports to Spec Kit,
-   OpenSpec, BMAD or a self-contained bundle (with the wireframe and the experience of its screens) into
-   `handoff/<target>/<ID>/`, with a manifest of the exact versions handed over.
+5. When it is `ready` and its screens are reviewed: `/alterspec-handoff CAP-…` exports a self-contained bundle
+   (the spec it needs, the wireframe and the experience of its screens) into `handoff/bundle/<ID>/`, with a
+   manifest of the exact versions handed over.
 
 Before the baseline, the same feature is simply created directly, without a change.
 
@@ -307,7 +307,7 @@ Check      /alterspec-validate     npx alterspec validate [--json] [--change CHG
 Design     /alterspec-experience init | SCR | review SCR | sync SCR | rebuild SCR
 Freeze     npx alterspec baseline
 Change     /alterspec-change "title" | /alterspec-change-capability CAP   /alterspec-impact CHG   /alterspec-apply CHG
-Deliver    /alterspec-handoff CAP|MOD bundle|speckit|openspec|bmad|all
+Deliver    /alterspec-handoff CAP|MOD
 Health     npx alterspec doctor     npx alterspec show ID
 Update     npm i -D @alterset/alterspec@latest && npx alterspec update && npx alterspec views
 ```

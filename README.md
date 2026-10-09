@@ -16,8 +16,8 @@ check it, change it and hand it over to development.
   matrices, traceability) is generated, never hand-maintained.
 - **A living spec.** Once the first version is agreed, every product change goes through a reviewed change proposal
   with an impact analysis, just like code goes through pull requests.
-- **Hands off to your dev tools.** Export a capability or module to GitHub Spec Kit, OpenSpec, BMAD, or a
-  self-contained bundle for a technical design.
+- **Hands off to your development team.** Export a capability or module as a self-contained bundle: the spec it
+  needs, the wireframe and the experience of its screens, with a manifest of the exact versions.
 
 > alterspec is at version 0.x: the spec format may still change between minor versions.
 
@@ -124,7 +124,7 @@ agents or settings.
    generated views.
 7. **Apply.** `/alterspec-apply CHG-001` asks for your explicit approval ("approve CHG-001"), then merges the change,
    raises the version of every modified object and archives the proposal.
-8. **Hand off.** `/alterspec-handoff CAP-CAT-001 openspec` exports a ready capability to your development tool.
+8. **Hand off.** `/alterspec-handoff CAP-CAT-001` exports a ready capability as a bundle for your development team.
 
 ## Claude Code commands
 
@@ -145,7 +145,7 @@ agents or settings.
 | `/alterspec-change <title>` | Start or continue a change proposal spanning several objects |
 | `/alterspec-impact <CHG>` | Impact analysis of a change, for a business reader |
 | `/alterspec-apply <CHG>` | Approve, after your explicit word, and merge a change |
-| `/alterspec-handoff <ID> [target]` | Export to Spec Kit, OpenSpec, BMAD or a bundle |
+| `/alterspec-handoff <ID>` | Export a self-contained bundle for the development team |
 | `/alterspec-experience [init \| <SCR> \| review <SCR> \| sync <SCR> \| rebuild <SCR>]` | The future app as working mockups, with a UX contract per screen kept fully aligned with the spec |
 
 Four agents work behind these commands:
@@ -224,7 +224,7 @@ alterspec show CAP-CAT-001        # references both ways, empty sections, open q
 
 | Command | Description |
 | --- | --- |
-| `alterspec handoff <CAP\|MOD> --target <t>` | Export to `handoff/<target>/<ID>/`. Targets: `bundle`, `speckit`, `openspec`, `bmad`, `all`. |
+| `alterspec handoff <CAP\|MOD>` | Export a self-contained bundle to `handoff/bundle/<ID>/`. |
 
 ### Experience
 
@@ -414,17 +414,19 @@ spec/changes/CHG-001/
 ## Handoff
 
 ```bash
-npx alterspec handoff CAP-PRC-001 --target openspec
+npx alterspec handoff CAP-PRC-001
 ```
 
-| Target | Output | Next step |
-| --- | --- | --- |
-| `bundle` | `README.md` and `bundle.json`: the capability with every role, entity, rule, event, screen, flow and term it needs, plus a clickable wireframe of its screens and, with an experience layer, their UX contracts and mockups | input for your technical design |
-| `speckit` | GitHub Spec Kit `spec.md`: user stories with priorities, `FR-###`, `SC-###`, key entities, `[NEEDS CLARIFICATION]` | copy to `specs/<NNN>-<name>/spec.md` |
-| `openspec` | OpenSpec change folder: proposal, tasks, SHALL/MUST requirements with scenarios | copy to `openspec/changes/`, run `openspec validate` |
-| `bmad` | BMAD `epics.md`: an epic per module, a story per capability, Given/When/Then | give to BMAD as the epics document |
+The development team gets one self-contained bundle in `handoff/bundle/<ID>/`:
 
-- **Where it writes:** handoff only ever writes to `handoff/<target>/<ID>/`. It never touches another tool's folders.
+- `README.md` and `bundle.json`: the capability (or module) with every role, entity, rule, event, screen, flow and
+  term it needs, open questions as clarification points, and the acceptance criteria as Given/When/Then.
+- `wireframe/`: a clickable wireframe of the screens in scope, with made-up data.
+- with an experience layer, the UX contracts and the mockups of those screens: the app as designed.
+
+The bundle is the input for the technical design; the plan, the architecture and the tasks are the team's.
+
+- **Where it writes:** handoff only ever writes to `handoff/bundle/<ID>/` and replaces what was there.
 - **What it refuses:** capabilities below `ready` (unless you pass `--allow-draft`), anything with lint errors, and,
   with an experience layer, any screen whose experience isn't ready, reviewed and free of findings.
 - **Traceability:** every output carries `manifest.json` with the source IDs, versions and fingerprints, so you can see
@@ -544,7 +546,7 @@ After an update, run `npx alterspec views` once: new versions can add or rename 
 [`examples/catalog`](https://github.com/altersetigor/alterspec/blob/main/examples/catalog/README.md) is a complete product catalog spec:
 - 4 modules, 16 capabilities, 6 screens and 5 cross-module flows
 - a baseline, three applied changes and one change in review
-- handoff output for every target
+- the handoff bundle of a capability and of a module
 - an experience layer with the sales price review designed, reviewed and handed off, running as a small app
 
 It's the quickest way to see what a finished alterspec project looks like.
@@ -558,10 +560,10 @@ For the interviews, reviews and drafting, yes. The CLI (`new`, `validate`, `view
 **Can I put technical decisions in the spec?**
 No. alterspec is deliberately product-only. Technical design starts after handoff, in the tool of your choice.
 
-**What about Spec Kit, OpenSpec or BMAD — do I have to choose?**
-No. alterspec is a specification framework like them, with the product spec as its focus. Keep the spec in alterspec
-and deliver each capability to your development team as a bundle, or in the format of whichever of those tools they
-use.
+**What does the development team get?**
+A bundle per capability or module: the product spec it needs, the wireframe and the experience of its screens, with a
+manifest of the exact versions handed over. alterspec covers only the product spec; the technical plan and tasks
+belong to the team, in whatever method they use.
 
 **Can I rename an ID?**
 IDs are stable by design. To replace an object, add the new one and remove the old one through a change proposal. The

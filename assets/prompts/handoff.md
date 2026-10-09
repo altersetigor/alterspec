@@ -2,20 +2,17 @@
 
 Read `.alterspec/prompts/_shared.md` first and follow it.
 
-Arguments: `<CAP|MOD> [target]`. Targets:
-- `bundle` — one self-contained document (README.md + bundle.json) for a technical design or any other tool, with a
-  clickable wireframe of the screens in scope (`wireframe/index.html`, made-up data)
-- `speckit` — a GitHub Spec Kit feature spec (`spec.md`)
-- `openspec` — an OpenSpec change folder (`proposal.md`, `tasks.md`, `specs/<capability>/spec.md`)
-- `bmad` — a BMAD epic breakdown (`epics.md`)
-- `all` — every target
+Arguments: `<CAP|MOD>`.
 
-alterspec stays a product spec: it never makes technology decisions. Handoff is where they start, in the target tool.
+Handoff writes one self-contained bundle for the development team: `README.md` and `bundle.json` with the capability
+(or module) and every role, entity, rule, event, screen, flow and term it needs, a clickable wireframe of the screens
+in scope (`wireframe/index.html`, made-up data) and, with an experience layer, their UX contracts and mockups.
+
+alterspec stays a product spec: it never makes technology decisions. Handoff is where they start, with the team.
 
 ## 1. Check
 
-1. If the target is missing, ask which one (offer the list above).
-2. Run `npx @alterset/alterspec show <ID>` for a capability, or `npx @alterset/alterspec validate` for a module.
+1. Run `npx @alterset/alterspec show <ID>` for a capability, or `npx @alterset/alterspec validate` for a module.
    Handoff refuses objects with lint errors, and capabilities below `ready`.
    - If capabilities are still `draft` or `refined`, suggest `/alterspec-refine` first. Only use `--allow-draft` when the
      person explicitly wants a draft export.
@@ -27,25 +24,20 @@ alterspec stays a product spec: it never makes technology decisions. Handoff is 
 
 ## 2. Export
 
-Run `npx @alterset/alterspec handoff <ID> --target <target> --json`. It writes only to `handoff/<target>/<ID>/`
-and replaces what was there. Each folder has a `manifest.json` with the source IDs, versions and fingerprints.
+Run `npx @alterset/alterspec handoff <ID> --json`. It writes only to `handoff/bundle/<ID>/` and replaces what was
+there. The folder has a `manifest.json` with the source IDs, versions and fingerprints.
 
 ## 3. Optional polish
 
-If the person asks, improve the wording of the exported files so they read naturally in the target's style. You may
+If the person asks, improve the wording of the exported files so they read naturally. You may
 rephrase sentences. You may **not** add or remove requirements, scenarios, acceptance criteria, business facts, IDs or
 any technology, and you must keep the alterspec ID markers (`<!-- alterspec: ... -->`, `*(CAP-…)*`). Say what you
 changed. Re-running the export overwrites the polish, so suggest polishing as the last step.
 
 ## 4. Explain the next step
 
-- **speckit:** copy `handoff/speckit/<ID>/spec.md` to `specs/<next number>-<short-name>/spec.md` in the repository
-  that uses Spec Kit (the "Feature Branch" line suggests a name), then run Spec Kit's clarify or plan command there.
-- **openspec:** copy the folder inside `handoff/openspec/<ID>/` to `openspec/changes/` and run `openspec validate`.
-- **bmad:** give `handoff/bmad/<ID>/epics.md` to BMAD as the epics document (its planning artifacts folder). BMAD's
-  formats are changing between versions; check the stories after import.
-- **bundle:** use `handoff/bundle/<ID>/README.md` as the input for the technical design; `wireframe/` shows the
-  screens.
+Use `handoff/bundle/<ID>/README.md` as the input for the technical design; `wireframe/` shows the screens and,
+with an experience layer, `experience/mockups/` is the app as designed.
 
 Remind the person that the alterspec spec stays the source of truth: product changes go through `/alterspec-change`, then
 a new handoff. The manifest shows which version was handed over.

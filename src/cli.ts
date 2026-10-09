@@ -235,12 +235,11 @@ program
 program
   .command('handoff')
   .description(
-    'Export a capability or module for Spec Kit, OpenSpec, BMAD or a technical design (into handoff/)',
+    'Export a capability or module as a self-contained bundle for the development team (into handoff/bundle/)',
   )
   .argument('<id>', 'capability or module ID')
   .option('-C, --dir <dir>', 'project directory', '.')
   .option('--spec <path>', 'spec folder, relative to the project', 'spec')
-  .option('-t, --target <target>', 'bundle | speckit | openspec | bmad | all', 'bundle')
   .option('--allow-draft', 'export capabilities that are not ready yet')
   .option('--date <date>', 'date written into the output (YYYY-MM-DD)')
   .option('--json', 'print as JSON')
@@ -250,7 +249,6 @@ program
       opts: {
         dir: string;
         spec: string;
-        target: string;
         allowDraft?: boolean;
         date?: string;
         json?: boolean;

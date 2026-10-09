@@ -18,10 +18,7 @@
     "spec-driven-development",
     "claude-code",
     "ai",
-    "requirements",
-    "spec-kit",
-    "openspec",
-    "bmad"
+    "requirements"
   ],
   "type": "module",
   "bin": {

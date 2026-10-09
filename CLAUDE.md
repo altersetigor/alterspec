@@ -4,9 +4,9 @@ The spec changes with the product. alterspec is a product specification framewor
 published as `@alterset/alterspec` by Alterset d.o.o. (MIT).
 
 It keeps a tech-agnostic product spec (**Application → Module → Capability**) as the single source of truth and
-evolves it through reviewed change proposals (deltas). It is a specification framework in the same family as Spec
-Kit, OpenSpec and BMAD: it delivers the spec to development teams via `/alterspec-handoff`, as its own bundle or in
-the format those tools read, and never gets a technology layer of its own.
+evolves it through reviewed change proposals (deltas). It is a spec-driven framework that covers only the product
+spec; the technical plan and tasks belong to the development team. It delivers the spec to that team as a
+self-contained bundle via `/alterspec-handoff`, and never gets a technology layer of its own.
 
 This file is the build brief: every decision made so far is recorded here. Read it before starting a phase or
 changing the content model, IDs, validation rules or install layout.
@@ -121,10 +121,10 @@ Statuses: `draft → refined → ready → approved → implemented`.
   `proposal.md` and an overlay `spec/` holding only touched objects (whole docs, single collection items). `change
   edit|remove|status`, `new --change`, `validate --change`, `impact`, `apply` live in `src/changes/` and
   `src/commands/change.ts`. Approval is always the person's explicit word; `apply` checks `approved_hash`.
-- Handoff (Phase 5): `alterspec handoff <CAP|MOD> --target bundle|speckit|openspec|bmad|all` builds a bundle
-  (`src/handoff/bundle.ts`) and renders it per target (`src/handoff/targets/`), writing only to
-  `handoff/<target>/<ID>/`. Target formats were checked on 2026-10-07 (Spec Kit v1.1.1, OpenSpec v1.14.1, BMAD v6.12.1
-  `epics.md`); re-check the upstream templates before changing a renderer. alterspec never gets a tech layer.
+- Handoff (Phase 5): `alterspec handoff <CAP|MOD>` builds a bundle (`src/handoff/bundle.ts`) and renders it
+  (`src/handoff/targets/bundle.ts`), writing only to `handoff/bundle/<ID>/`. It is the one handoff format: the
+  development team gets the spec, the wireframe and the experience of the screens in scope (2026-10-09: the earlier
+  exports to third-party spec tools were removed, don't reintroduce them). alterspec never gets a tech layer.
 - Wireframe and experience (Phases 6–7): screens list their data in `fields`; entity attributes carry `references` /
   `options`. `src/wireframe/` builds the dry page model and renders the generic wireframe (`views` →
   `spec/_generated/wireframe/`, `manifest.json` lists every `data-src` and its roles; `views` also deletes a
@@ -148,7 +148,7 @@ Statuses: `draft → refined → ready → approved → implemented`.
   re-running its handoffs (`--date 2026-10-07`) reproduces `examples/catalog/handoff/` byte for byte. Its applied
   CHG-003 adds the experience layer with SCR-PRC-01 designed and reviewed; CHG-004 moves it onto the app runtime.
   After changing a renderer or bumping the package version, regenerate it: `node dist/cli.js views examples/catalog`,
-  `node dist/cli.js handoff CAP-PRC-001 --target all --date 2026-10-07 -C examples/catalog` and
+  `node dist/cli.js handoff CAP-PRC-001 --date 2026-10-07 -C examples/catalog` and
   `node dist/cli.js handoff MOD-PRC --date 2026-10-07 -C examples/catalog`.
 - Decided: interview-then-draft; `refine` moves status to `refined` at most, anything beyond needs the person's
   explicit word. Granularity and rule placement: see Decisions below.

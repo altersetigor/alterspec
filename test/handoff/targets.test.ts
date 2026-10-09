@@ -18,8 +18,8 @@ const tree = (dir: string) =>
 describe('handoff golden files', () => {
   it('reproduces the committed example handoff exactly', () => {
     const dir = copyExample();
-    runHandoff(dir, 'CAP-PRC-001', { target: 'all', date: '2026-10-07' });
-    runHandoff(dir, 'MOD-PRC', { target: 'bundle', date: '2026-10-07' });
+    runHandoff(dir, 'CAP-PRC-001', { date: '2026-10-07' });
+    runHandoff(dir, 'MOD-PRC', { date: '2026-10-07' });
     expect(tree(join(dir, 'handoff'))).toEqual(tree(join(EXAMPLE, 'handoff')));
   });
 });
@@ -61,73 +61,15 @@ describe('bundle', () => {
   });
 });
 
-describe('target formats', () => {
+describe('bundle output', () => {
   const out = (p: string) => readFileSync(join(EXAMPLE, 'handoff', p), 'utf8');
 
-  it('OpenSpec: SHALL/MUST requirements with 4-hash scenarios, Why and Purpose lengths, kebab-case id', () => {
-    const changeDir = readdirSync(join(EXAMPLE, 'handoff/openspec/CAP-PRC-001')).find(
-      (n) => n !== 'manifest.json',
-    )!;
-    expect(changeDir).toMatch(/^[a-z0-9]+(-[a-z0-9]+)*$/);
-    const proposal = out(`openspec/CAP-PRC-001/${changeDir}/proposal.md`);
-    const why = /## Why\n\n([\s\S]*?)\n\n## /.exec(proposal)?.[1] ?? '';
-    expect(why.length).toBeGreaterThanOrEqual(50);
-    expect(why.length).toBeLessThanOrEqual(1000);
-    expect(proposal).toMatch(/## What Changes\n\n- /);
-    const spec = out(`openspec/CAP-PRC-001/${changeDir}/specs/pricing/spec.md`);
-    const purpose = /## Purpose\n\n(.*)\n/.exec(spec)?.[1] ?? '';
-    expect(purpose.length).toBeGreaterThanOrEqual(50);
-    const reqs = spec.split(/^### Requirement: /m).slice(1);
-    expect(reqs.length).toBeGreaterThan(0);
-    for (const r of reqs) {
-      expect(r).toMatch(/\b(SHALL|MUST)\b/);
-      expect(r).toMatch(/^#### Scenario: /m);
-      expect(r).not.toMatch(/^(###|#####) Scenario:/m);
-      for (const sc of r.split(/^#### Scenario: /m).slice(1)) {
-        expect(sc).toMatch(/^- \*\*WHEN\*\* /m);
-        expect(sc).toMatch(/^- \*\*THEN\*\* /m);
-      }
-    }
-    expect(out(`openspec/CAP-PRC-001/${changeDir}/tasks.md`)).toMatch(/^## 1\. .+\n\n- \[ \] 1\.1 /m);
-  });
-
-  it('Spec Kit: mandatory sections, sequential FR and SC, priorities', () => {
-    const spec = out('speckit/CAP-PRC-001/spec.md');
-    for (const h of [
-      '## User Scenarios & Testing *(mandatory)*',
-      '## Requirements *(mandatory)*',
-      '### Functional Requirements',
-      '### Key Entities',
-      '## Success Criteria *(mandatory)*',
-      '## Assumptions',
-      '### Edge Cases',
-    ]) {
-      expect(spec).toContain(h);
-    }
-    expect(spec).toMatch(/^### User Story 1 - .+ \(Priority: P1\)$/m);
-    const frs = [...spec.matchAll(/\*\*FR-(\d{3})\*\*: System MUST/g)].map((m) => Number(m[1]));
-    expect(frs).toEqual(frs.map((_, i) => i + 1));
-    expect(spec).toMatch(/\[NEEDS CLARIFICATION: Do sales prices differ per customer group\?\]/);
-    expect(spec).toMatch(/^1\. \*\*Given\*\* .+, \*\*When\*\* .+, \*\*Then\*\* /m);
-    expect(spec).toMatch(/\*\*SC-001\*\*: /);
-  });
-
-  it('BMAD: epic and story numbering with Given/When/Then', () => {
-    const epics = out('bmad/CAP-PRC-001/epics.md');
-    expect(epics).toMatch(/^## Epic 1: Pricing$/m);
-    expect(epics).toMatch(/^### Story 1\.1: Propose sales price$/m);
-    expect(epics).toMatch(/^As a .+,\nI want to .+,\nSo that .+\.$/m);
-    expect(epics).toMatch(/^\*\*Given\*\* .+\n\*\*When\*\* .+\n\*\*Then\*\* /m);
-    expect(epics).toMatch(/^FR1: .+\n/m);
-    expect(epics).toMatch(/^FR1: Epic 1 - Story 1\.1$/m);
-  });
-
   it('writes a manifest with sources and fingerprints', () => {
-    const m = JSON.parse(out('speckit/CAP-PRC-001/manifest.json')) as {
+    const m = JSON.parse(out('bundle/CAP-PRC-001/manifest.json')) as {
       target: string;
       sources: { id: string; fingerprint: string; version?: number }[];
     };
-    expect(m.target).toBe('speckit');
+    expect(m.target).toBe('bundle');
     expect(m.sources.find((s) => s.id === 'CAP-PRC-001')).toMatchObject({
       version: 1,
       fingerprint: expect.stringMatching(/^[0-9a-f]{16}$/),
@@ -142,7 +84,7 @@ describe('handoff preconditions', () => {
     expect(runHandoff(dir, 'CAP-HR-002', { allowDraft: true }).warnings[0]).toMatch(/draft/);
   });
 
-  it('refuses scopes with lint errors and unknown targets', () => {
+  it('refuses scopes with lint errors and IDs that are not a capability or module', () => {
     const dir = copyExample();
     const f = join(dir, 'spec/modules/prc/capabilities/CAP-PRC-001.md');
     writeFileSync(
@@ -150,13 +92,16 @@ describe('handoff preconditions', () => {
       readFileSync(f, 'utf8').replace('rules: [RULE-001, RULE-PRC-001]', 'rules: [RULE-001, RULE-PRC-099]'),
     );
     expect(() => runHandoff(dir, 'CAP-PRC-001')).toThrow(/lint error/);
-    expect(() => runHandoff(copyExample(), 'CAP-PRC-001', { target: 'jira' })).toThrow(/--target/);
     expect(() => runHandoff(copyExample(), 'ENT-ARTICLE')).toThrow(/not a capability or module/);
   });
 
   it('replaces only its own output folder', () => {
     const dir = copyExample();
-    runHandoff(dir, 'CAP-PRC-002', { target: 'speckit', date: '2026-10-07' });
-    expect(readdirSync(join(dir, 'handoff/speckit')).sort()).toEqual(['CAP-PRC-001', 'CAP-PRC-002']);
+    runHandoff(dir, 'CAP-PRC-002', { date: '2026-10-07' });
+    expect(readdirSync(join(dir, 'handoff/bundle')).sort()).toEqual([
+      'CAP-PRC-001',
+      'CAP-PRC-002',
+      'MOD-PRC',
+    ]);
   });
 });

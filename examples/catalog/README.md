@@ -63,12 +63,9 @@ keeps it and only reports what a fresh render would change.
 
 ## Handoff
 
-[CAP-PRC-001 Propose sales price](spec/modules/prc/capabilities/CAP-PRC-001.md) is handed off to every target:
-
-- [bundle](handoff/bundle/CAP-PRC-001/README.md) — self-contained document for a technical design
-- [Spec Kit](handoff/speckit/CAP-PRC-001/spec.md)
-- [OpenSpec](handoff/openspec/CAP-PRC-001/add-propose-sales-price/)
-- [BMAD](handoff/bmad/CAP-PRC-001/epics.md)
+[CAP-PRC-001 Propose sales price](spec/modules/prc/capabilities/CAP-PRC-001.md) is handed off as a
+[bundle](handoff/bundle/CAP-PRC-001/README.md): the self-contained document the development team gets, with the
+wireframe and the experience of its screen.
 
 The whole Pricing module is also exported as a [bundle](handoff/bundle/MOD-PRC/README.md).
 
@@ -80,7 +77,7 @@ From the alterspec repository root:
 npx @alterset/alterspec validate examples/catalog
 npx @alterset/alterspec show CAP-PRC-002 -C examples/catalog
 npx @alterset/alterspec impact CHG-002 -C examples/catalog
-npx @alterset/alterspec handoff MOD-CAT --target openspec --allow-draft -C examples/catalog   # refused: no experience yet
+npx @alterset/alterspec handoff MOD-CAT --allow-draft -C examples/catalog   # refused: no experience yet
 ```
 
 In a browser, open `spec/_generated/wireframe/index.html` for the wireframe and `spec/experience/mockups/index.html`
