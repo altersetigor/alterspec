@@ -43,11 +43,11 @@ the object, and the object cannot become `refined` until it is answered.
 
 When the first version is agreed: `npx alterspec baseline`. From then on every edit is a change proposal (section 5).
 
-## 3. Prototype and experience: making and tuning the UI
+## 3. Wireframe and experience: making and tuning the UI
 
 Two layers show the product. Think of them as a dry and a wet signal.
 
-**Dry: the generic prototype.** `alterspec views` writes `spec/_generated/prototype/`: one plain page per screen,
+**Dry: the generic wireframe.** `alterspec views` writes `spec/_generated/wireframe/`: one plain page per screen,
 built only from the business spec (fields, actions, roles, entry points, the empty / no-permission / validation
 states) with made-up data. Anything the spec doesn't say shows as a highlighted "Not specified" note. You never edit
 it; it is always current, and it is what the experience layer is measured against.
@@ -91,10 +91,10 @@ How everything stays in sync:
 - If the design needs something the business spec lacks (a field, a filter, a message), it goes into the business
   spec first, then `sync`. Never only into the mockup: the checks would reject it.
 
-## 4. Why spec, prototype and experience cannot drift apart
+## 4. Why spec, wireframe and experience cannot drift apart
 
 - One source of truth: capability, screen and entity front-matter. Module lists, role matrices, screen
-  back-references, entity coverage, traceability, the prototype and the data the mockups load (`spec.js`) are all
+  back-references, entity coverage, traceability, the wireframe and the data the mockups load (`spec.js`) are all
   generated from it. Generated blocks carry a hash; a hand edit is an error.
 - One vocabulary: IDs are stable and never reused; every reference is checked to exist; glossary synonyms and
   technology words are flagged.
@@ -140,7 +140,7 @@ A new feature is a change proposal that mostly adds:
 3. `/alterspec-refine` the new objects until they are `refined`; `/alterspec-experience` their screens.
 4. `/alterspec-impact`, review, `in_review`, `/alterspec-apply` with your explicit approval.
 5. When it is `ready` and its screens are reviewed: `/alterspec-handoff CAP-… <target>` exports to Spec Kit,
-   OpenSpec, BMAD or a self-contained bundle (with the prototype and the experience of its screens) into
+   OpenSpec, BMAD or a self-contained bundle (with the wireframe and the experience of its screens) into
    `handoff/<target>/<ID>/`, with a manifest of the exact versions handed over.
 
 Before the baseline, the same feature is simply created directly, without a change.
@@ -151,7 +151,7 @@ Before the baseline, the same feature is simply created directly, without a chan
 | ------------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
 | IDs, file locations, templates (`new`)                                          | Interviewing you, three questions at a time                               |
 | Schema and the 41 lint rules (`validate`)                                       | Semantic review: contradictions, gaps, permission holes (reviewer agent) |
-| Generated blocks, matrices, traceability, prototype, `spec.js` (`views`)        | Drafting body text from your answers (analyst agent)                      |
+| Generated blocks, matrices, traceability, wireframe, `spec.js` (`views`)        | Drafting body text from your answers (analyst agent)                      |
 | Fingerprints, baseline, conflicts, approval hash, merge, versions (`change`, `impact`, `apply`) | Writing the "Why" and "What changes" of a proposal                |
 | Experience drafts, sync, dry and review fingerprints, parity checks             | Shaping layout, components, labels, realistic data (UX designer agent)    |
 | Handoff rendering and the experience gate                                       | Parity table and developer questions (experience reviewer agent)          |

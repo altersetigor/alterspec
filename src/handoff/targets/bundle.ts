@@ -118,7 +118,7 @@ export function renderBundle(b: Bundle, ctx: TargetContext): TargetOutput {
       }
     }
     out.push(
-      'A clickable prototype of these screens, with made-up data, is in `prototype/index.html`.',
+      'A clickable wireframe of these screens, with made-up data, is in `wireframe/index.html`.',
       ...(b.screens.some((s) => s.experience)
         ? [
             '',

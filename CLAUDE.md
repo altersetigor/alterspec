@@ -88,7 +88,7 @@ skill and agent with `alterspec-`.
 - `changes/CHG-*/`: `proposal.md` and delta files; moved to `changes/archive/` after merge
 - `experience/`: `design-system.md`, `patterns.md`, `screens/UX-SCR-*.md`, `mockups/` (the app: `index.html` sign-in,
   one page per screen, `config.js`, `data.js`, `kit/`); UI-technical by design, baselined and changed like the rest
-- `_generated/`: matrices, traceability, coverage, lint report, the generic `prototype/` and `experience/spec.js`
+- `_generated/`: matrices, traceability, coverage, lint report, the generic `wireframe/` and `experience/spec.js`
   (never hand-edited)
 
 **IDs** are stable and never reused: `APP`, `MOD-<CODE>`, `CAP-<MOD>-<NNN>`, `SCR-<MOD>-<NN>` / `SCR-GLB-<NN>`,
@@ -124,9 +124,10 @@ Statuses: `draft → refined → ready → approved → implemented`.
   (`src/handoff/bundle.ts`) and renders it per target (`src/handoff/targets/`), writing only to
   `handoff/<target>/<ID>/`. Target formats were checked on 2026-10-07 (Spec Kit v1.1.1, OpenSpec v1.14.1, BMAD v6.12.1
   `epics.md`); re-check the upstream templates before changing a renderer. alterspec never gets a tech layer.
-- Prototype and experience (Phases 6–7): screens list their data in `fields`; entity attributes carry `references` /
-  `options`. `src/prototype/` builds the dry page model and renders the generic prototype (`views` →
-  `spec/_generated/prototype/`, `manifest.json` lists every `data-src` and its roles). `src/experience/` is the wet layer:
+- Wireframe and experience (Phases 6–7): screens list their data in `fields`; entity attributes carry `references` /
+  `options`. `src/wireframe/` builds the dry page model and renders the generic wireframe (`views` →
+  `spec/_generated/wireframe/`, `manifest.json` lists every `data-src` and its roles; `views` also deletes a
+  leftover `_generated/prototype/` from versions before 0.6). `src/experience/` is the wet layer:
   catalogue (`patterns.md` archetypes, `design-system.md` components), a small HTML reader, `dryHash` (only what an
   experience screen realises), `reviewHash`, and the scaffold behind `experience new|sync`. The `experience-*` lint
   rules in `src/lint/rules/experience.ts` enforce zero deviation; handoff refuses screens whose experience isn't
@@ -162,7 +163,7 @@ Decided (don't reopen without the person's word):
   `modules/<mod>/rules.md` as `RULE-<MOD>-NNN`; `foreign-module-rule` warns when a capability uses another module's
   rule.
 - **Language** (2026-10-09): English only. `config.language` stays `en`; no SR/EN pairs in glossary or templates.
-- **Mockups** (2026-10-07, revised 2026-10-08): a generic HTML prototype generated from the spec, plus the experience
+- **Mockups** (2026-10-07, revised 2026-10-08): a generic HTML wireframe generated from the spec, plus the experience
   layer. The experience layer is UI-only and must match the business spec exactly before handoff; backend, data and
   architecture design stay outside alterspec.
 - **Naming** (0.2.0): installed skills and agents are prefixed `alterspec-`; front-matter is parsed without
@@ -180,6 +181,6 @@ Open (ask before building anything that depends on it):
 3. Authoring commands and the analyst agent
 4. Semantic review and change management
 5. Handoff and a full example project (reference fixture)
-6. Screen fields and the generated (dry) prototype
+6. Screen fields and the generated (dry) wireframe
 7. Experience layer: UX contracts and realistic mockups, zero-deviation checks and the handoff gate
 8. Living mockups: the experience mockups are a working app (sign-in as a role, demo data, real-app look)

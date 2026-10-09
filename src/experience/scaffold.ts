@@ -1,6 +1,6 @@
 import { Document } from 'yaml';
-import { esc } from '../prototype/render.js';
-import type { FieldGroup, ScreenPage } from '../prototype/model.js';
+import { esc } from '../wireframe/render.js';
+import type { FieldGroup, ScreenPage } from '../wireframe/model.js';
 import type { ExperienceScreen } from '../schemas/experience.js';
 import type { SpecModel } from '../spec/model.js';
 import { blockHash } from '../views/blocks.js';

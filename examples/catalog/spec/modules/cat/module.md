@@ -39,9 +39,9 @@ Articles and the master data that describes them: brands, categories and units o
 
 ## Screens
 
-<!-- GENERATED:start screens hash=d326831785a5 -->
-| Screen | Title | Actions | Prototype |
+<!-- GENERATED:start screens hash=d6e233643cac -->
+| Screen | Title | Actions | Wireframe |
 | --- | --- | --- | --- |
-| [SCR-CAT-01](screens/SCR-CAT-01.md) | Article record | A01 Create → CAP-CAT-004<br>A02 Activate → CAP-CAT-005<br>A03 Discontinue → CAP-CAT-006 | [open](../../_generated/prototype/SCR-CAT-01.html) |
-| [SCR-CAT-02](screens/SCR-CAT-02.md) | Master data | A01 Units of measure → CAP-CAT-003<br>A02 Brands → CAP-CAT-001<br>A03 Categories → CAP-CAT-002 | [open](../../_generated/prototype/SCR-CAT-02.html) |
+| [SCR-CAT-01](screens/SCR-CAT-01.md) | Article record | A01 Create → CAP-CAT-004<br>A02 Activate → CAP-CAT-005<br>A03 Discontinue → CAP-CAT-006 | [open](../../_generated/wireframe/SCR-CAT-01.html) |
+| [SCR-CAT-02](screens/SCR-CAT-02.md) | Master data | A01 Units of measure → CAP-CAT-003<br>A02 Brands → CAP-CAT-001<br>A03 Categories → CAP-CAT-002 | [open](../../_generated/wireframe/SCR-CAT-02.html) |
 <!-- GENERATED:end -->

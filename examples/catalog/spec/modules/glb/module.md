@@ -29,8 +29,8 @@ Screens everyone uses. Today that is the article search, where sales staff find 
 
 ## Screens
 
-<!-- GENERATED:start screens hash=0dbe4398465e -->
-| Screen | Title | Actions | Prototype |
+<!-- GENERATED:start screens hash=10a59eab3faf -->
+| Screen | Title | Actions | Wireframe |
 | --- | --- | --- | --- |
-| [SCR-GLB-01](screens/SCR-GLB-01.md) | Article search | — | [open](../../_generated/prototype/SCR-GLB-01.html) |
+| [SCR-GLB-01](screens/SCR-GLB-01.md) | Article search | — | [open](../../_generated/wireframe/SCR-GLB-01.html) |
 <!-- GENERATED:end -->

@@ -1,8 +1,8 @@
 import type { ExperienceScreen } from '../schemas/experience.js';
 import type { LocatedDoc, SpecModel } from '../spec/model.js';
 import { blockHash } from '../views/blocks.js';
-import { elementRoles } from '../prototype/index.js';
-import { buildPrototype, type PrototypeModel, type ScreenPage } from '../prototype/model.js';
+import { elementRoles } from '../wireframe/index.js';
+import { buildWireframe, type WireframeModel, type ScreenPage } from '../wireframe/model.js';
 
 export const EXPERIENCE_DIR = 'experience';
 export const mockupPath = (screenId: string) => `${EXPERIENCE_DIR}/mockups/${screenId}.html`;
@@ -12,12 +12,12 @@ export const experiencePath = (screenId: string) => `${EXPERIENCE_DIR}/screens/U
 export const hasExperience = (model: SpecModel) =>
   model.raw.some((f) => f.path.startsWith(`${EXPERIENCE_DIR}/`));
 
-const cache = new WeakMap<SpecModel, PrototypeModel>();
-/** The generated (dry) prototype of the spec, computed once per model. */
-export function dryModel(model: SpecModel): PrototypeModel {
+const cache = new WeakMap<SpecModel, WireframeModel>();
+/** The generated (dry) wireframe of the spec, computed once per model. */
+export function dryModel(model: SpecModel): WireframeModel {
   let m = cache.get(model);
   if (!m) {
-    m = buildPrototype(model);
+    m = buildWireframe(model);
     cache.set(model, m);
   }
   return m;

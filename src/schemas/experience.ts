@@ -7,7 +7,7 @@ export const UxName = z.string().regex(/^[a-z][a-z0-9-]*$/, { message: 'must be 
 
 export const ExperienceElementSchema = z
   .object({
-    /** The `data-src` of a business element on the screen (see the generated prototype's manifest). */
+    /** The `data-src` of a business element on the screen (see the generated wireframe's manifest). */
     src: z.string().min(1),
     region: UxName,
     component: UxName,
@@ -39,7 +39,7 @@ export const ExperienceScreenSchema = z
     screen: ScreenId,
     status: Status,
     archetype: UxName,
-    /** Fingerprint of the generated prototype page this screen was aligned with. Written by the CLI. */
+    /** Fingerprint of the generated wireframe page this screen was aligned with. Written by the CLI. */
     dry: z.string().optional(),
     /** Fingerprint of this screen and its mockup at the last clean parity review. Written by the CLI. */
     reviewed: z.string().optional(),

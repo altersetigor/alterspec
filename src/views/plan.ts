@@ -1,7 +1,7 @@
 import type { SpecModel } from '../spec/model.js';
 import { SPEC_JS, specJs } from '../experience/app.js';
 import { hasExperience } from '../experience/index.js';
-import { PROTOTYPE_DIR, planPrototype } from '../prototype/index.js';
+import { LEGACY_WIREFRAME_DIR, WIREFRAME_DIR, planWireframe } from '../wireframe/index.js';
 import { renderGeneratedFile, replaceBlocks } from './blocks.js';
 import {
   appRoleMatrix,
@@ -22,7 +22,7 @@ export interface ViewsPlan {
   blocks: Map<string, Record<string, string>>;
   /** Expected blocks a file doesn't have. Views doesn't add them. */
   missing: { file: string; block: string }[];
-  /** Generated files on disk that views no longer writes (a removed screen's prototype page). */
+  /** Generated files on disk that views no longer writes (a removed screen's wireframe page). */
   remove: string[];
 }
 
@@ -54,11 +54,14 @@ export function planViews(model: SpecModel): ViewsPlan {
   plan.files.set('_generated/coverage.md', renderGeneratedFile(coverage(model)));
   plan.files.set('_generated/role-matrix.md', renderGeneratedFile(appRoleMatrix(model)));
   plan.files.set('_generated/index.json', index(model));
-  for (const [path, text] of planPrototype(model)) plan.files.set(path, text);
+  for (const [path, text] of planWireframe(model)) plan.files.set(path, text);
   if (hasExperience(model)) plan.files.set(SPEC_JS, specJs(model));
+  // Also the folder the wireframe was written to before 0.6 (`_generated/prototype/`).
   plan.remove = model.raw
     .map((f) => f.path)
-    .filter((p) => p.startsWith(`${PROTOTYPE_DIR}/`) && !plan.files.has(p))
+    .filter(
+      (p) => (p.startsWith(`${WIREFRAME_DIR}/`) || p.startsWith(LEGACY_WIREFRAME_DIR)) && !plan.files.has(p),
+    )
     .sort();
   return plan;
 }

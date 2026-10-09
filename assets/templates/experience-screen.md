@@ -5,7 +5,7 @@ status: draft
 archetype: {{archetype}}
 # dry / reviewed / page are written by `alterspec experience`; don't edit them.
 elements: []
-# - src: SCR-XX-NN.A01           # a business element of the screen (data-src in the prototype)
+# - src: SCR-XX-NN.A01           # a business element of the screen (data-src in the wireframe)
 #   region: actions              # a region of the archetype (experience/patterns.md)
 #   component: button-primary    # a component of the design system (experience/design-system.md)
 #   label: "Approve"             # the exact text people see

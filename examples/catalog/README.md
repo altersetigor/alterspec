@@ -40,10 +40,10 @@ The first version was baselined (`alterspec baseline`), so every later edit goes
 - **[CHG-002 Article replacement on discontinuation](spec/changes/CHG-002/proposal.md)** — in review. It adds a
   replacement article to `ENT-ARTICLE` and changes `CAP-CAT-006`. See its [impact report](spec/changes/CHG-002/impact.md).
 
-## Prototype and experience
+## Wireframe and experience
 
 Every screen lists the data it shows in `fields`, so the spec renders as a clickable
-[generic prototype](spec/_generated/prototype/index.html) with made-up data, written by `alterspec views`.
+[generic wireframe](spec/_generated/wireframe/index.html) with made-up data, written by `alterspec views`.
 
 The applied **[CHG-003 Experience for sales price review](spec/changes/archive/CHG-003/proposal.md)** added the
 experience layer: the starter [design system](spec/experience/design-system.md) and

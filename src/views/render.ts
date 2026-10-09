@@ -85,12 +85,12 @@ export function moduleScreens(model: SpecModel, mod: LocatedDoc<{ id: string }>)
   const screens = sorted(model.screens).filter((s) => s.data.module === mod.id);
   if (screens.length === 0) return '_No screens yet._';
   return table(
-    ['Screen', 'Title', 'Actions', 'Prototype'],
+    ['Screen', 'Title', 'Actions', 'Wireframe'],
     screens.map((s) => [
       link(mod.file, s.file, s.id),
       s.data.title,
       s.data.actions.map((a) => `${a.id} ${a.label} → ${a.capability}`).join('<br>') || '—',
-      link(mod.file, `_generated/prototype/${s.id}.html`, 'open'),
+      link(mod.file, `_generated/wireframe/${s.id}.html`, 'open'),
     ]),
   );
 }

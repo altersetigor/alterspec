@@ -36,7 +36,7 @@ import {
   specJs,
 } from '../experience/app.js';
 import { lint } from '../lint/lint.js';
-import { esc } from '../prototype/render.js';
+import { esc } from '../wireframe/render.js';
 import type { ExperienceScreen } from '../schemas/experience.js';
 import { readSpecDir } from '../spec/files.js';
 import { loadSpec } from '../spec/load.js';

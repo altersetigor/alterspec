@@ -12,7 +12,7 @@ Arguments: `<CHG>`.
    - conflicts with the current spec, if any, and what to do (re-read the object, then
      `npx @alterset/alterspec change edit <CHG> <ID> --rebase` and redo the edit)
    - who and what is affected: flows, screens, roles, acceptance criteria that must be re-checked
-   - generated views that will change (module capability lists, role matrices), including the prototype pages of
+   - generated views that will change (module capability lists, role matrices), including the wireframe pages of
      screens whose content changes
    - experience screens and mockups affected (`UX-SCR-…` in the affected list): each must be synced and reviewed in
      this change before it can be approved

@@ -33,8 +33,8 @@ Registering employees and recording when they leave.
 
 ## Screens
 
-<!-- GENERATED:start screens hash=58ffd857be66 -->
-| Screen | Title | Actions | Prototype |
+<!-- GENERATED:start screens hash=3f049c9b557e -->
+| Screen | Title | Actions | Wireframe |
 | --- | --- | --- | --- |
-| [SCR-HR-01](screens/SCR-HR-01.md) | Employee record | A01 Register → CAP-HR-001<br>A02 Activate → CAP-HR-002<br>A03 Record leaving → CAP-HR-003 | [open](../../_generated/prototype/SCR-HR-01.html) |
+| [SCR-HR-01](screens/SCR-HR-01.md) | Employee record | A01 Register → CAP-HR-001<br>A02 Activate → CAP-HR-002<br>A03 Record leaving → CAP-HR-003 | [open](../../_generated/wireframe/SCR-HR-01.html) |
 <!-- GENERATED:end -->

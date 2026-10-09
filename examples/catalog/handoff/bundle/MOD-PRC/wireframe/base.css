@@ -1,0 +1,227 @@
+/* Generic wireframe look: a neutral wireframe. Behaviour (states, roles) lives in state.css. */
+:root {
+  --as-fg: #1f2328;
+  --as-muted: #59636e;
+  --as-line: #d1d9e0;
+  --as-soft: #f6f8fa;
+  --as-accent: #0969da;
+  --as-gap: #9a6700;
+  --as-gap-bg: #fff8c5;
+  --as-error: #d1242f;
+  font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+  color: var(--as-fg);
+  background: #fff;
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  line-height: 1.5;
+}
+a {
+  color: var(--as-accent);
+}
+.as-top {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 20px;
+  border-bottom: 1px solid var(--as-line);
+  background: var(--as-soft);
+}
+.as-app {
+  font-weight: 600;
+  color: var(--as-fg);
+  text-decoration: none;
+}
+.as-badge {
+  font-size: 12px;
+  color: var(--as-muted);
+  border: 1px solid var(--as-line);
+  border-radius: 10px;
+  padding: 0 8px;
+}
+.as-layout {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  min-height: calc(100vh - 50px);
+}
+.as-nav {
+  border-right: 1px solid var(--as-line);
+  padding: 16px;
+  font-size: 14px;
+}
+.as-nav h2 {
+  font-size: 12px;
+  text-transform: uppercase;
+  color: var(--as-muted);
+  margin: 16px 0 4px;
+}
+.as-nav ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.as-nav a[aria-current='page'] {
+  font-weight: 600;
+  color: var(--as-fg);
+}
+main {
+  padding: 20px 28px;
+  max-width: 1100px;
+}
+.as-crumb {
+  color: var(--as-muted);
+  font-size: 13px;
+  margin: 0;
+}
+h1 {
+  margin: 4px 0 8px;
+  font-size: 24px;
+}
+h2 {
+  font-size: 16px;
+  margin: 0 0 8px;
+}
+.as-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 24px;
+  font-size: 13px;
+  color: var(--as-muted);
+}
+.as-meta ul {
+  display: inline;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.as-meta li {
+  display: inline;
+  margin-right: 8px;
+}
+.as-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  margin: 16px 0;
+}
+button,
+select,
+input {
+  font: inherit;
+}
+button {
+  border: 1px solid var(--as-line);
+  background: #fff;
+  border-radius: 6px;
+  padding: 4px 12px;
+  cursor: pointer;
+}
+.as-action {
+  background: var(--as-accent);
+  border-color: var(--as-accent);
+  color: #fff;
+}
+[aria-pressed='true'] {
+  background: var(--as-fg);
+  color: #fff;
+}
+.as-states {
+  font-size: 13px;
+}
+.as-gap {
+  background: var(--as-gap-bg);
+  color: var(--as-gap);
+  border: 1px dashed var(--as-gap);
+  border-radius: 6px;
+  padding: 4px 10px;
+  margin: 4px 0;
+  font-size: 13px;
+}
+.as-group {
+  border: 1px solid var(--as-line);
+  border-radius: 8px;
+  padding: 16px;
+  margin: 16px 0;
+}
+.as-mode {
+  font-weight: normal;
+  font-size: 12px;
+  color: var(--as-muted);
+}
+table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 14px;
+}
+th,
+td {
+  text-align: left;
+  border-bottom: 1px solid var(--as-line);
+  padding: 6px 8px;
+}
+th {
+  background: var(--as-soft);
+}
+dl {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 4px 16px;
+  margin: 0;
+}
+dl div {
+  display: contents;
+}
+dt {
+  color: var(--as-muted);
+}
+dd {
+  margin: 0;
+}
+.as-field {
+  display: grid;
+  gap: 2px;
+  margin-bottom: 10px;
+  max-width: 420px;
+}
+.as-field input:not([type='checkbox']),
+.as-field select {
+  border: 1px solid var(--as-line);
+  border-radius: 6px;
+  padding: 4px 8px;
+}
+.as-req {
+  color: var(--as-error);
+}
+.as-state {
+  border: 1px solid var(--as-line);
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin: 16px 0;
+  background: var(--as-soft);
+}
+main[data-state='validation'] .as-state[data-for='validation'] {
+  border-color: var(--as-error);
+  color: var(--as-error);
+}
+.as-index li {
+  margin: 4px 0;
+}
+dialog {
+  border: 1px solid var(--as-line);
+  border-radius: 8px;
+  max-width: 520px;
+}
+@media (max-width: 720px) {
+  .as-layout {
+    grid-template-columns: 1fr;
+  }
+  .as-nav {
+    border-right: 0;
+    border-bottom: 1px solid var(--as-line);
+  }
+}

@@ -11,7 +11,7 @@ import {
   uxElements,
   type ExperienceDoc,
 } from '../../experience/index.js';
-import type { ScreenPage } from '../../prototype/model.js';
+import type { ScreenPage } from '../../wireframe/model.js';
 import type { SpecModel } from '../../spec/model.js';
 import type { LintRule, RawFinding } from '../types.js';
 
@@ -226,7 +226,7 @@ export const experienceVocabulary: LintRule = {
 
 const CHROME_CLASSES = /\bclass="[^"]*\b(ux-review|ux-mock-note|ux-dialog-preview|ux-annotation)\b/;
 const SPEC_ID = /\b(?:APP|MOD|CAP|SCR|ROLE|PER|ENT|RULE|FLOW|EVT|DEC|CHG|UX)-[A-Z0-9][A-Z0-9-]*\b/;
-const SPEC_WORDS = /\b(mockup|prototype|data-src|alterspec|capability|acceptance criteri)/i;
+const SPEC_WORDS = /\b(mockup|prototype|wireframe|data-src|alterspec|capability|acceptance criteri)/i;
 
 export const experienceChrome: LintRule = {
   name: 'experience-chrome',

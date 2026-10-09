@@ -35,7 +35,7 @@ check it, change it and hand it over to development.
 - [Validation](#validation)
 - [Change management](#change-management)
 - [Handoff](#handoff)
-- [Prototype and experience](#prototype-and-experience)
+- [Wireframe and experience](#wireframe-and-experience)
 - [Configuration and customisation](#configuration-and-customisation)
 - [Using alterspec in CI](#using-alterspec-in-ci)
 - [Updating](#updating)
@@ -112,7 +112,7 @@ agents or settings.
 2. **Refine.** `/alterspec-refine <ID>` finds the gaps in one object and asks about them until the object is complete.
    Only then does it move the object to `refined`. Moving to `ready` or `approved` always needs your explicit word.
 3. **Validate.** `/alterspec-validate` runs the deterministic linter and a semantic review, and gives you one report.
-   **Look at it.** `spec/_generated/prototype/index.html` is a clickable prototype generated from the spec.
+   **Look at it.** `spec/_generated/wireframe/index.html` is a clickable wireframe generated from the spec.
    **Design it.** `/alterspec-experience` adds the experience layer: a UX contract and a realistic mockup per screen,
    checked element by element against the spec.
 4. **Baseline.** When the first version is agreed, run `npx alterspec baseline`. From that moment on, every edit goes
@@ -352,7 +352,7 @@ and that someone on the screen can perform each action.
 ### Generated content
 
 Module capability lists, role × capability matrices, screen back-references, entity coverage and the generic
-prototype (`spec/_generated/prototype/`) are written by `alterspec views`. Inside documents they go into marked
+wireframe (`spec/_generated/wireframe/`) are written by `alterspec views`. Inside documents they go into marked
 blocks:
 
 ```markdown
@@ -419,7 +419,7 @@ npx alterspec handoff CAP-PRC-001 --target openspec
 
 | Target | Output | Next step |
 | --- | --- | --- |
-| `bundle` | `README.md` and `bundle.json`: the capability with every role, entity, rule, event, screen, flow and term it needs, plus a clickable prototype of its screens and, with an experience layer, their UX contracts and mockups | input for your technical design |
+| `bundle` | `README.md` and `bundle.json`: the capability with every role, entity, rule, event, screen, flow and term it needs, plus a clickable wireframe of its screens and, with an experience layer, their UX contracts and mockups | input for your technical design |
 | `speckit` | GitHub Spec Kit `spec.md`: user stories with priorities, `FR-###`, `SC-###`, key entities, `[NEEDS CLARIFICATION]` | copy to `specs/<NNN>-<name>/spec.md` |
 | `openspec` | OpenSpec change folder: proposal, tasks, SHALL/MUST requirements with scenarios | copy to `openspec/changes/`, run `openspec validate` |
 | `bmad` | BMAD `epics.md`: an epic per module, a story per capability, Given/When/Then | give to BMAD as the epics document |
@@ -430,17 +430,17 @@ npx alterspec handoff CAP-PRC-001 --target openspec
 - **Traceability:** every output carries `manifest.json` with the source IDs, versions and fingerprints, so you can see
   later which handoffs are out of date.
 
-## Prototype and experience
+## Wireframe and experience
 
 Two layers show what the spec describes, like a dry and a wet signal:
 
 ```text
-spec/_generated/prototype/   dry: the generic prototype, generated from the business spec by `alterspec views`
+spec/_generated/wireframe/   dry: the generic wireframe, generated from the business spec by `alterspec views`
 spec/experience/             wet: the experience layer — design system, patterns, a UX contract and a realistic
                              mockup per screen
 ```
 
-- **Dry: the generic prototype.** One page per screen, with navigation from modules and entry points, the data from
+- **Dry: the generic wireframe.** One page per screen, with navigation from modules and entry points, the data from
   `fields` filled with made-up records, the actions (each says which capability it performs), a role picker, and
   buttons for the empty, no-permission and validation-error states. Anything the spec doesn't say yet shows as a
   highlighted "Not specified" note. It needs no design work and is always current.
@@ -534,7 +534,7 @@ npx alterspec update
 npx alterspec doctor
 ```
 
-After an update, run `npx alterspec views` once: new versions can add generated views, such as the prototype.
+After an update, run `npx alterspec views` once: new versions can add or rename generated views, such as the wireframe (0.6 renamed `_generated/prototype/` to `_generated/wireframe/`; `views` removes the old folder).
 
 `update` refreshes `.alterspec/` and the `.claude/` commands. It never touches `spec/`, `config.yaml` or
 `.alterspec/custom/`, and it skips any command file you edited by hand (use `--force` to overwrite).
@@ -568,7 +568,7 @@ old ID is never reused.
 
 **Is my spec sent anywhere?**
 The CLI works only on local files and makes no network calls. Claude Code works with your files the way it does for
-any code. Prototype pages and mockups are plain local files; mockups
+any code. Wireframe pages and mockups are plain local files; mockups
 load demo photos from the image URLs in their data (a stock photo service by default) when you open them.
 
 ## License

@@ -10,7 +10,7 @@ import { loadSpec } from '../spec/load.js';
 import type { SpecModel } from '../spec/model.js';
 import { outgoingRefs } from '../spec/refs.js';
 import { normalizeSection, sections } from '../spec/sections.js';
-import { MANIFEST_FILE, PROTOTYPE_DIR, type PrototypeManifest } from '../prototype/index.js';
+import { MANIFEST_FILE, WIREFRAME_DIR, type WireframeManifest } from '../wireframe/index.js';
 import { planViews } from '../views/plan.js';
 import { loadChange, type LoadedChange } from './change.js';
 import { isExperienceAsset, specObjects, type SpecObject } from './fingerprint.js';
@@ -137,18 +137,18 @@ function viewChanges(before: SpecModel, after: SpecModel): Impact['views'] {
     const blocks = [...new Set([...Object.keys(a), ...Object.keys(b)])].filter((n) => a[n] !== b[n]);
     if (blocks.length) out.push({ file, blocks });
   }
-  const generated = (f: string) => f.startsWith('_generated/') && !f.startsWith(`${PROTOTYPE_DIR}/`);
+  const generated = (f: string) => f.startsWith('_generated/') && !f.startsWith(`${WIREFRAME_DIR}/`);
   for (const file of [...pb.files.keys()].filter(generated).sort()) {
     if (pa.files.get(file) !== pb.files.get(file)) out.push({ file });
   }
-  // Prototype pages: only screens whose page content changes, not every page whose navigation does.
+  // Wireframe pages: only screens whose page content changes, not every page whose navigation does.
   const manifest = (p: typeof pa) =>
-    (JSON.parse(p.files.get(`${PROTOTYPE_DIR}/${MANIFEST_FILE}`) ?? '{"screens":{}}') as PrototypeManifest)
+    (JSON.parse(p.files.get(`${WIREFRAME_DIR}/${MANIFEST_FILE}`) ?? '{"screens":{}}') as WireframeManifest)
       .screens;
   const ma = manifest(pa);
   const mb = manifest(pb);
   for (const id of [...new Set([...Object.keys(ma), ...Object.keys(mb)])].sort()) {
-    if (ma[id]?.hash !== mb[id]?.hash) out.push({ file: `${PROTOTYPE_DIR}/${(mb[id] ?? ma[id])!.file}` });
+    if (ma[id]?.hash !== mb[id]?.hash) out.push({ file: `${WIREFRAME_DIR}/${(mb[id] ?? ma[id])!.file}` });
   }
   return out;
 }

@@ -1,0 +1,22 @@
+/* Wireframe behaviour shared by the generic wireframe and every variant: which business state and which role is shown. */
+[hidden] {
+  display: none !important;
+}
+.as-state {
+  display: none;
+}
+main[data-state='empty'] .as-state[data-for='empty'],
+main[data-state='no-permission'] .as-state[data-for='no-permission'],
+main[data-state='validation'] .as-state[data-for='validation'] {
+  display: block;
+}
+main[data-state='empty'] .as-data,
+main[data-state='no-permission'] .as-group,
+main[data-state='no-permission'] .as-actions {
+  display: none;
+}
+main[data-state='validation'] .as-field:has(.as-req) input,
+main[data-state='validation'] .as-field:has(.as-req) select {
+  outline: 2px solid #d1242f;
+  outline-offset: 1px;
+}

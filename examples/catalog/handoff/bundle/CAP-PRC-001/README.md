@@ -1,6 +1,6 @@
 # CAP-PRC-001 — Propose sales price
 
-<!-- Exported by alterspec 0.5.1 from CAP-PRC-001 (CAP-PRC-001 v1). Edit the source spec, not this file. -->
+<!-- Exported by alterspec 0.6.0 from CAP-PRC-001 (CAP-PRC-001 v1). Edit the source spec, not this file. -->
 
 Self-contained product specification exported from alterspec on 2026-10-07. It describes what the product does and why, in business terms; technical design decisions are made from here on.
 
@@ -180,7 +180,7 @@ Work through articles that need a sales price, proposals that need approval, and
 - [no-permission](experience/mockups/SCR-PRC-01.html?state=no-permission)
 - [validation as ROLE-PRICING-MANAGER](experience/mockups/SCR-PRC-01.html?as=ROLE-PRICING-MANAGER&state=validation)
 
-A clickable prototype of these screens, with made-up data, is in `prototype/index.html`.
+A clickable wireframe of these screens, with made-up data, is in `wireframe/index.html`.
 
 The experience contracts and mockups in `experience/` are binding: they say how each screen looks and behaves, and they were checked element by element against this specification.
 
