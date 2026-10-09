@@ -1,7 +1,7 @@
 ---
 status: draft
 inputDocuments: ["alterspec CAP-PRC-001 v1"]
-exportedBy: "alterspec 0.5.0"
+exportedBy: "alterspec 0.5.1"
 ---
 
 # Product Catalog - Epic Breakdown
