@@ -100,6 +100,7 @@ describe('generic wireframe', () => {
     expect(runValidate(dir).findings.map((f) => f.rule)).toEqual(['views-stale']);
     expect(runViews(dir).changed).toEqual(['_generated/prototype/index.html']);
     expect(existsSync(legacy)).toBe(false);
+    expect(existsSync(join(dir, 'spec/_generated/prototype'))).toBe(false);
     expect(runValidate(dir).findings).toEqual([]);
   });
 
