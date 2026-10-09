@@ -94,6 +94,8 @@ real product, based on the application's vision, glossary and entities:
 
 1. Run `npx @alterset/alterspec experience sync <SCR> --json`. It removes elements the screen no longer has, adds new
    ones as drafts in an "Added by sync" block of the page, adds missing states and records the new alignment.
+   Inside a change proposal, `npx @alterset/alterspec change sync <CHG>` does this for every screen the change
+   affects at once, drafts experience screens that are missing and drops the experience of removed screens.
 2. Place the added elements properly (designer agent), then `validate`, then `review <SCR>`.
 
 ## `rebuild <SCR>` — a fresh page from the contract, never over hand edits

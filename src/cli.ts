@@ -9,6 +9,7 @@ import { formatProfile, runProfileSet, runProfileShow } from './commands/profile
 import { runBaseline } from './commands/baseline.js';
 import { runHandoff } from './commands/handoff.js';
 import { runChangeEdit, runChangeNew, runChangeRemove, runChangeStatus } from './commands/change.js';
+import { runChangeSync } from './commands/change-sync.js';
 import { runApply } from './changes/apply.js';
 import { computeImpact, formatImpact } from './changes/impact.js';
 import { writeFileSync } from 'node:fs';
@@ -255,6 +256,34 @@ changeOpts(change.command('remove').description('Mark an object for removal in a
   .action((id: string, key: string, opts: { dir: string; spec: string }) => {
     const r = runChangeRemove(opts.dir, id, key, opts);
     console.log(`${id.toUpperCase()} removes ${r.key}`);
+  });
+
+changeOpts(
+  change
+    .command('sync')
+    .description(
+      'Make the experience layer follow a change: re-sync stale experience screens, draft missing ones, drop orphaned ones',
+    ),
+)
+  .argument('<CHG>')
+  .option('--json', 'print the result as JSON')
+  .action((id: string, opts: { dir: string; spec: string; json?: boolean }) => {
+    const r = runChangeSync(opts.dir, id, opts);
+    if (opts.json) return console.log(JSON.stringify(r, null, 2));
+    if (r.skipped) return console.log(`${r.id}: ${r.skipped}, nothing to align`);
+    for (const s of r.synced)
+      console.log(
+        `${s.screen}: synced (${s.added.length} added, ${s.removed.length} removed, ${s.states.length} state(s), ${s.roles.length} audience change(s))`,
+      );
+    for (const d of r.drafted) console.log(`${d}: experience screen and page drafted`);
+    for (const x of r.removed) console.log(`${x}: removed with its screen`);
+    if (!r.synced.length && !r.drafted.length && !r.removed.length) console.log(`${r.id}: nothing to align`);
+    const place = [...r.synced.filter((s) => s.added.length).map((s) => s.screen), ...r.drafted];
+    if (place.length) console.log(`place the drafted elements: /alterspec-experience ${place.join(', ')}`);
+    if (r.toReview.length)
+      console.log(
+        `review: ${r.toReview.map((x) => `/alterspec-experience review ${x.replace(/^UX-/, '')}`).join('; ')}`,
+      );
   });
 
 changeOpts(change.command('status').description('Move a change: draft | in_review | approved | rejected'))

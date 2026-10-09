@@ -37,10 +37,13 @@ For a capability whose behaviour changes, raise nothing yourself: `apply` raises
 ## 4. Describe and check
 
 1. Write the proposal's "Why" and "What changes" sections in business language.
-2. Run `npx @alterset/alterspec validate --change <CHG>` and fix every error inside the change.
-3. Run `npx @alterset/alterspec impact <CHG> --write`. Read it: affected flows, acceptance criteria and objects. Ask
+2. Run `npx @alterset/alterspec change sync <CHG> --json`: the experience layer follows every screen the change
+   affects (stale experience screens re-synced, screens without one drafted, the experience of removed screens
+   removed). Note what it leaves for a person: elements to place and reviews.
+3. Run `npx @alterset/alterspec validate --change <CHG>` and fix every error inside the change.
+4. Run `npx @alterset/alterspec impact <CHG> --write`. Read it: affected flows, acceptance criteria and objects. Ask
    the person whether the affected objects need changes too; if yes, add them to the change.
-4. Ask the `alterspec-reviewer` agent to review the change (scope `<CHG>`). Fix critical and major findings with the
+5. Ask the `alterspec-reviewer` agent to review the change (scope `<CHG>`). Fix critical and major findings with the
    person, or record them as open questions in the proposal.
 
 ## 5. Hand over for review

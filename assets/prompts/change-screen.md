@@ -21,6 +21,6 @@ What to check, depending on what changes:
 The "Used by capabilities" block is generated: never edit it.
 
 **Experience layer.** If `spec/experience/screens/UX-<SCR>.md` exists, the experience screen and its mockup must
-follow in the same change, or the change can't go to review: after the edit, run
-`npx @alterset/alterspec experience sync <SCR>` (with `--change <CHG>` after the baseline) and tell the person to
-finish it with `/alterspec-experience <SCR>`.
+follow, or the change can't go to review. Before the baseline, run `npx @alterset/alterspec experience sync <SCR>`
+after the edit; after the baseline, `npx @alterset/alterspec change sync <CHG>` does it for every affected screen
+(step 4 of the shared flow). Tell the person what is left to place and review with `/alterspec-experience <SCR>`.

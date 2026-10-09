@@ -200,7 +200,8 @@ After the baseline, the main `spec/` is read-only for people. Direct edits are `
    objects are created there (`alterspec new … --change CHG-NNN`), removals are recorded (`alterspec change remove`).
    The copy remembers the fingerprint it started from.
 3. Work inside the change: edit the copies, run `alterspec validate --change CHG-NNN` (the spec as it would be after
-   the change), `alterspec experience sync SCR-… --change CHG-NNN` for affected screens, and
+   the change), `alterspec change sync CHG-NNN` so the experience of every affected screen follows (Claude runs it
+   for you and tells you what to place and review), and
    `/alterspec-impact CHG-NNN` for what is affected: flows, acceptance criteria, screens, roles, generated views, new
    and resolved findings, plus the reviewer agent's semantic findings.
 4. `alterspec change status CHG-NNN in_review` is refused while the change has errors, conflicts or no content.
@@ -285,7 +286,8 @@ hole, data the new field needs that nobody produces.
 
 **Bringing it back down and closing the loop.**
 
-1. `alterspec experience sync SCR-XX-NN --change CHG-NNN`: the contract drops elements the screen no longer has,
+1. `alterspec change sync CHG-NNN` (or `experience sync SCR-XX-NN --change CHG-NNN` for one screen): the contract
+   drops elements the screen no longer has,
    receives the new ones as drafts, gains states and default views for new roles, and records the new alignment
    with the dry page (clearing `experience-stale`). The page gets the new elements in an "Added by sync" block.
 2. The designer agent places them where you wanted them in the first place; now they carry a `data-src` the spec

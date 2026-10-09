@@ -84,3 +84,29 @@ export function reviewHash(screenDoc: string, mockup: string | undefined): strin
 export const contentOf = (model: SpecModel, path: string) => model.raw.find((f) => f.path === path)?.content;
 
 export type ExperienceDoc = LocatedDoc<ExperienceScreen>;
+
+/** Each experience screen with its business page; experiences whose business screen is unknown are skipped. */
+export function experiencePages(model: SpecModel): { x: ExperienceDoc; page: ScreenPage }[] {
+  return [...model.experiences.values()].flatMap((x) => {
+    const page = dryPage(model, x.data.screen);
+    return page ? [{ x, page }] : [];
+  });
+}
+
+/** Experience screens whose business screen changed since they were aligned (`sync` records the alignment). */
+export const staleExperiences = (model: SpecModel) =>
+  experiencePages(model).filter(({ x, page }) => x.data.dry !== dryHash(page));
+
+/** Experience screens edited since their last recorded parity review (or never reviewed). */
+export const unreviewedExperiences = (model: SpecModel) =>
+  [...model.experiences.values()].filter(
+    (x) =>
+      x.data.reviewed !==
+      reviewHash(contentOf(model, x.file) ?? '', contentOf(model, mockupPath(x.data.screen))),
+  );
+
+/** Those of the given screens that exist in the model but have no experience screen yet. */
+export function screensWithoutExperience(model: SpecModel, screenIds: Iterable<string>): string[] {
+  const done = new Set([...model.experiences.values()].map((x) => x.data.screen));
+  return [...new Set(screenIds)].filter((id) => model.screens.has(id) && !done.has(id)).sort();
+}

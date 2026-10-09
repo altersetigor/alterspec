@@ -14,8 +14,9 @@ Arguments: `<CHG>`.
    - who and what is affected: flows, screens, roles, acceptance criteria that must be re-checked
    - generated views that will change (module capability lists, role matrices), including the wireframe pages of
      screens whose content changes
-   - experience screens and mockups affected (`UX-SCR-…` in the affected list): each must be synced and reviewed in
-     this change before it can be approved
+   - the "Experience screens" section: screens to align, draft or drop (`npx @alterset/alterspec change sync <CHG>`
+     does those three) and experience screens still to review (`/alterspec-experience review <SCR>`, a person's
+     job); the change can't go to review while a screen is stale
    - new lint findings, and findings the change resolves
    - the reviewer's critical and major findings
    - a recommendation: ready for approval, or what must be fixed first

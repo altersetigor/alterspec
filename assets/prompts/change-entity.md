@@ -13,8 +13,9 @@ What to check, depending on what changes:
   capability and screen that shows or uses it, including screen `fields`. Renaming an attribute means renaming it in
   every screen's `fields` too. A `reference` attribute says which entity it points to (`references`); a `choice`
   attribute lists its `options`. Screens that show the entity may have experience screens
-  (`spec/experience/screens/`): after renaming or removing an attribute they show, run
-  `npx @alterset/alterspec experience sync <SCR>` for each, in the same change.
+  (`spec/experience/screens/`): after renaming, removing or re-typing an attribute they show, they must follow.
+  Before the baseline, run `npx @alterset/alterspec experience sync <SCR>` for each; after the baseline,
+  `npx @alterset/alterspec change sync <CHG>` finds and re-syncs all of them (step 4 of the shared flow).
 - **Relationships** — a new relationship to another entity: check that entity exists and that someone sets the
   relationship (a capability's main flow).
 - **States and transitions** — this is the risky part:

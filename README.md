@@ -228,6 +228,7 @@ until a default is given. After the baseline both take `--change <CHG>`.
 | `alterspec change new --title <t>` | Start a change proposal (`CHG-NNN`). |
 | `alterspec change edit <CHG> <ID>` | Copy an object into the change so you can edit it there. |
 | `alterspec change remove <CHG> <ID>` | Mark an object for removal. |
+| `alterspec change sync <CHG>` | Make the experience layer follow the change: re-sync stale experience screens, draft missing ones, drop those of removed screens. |
 | `alterspec change status <CHG> <status>` | `draft` → `in_review` → `approved`, or `rejected`. |
 | `alterspec new <type> … --change <CHG>` | Create a new object inside a change. |
 | `alterspec impact <CHG> [--write]` | Impact analysis; `--write` saves `impact.md` in the change. |
@@ -446,6 +447,10 @@ spec/changes/CHG-001/
   spec as it would look afterwards.
 - **Parallel:** two open changes never get the same new ID. If one change is applied and touches an object the other
   also edits, the second reports a conflict, and you rebase with `change edit --rebase` after re-reading the object.
+- **In step with the design:** `change sync CHG-001` makes the experience layer follow the change: experience
+  screens whose business screen changed are re-synced, screens without one get a draft, the experience of a removed
+  screen goes with it. What it can't decide (where a new element sits, the parity review) is listed for you, and a
+  change can't go to review while a screen is stale.
 - **Reviewed:** a change needs `in_review`, then your explicit approval. If it is edited after approval, it must be
   approved again.
 - **Traceable:** applied changes move to `spec/changes/archive/`, modified objects get a new `version`, and the IDs they

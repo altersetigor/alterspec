@@ -126,8 +126,10 @@ Statuses: `draft → refined → ready → approved → implemented`.
 - Change management (Phase 4): `alterspec baseline` records object fingerprints in `spec/_generated/baseline.json`;
   after that the `direct-edit` rule makes every edit go through a change. A change is `spec/changes/CHG-NNN/` with
   `proposal.md` and an overlay `spec/` holding only touched objects (whole docs, single collection items). `change
-  edit|remove|status`, `new --change`, `validate --change`, `impact`, `apply` live in `src/changes/` and
-  `src/commands/change.ts`. Approval is always the person's explicit word; `apply` checks `approved_hash`.
+  edit|remove|status|sync`, `new --change`, `validate --change`, `impact`, `apply` live in `src/changes/`,
+  `src/commands/change.ts` and `src/commands/change-sync.ts`. `change sync` makes the experience layer follow the
+  change (see Phase 10b); `impact` carries an "Experience screens" section and `change status in_review|approved`
+  refuses while one is stale. Approval is always the person's explicit word; `apply` checks `approved_hash`.
 - Handoff (Phase 5): `alterspec handoff <CAP|MOD>` builds a bundle (`src/handoff/bundle.ts`) and renders it
   (`src/handoff/targets/bundle.ts`), writing only to `handoff/bundle/<ID>/`. It is the one handoff format: the
   development team gets the spec, the wireframe and the experience of the screens in scope (2026-10-09: the earlier
@@ -208,8 +210,10 @@ Open (ask before building anything that depends on it):
 9. Product profile: channels, tenancy, languages, currencies and time zones recorded at init and consumed by
    prompts, lint and the mockup app, so nothing is specified that the product doesn't need
 10. Conversational alterspec, step by step (agreed 2026-10-09): (a) the front door and model-invocable skills, done;
-    (b) `alterspec change sync <CHG>`: align every stale experience screen of a change in one go, named by
-    `change status in_review`; (c) grooming: one proposal drafted from an idea (module, entities, capabilities,
+    (b) `alterspec change sync <CHG>` (`src/commands/change-sync.ts`), done: re-syncs stale experience screens,
+    drafts missing ones for screens the change touches, drops those of removed screens; `impact` reports an
+    "Experience screens" section (`experienceImpact` in `src/changes/impact.ts`) and `change status in_review|approved`
+    refuses while a screen is stale, orphaned, or ready without an experience; (c) grooming: one proposal drafted from an idea (module, entities, capabilities,
     screens, rules, flows, what was not proposed, open questions), asked once, executed on the person's "go" up to
     `in_review`; this is the "AI drafts, human approves" mode of the open decision above, to be recorded as decided
     for both modes when (c) is planned; (d) `apply` hands off every touched capability that passes the gate and

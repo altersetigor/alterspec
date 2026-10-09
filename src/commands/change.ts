@@ -10,8 +10,9 @@ import { renderTemplate } from '../lib/template.js';
 import { readTemplate } from '../lib/templates.js';
 import { ChangeStatus } from '../schemas/change.js';
 import { encodingOf, readSpecDir } from '../spec/files.js';
-import { classify } from '../spec/load.js';
-import { computeImpact } from '../changes/impact.js';
+import { classify, loadSpec } from '../spec/load.js';
+import { mergedFiles } from '../changes/impact.js';
+import { computeImpact, experienceTodo } from '../changes/impact.js';
 
 export interface ChangeOptions {
   spec?: string;
@@ -155,6 +156,8 @@ export function runChangeRemove(dir: string, changeId: string, rawKey: string, o
   return { key };
 }
 
+const READY = new Set(['ready', 'approved', 'implemented']);
+
 const TRANSITIONS: Record<string, string[]> = {
   draft: ['in_review', 'rejected'],
   in_review: ['draft', 'approved', 'rejected'],
@@ -187,6 +190,18 @@ export function runChangeStatus(dir: string, changeId: string, status: string, o
     if (impact.added.length + impact.modified.length + impact.removed.length === 0) {
       throw new ChangeError(`${change.id} doesn't change anything yet`);
     }
+    // The experience follows the business screens before anyone reviews the change. A screen that is still draft
+    // may wait for its first experience screen; a stale or orphaned one may not.
+    const merged = loadSpec(mergedFiles(specRoot, change.id, root).merged).model;
+    const readyWithout = impact.experience.missing.filter((s) => {
+      const status = merged.screens.get(s)?.data.status;
+      return status !== undefined && READY.has(status);
+    });
+    const todo = experienceTodo({
+      id: change.id,
+      experience: { ...impact.experience, missing: readyWithout },
+    });
+    if (todo) throw new ChangeError(`${change.id} has ${todo}`);
   }
   updateProposal(change, (doc) => {
     doc.set('status', next.data);

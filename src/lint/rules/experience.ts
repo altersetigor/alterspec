@@ -2,12 +2,12 @@ import { readCatalog } from '../../experience/catalog.js';
 import { elementText, normalize, tags, visibleText, type Tag } from '../../experience/html.js';
 import {
   contentOf,
-  dryHash,
   dryPage,
   hasExperience,
   mockupPath,
   narrowedRoles,
-  reviewHash,
+  staleExperiences,
+  unreviewedExperiences,
   uxElements,
   type ExperienceDoc,
 } from '../../experience/index.js';
@@ -272,14 +272,12 @@ export const experienceStale: LintRule = {
   description:
     'Experience screens are aligned with the current business screen (run `alterspec experience sync`).',
   check: ({ model }) =>
-    each(model)
-      .filter(({ x, page }) => x.data.dry !== dryHash(page))
-      .map(({ x, page }) => ({
-        file: x.file,
-        line: x.data.dry ? x.lineOf(['dry']) : x.line,
-        id: x.id,
-        message: `${page.id} changed since ${x.id} was aligned; run \`alterspec experience sync ${page.id}\``,
-      })),
+    staleExperiences(model).map(({ x, page }) => ({
+      file: x.file,
+      line: x.data.dry ? x.lineOf(['dry']) : x.line,
+      id: x.id,
+      message: `${page.id} changed since ${x.id} was aligned; run \`alterspec experience sync ${page.id}\``,
+    })),
 };
 
 export const experienceMissing: LintRule = {
@@ -305,10 +303,9 @@ export const experienceUnreviewed: LintRule = {
   severity: 'warn',
   description: 'Experience screens that are ready or later passed a parity review since their last edit.',
   check: ({ model }) =>
-    each(model)
-      .filter(({ x }) => READY.has(x.data.status))
-      .filter(({ x, html }) => x.data.reviewed !== reviewHash(contentOf(model, x.file) ?? '', html))
-      .map(({ x }) => ({
+    unreviewedExperiences(model)
+      .filter((x) => READY.has(x.data.status))
+      .map((x) => ({
         file: x.file,
         line: x.data.reviewed ? x.lineOf(['reviewed']) : x.line,
         id: x.id,

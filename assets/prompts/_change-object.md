@@ -43,9 +43,14 @@ Check whether `spec/_generated/baseline.json` exists.
 
 - **No baseline:** run `npx @alterset/alterspec views`, then `npx @alterset/alterspec show <ID>` for every object you
   touched, and fix every error.
-- **Baseline:** run `npx @alterset/alterspec validate --change <CHG>` and fix every error inside the change. Add a line
-  for this edit to the proposal's "What changes" section (and "Why", if the change is new). Then run
-  `npx @alterset/alterspec impact <CHG>` and summarise the affected flows, objects and acceptance criteria.
+- **Baseline:** run `npx @alterset/alterspec change sync <CHG> --json` so the experience layer follows every screen
+  the edit affects (stale experience screens are re-synced, screens without one get a draft, the experience of a
+  removed screen is removed too; a hand-designed page is only edited the way `experience sync` edits it). Then run
+  `npx @alterset/alterspec validate --change <CHG>` and fix every error inside the change. Add a line for this edit
+  to the proposal's "What changes" section (and "Why", if the change is new). Then run
+  `npx @alterset/alterspec impact <CHG>` and summarise the affected flows, objects and acceptance criteria, and what
+  `change sync` left for a person: elements to place (`/alterspec-experience <SCR>`) and reviews
+  (`/alterspec-experience review <SCR>`).
 
 Finish with what changed, and the next step: `/alterspec-refine <ID>` if gaps were reopened; with a baseline,
 `/alterspec-impact <CHG>` and `/alterspec-apply <CHG>` when the change is complete.

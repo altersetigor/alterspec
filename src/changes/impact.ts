@@ -15,6 +15,12 @@ import { planViews } from '../views/plan.js';
 import { loadChange, type LoadedChange } from './change.js';
 import { isExperienceAsset, specObjects, type SpecObject } from './fingerprint.js';
 import { conflicts, mergeChange, overlayObjects, type Conflict } from './merge.js';
+import {
+  hasExperience,
+  screensWithoutExperience,
+  staleExperiences,
+  unreviewedExperiences,
+} from '../experience/index.js';
 
 /** Rules only `alterspec apply` can satisfy; they are not reported for a change's merged spec. */
 export const SKIP_FOR_CHANGES = new Set([
@@ -53,6 +59,42 @@ export interface Impact {
   flows: string[];
   acceptanceCriteria: string[];
   views: { file: string; blocks?: string[] }[];
+  experience: ExperienceImpact;
+}
+
+/** What the experience layer still has to do to follow the change (all empty without an experience layer). */
+export interface ExperienceImpact {
+  /** Business screens that changed since their experience screen was aligned: `change sync` re-syncs them. */
+  stale: string[];
+  /** Screens the change adds or modifies that have no experience screen: `change sync` drafts them. */
+  missing: string[];
+  /** Experience screens (UX-…) of screens the change removes, not yet recorded as removed: `change sync` does it. */
+  orphaned: string[];
+  /** Experience screens (UX-…) in the merged spec that need a parity review. */
+  unreviewed: string[];
+}
+
+export function experienceImpact(
+  change: LoadedChange,
+  afterModel: SpecModel,
+  keys: { added: string[]; modified: string[]; removed: string[] },
+): ExperienceImpact {
+  if (!hasExperience(afterModel)) return { stale: [], missing: [], orphaned: [], unreviewed: [] };
+  const screens = (ks: string[]) => ks.filter((k) => k.startsWith('SCR-'));
+  const removedScreens = new Set(screens(keys.removed));
+  const orphaned = [...afterModel.experiences.values()]
+    .filter((x) => removedScreens.has(x.data.screen) && !change.proposal.removes.includes(x.id))
+    .map((x) => x.id);
+  return {
+    stale: staleExperiences(afterModel)
+      .map(({ page }) => page.id)
+      .sort(),
+    missing: screensWithoutExperience(afterModel, [...screens(keys.added), ...screens(keys.modified)]),
+    orphaned: orphaned.sort(),
+    unreviewed: unreviewedExperiences(afterModel)
+      .map((x) => x.id)
+      .sort(),
+  };
 }
 
 /** Lint a set of files as a change's merged spec would be linted. */
@@ -246,7 +288,24 @@ export function computeImpact(dir: string, changeId: string, opts: { spec?: stri
     flows: [...flows].sort(),
     acceptanceCriteria: [...acceptance].sort(),
     views: viewChanges(beforeModel, afterModel),
+    experience: experienceImpact(change, afterModel, {
+      added: added.map((o) => o.key),
+      modified: modified.map((o) => o.key),
+      removed: removed.map((o) => o.key),
+    }),
   };
+}
+
+/** The experience work a change still needs, as one sentence for refusals and reports; empty when nothing is left. */
+export function experienceTodo(i: Pick<Impact, 'id' | 'experience'>, blockingOnly = false): string {
+  const parts = [
+    ...i.experience.stale.map((s) => `${s} changed since its experience screen was aligned`),
+    ...(blockingOnly ? [] : i.experience.missing.map((s) => `${s} has no experience screen`)),
+    ...i.experience.orphaned.map((x) => `${x} belongs to a removed screen`),
+  ];
+  return parts.length
+    ? `${parts.length} experience screen(s) to align (${parts.join('; ')}); run \`alterspec change sync ${i.id}\``
+    : '';
 }
 
 export function formatImpact(i: Impact): string {
@@ -291,6 +350,18 @@ export function formatImpact(i: Impact): string {
     '## Generated views that change',
     '',
     list(i.views.map((v) => `${v.file}${v.blocks ? `: ${v.blocks.join(', ')}` : ''}`)),
+    '',
+    '## Experience screens',
+    '',
+    list([
+      ...i.experience.stale.map((s) => `to align: ${s} (its experience screen is stale)`),
+      ...i.experience.missing.map((s) => `to draft: ${s} (no experience screen yet)`),
+      ...i.experience.orphaned.map((x) => `to drop: ${x} (its screen is removed)`),
+      ...i.experience.unreviewed.map((x) => `to review: ${x}`),
+    ]),
+    ...(i.experience.stale.length || i.experience.missing.length || i.experience.orphaned.length
+      ? ['', `Run \`alterspec change sync ${i.id}\` for the first three; the review is a person's.`]
+      : []),
     '',
     '## New findings',
     '',
