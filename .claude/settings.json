@@ -12,7 +12,11 @@
       "Bash(node:*)",
       "Bash(git status)",
       "Bash(git diff:*)",
-      "Bash(git log:*)"
+      "Bash(git log:*)",
+      "Bash(npx @alterset/alterspec validate:*)",
+      "Bash(npx prettier --check:*)",
+      "Bash(npm view:*)",
+      "Bash(npm pack --dry-run:*)"
     ],
     "ask": [
       "Bash(npm publish:*)",
