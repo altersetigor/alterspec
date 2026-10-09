@@ -43,7 +43,7 @@
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org/",
-    "access": "public"
+    "access": "restricted"
   },
   "dependencies": {
     "commander": "^14.0.3",
